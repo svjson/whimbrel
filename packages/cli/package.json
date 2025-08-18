@@ -22,9 +22,23 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "@whimbrel/core": "^0.0.1",
+    "@whimbrel/core-api": "^0.0.1",
+    "@whimbrel/actor": "^0.0.1",
+    "@whimbrel/source": "^0.0.1",
+    "@whimbrel/gitignore": "^0.0.1",
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0",
+    "ora": "^8.2.0",
+    "strip-ansi": "^7.1.0"
+  },
   "dependencies": {
     "@whimbrel/core": "*",
     "@whimbrel/core-api": "*",
+    "@whimbrel/actor": "*",
+    "@whimbrel/source": "*",
+    "@whimbrel/gitignore": "*",
     "chalk": "^5.6.0",
     "commander": "^14.0.0",
     "ora": "^8.2.0",
