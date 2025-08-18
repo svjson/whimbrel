@@ -1,0 +1,33 @@
+{
+  "name": "whimbrel",
+  "version": "0.0.1",
+  "description": "CLI-based automation tool",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "whim": "./dist/index.cjs"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@whimbrel/core": "*",
+    "@whimbrel/core-api": "*",
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0",
+    "ora": "^8.2.0",
+    "strip-ansi": "^7.1.0"
+  }
+}

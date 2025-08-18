@@ -1,0 +1,38 @@
+{
+  "name": "@whimbrel/core",
+  "version": "0.0.1",
+  "description": "Whimbrel Core Library",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@whimbrel/actor": "^0.0.1",
+    "@whimbrel/core-api": "^0.0.1",
+    "@whimbrel/facet": "^0.0.1",
+    "@whimbrel/filesystem": "^0.0.1",
+    "@whimbrel/walk": "^0.0.1",
+    "@whimbrel/source": "^0.0.1"
+  },
+  "dependencies": {
+    "@whimbrel/actor": "*",
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/walk": "*",
+    "@whimbrel/source": "*"
+  }
+}

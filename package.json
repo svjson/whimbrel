@@ -1,0 +1,27 @@
+{
+  "name": "whimbrel-root",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Automation Engine",
+  "license": "ISC",
+  "author": "Sven Johansson",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "packages/cli",
+    "packages/core/*",
+    "packages/lib/*",
+    "packages/facets/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "npm run --workspaces test --if-present"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.6"
+  }
+}

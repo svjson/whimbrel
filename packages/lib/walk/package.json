@@ -1,0 +1,25 @@
+{
+  "name": "@whimbrel/walk",
+  "version": "0.0.1",
+  "description": "Recursive object structure walker for JS/TS",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "vite": "^7.1.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
+  }
+}
