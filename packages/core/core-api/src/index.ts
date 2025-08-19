@@ -8,8 +8,12 @@ export { FacetImplementationError, makeFacetModule } from './facet'
 export { toFileSystemReadOptions, toFileSystemWriteOptions } from './fs'
 export { makeTask, moduleTasks, NoOpExecution } from './task'
 export { Formatter, NullAppender, indent } from './log'
-export { makeNullExecutionStep } from './execution'
 export { defaultMutationHandler, ContextMutator } from './mutation'
+export {
+  defaultJournalEntryHandler,
+  makeNullExecutionStep,
+  newStepResult,
+} from './execution'
 
 export type { Actor } from './actor'
 export type {
@@ -19,7 +23,13 @@ export type {
   VCSEventType,
   WhimbrelEvent,
 } from './event'
-export type { ExecutionStep, StepExecutionResult } from './execution'
+export type {
+  AcceptJournalEntryHandler,
+  JournalEntry,
+  JournalEntryOrigin,
+  ExecutionStep,
+  StepExecutionResult,
+} from './execution'
 export type {
   ExecuteTaskFunction,
   Task,

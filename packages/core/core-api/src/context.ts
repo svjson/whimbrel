@@ -1,6 +1,10 @@
 import { Actor } from './actor'
 import { WhimbrelEvent } from './event'
-import { ExecutionStep, StepExecutionResult } from './execution'
+import {
+  AcceptJournalEntryHandler,
+  ExecutionStep,
+  StepExecutionResult,
+} from './execution'
 import { FacetRegistry } from './facet'
 import { FileSystem } from './fs'
 import { ApplicationLog, Formatter } from './log'
@@ -30,6 +34,7 @@ export interface WhimbrelContextOptions {
   dir?: string
   log?: ApplicationLog
   memCacheOnly?: boolean
+  acceptJournalEntry?: AcceptJournalEntryHandler
   acceptMutation?: AcceptMutationHandler
 }
 
@@ -95,6 +100,6 @@ export interface WhimbrelContext {
   stepResult?: StepExecutionResult
   options: WhimbrelCommandOptions
   emitEvent(event: WhimbrelEvent): void
-  acceptMutation(mutation: Mutation): void
   acceptMutation: AcceptMutationHandler
+  acceptJournalEntry: AcceptJournalEntryHandler
 }

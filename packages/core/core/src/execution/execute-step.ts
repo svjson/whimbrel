@@ -1,6 +1,6 @@
 import { ContextOperator } from '@src/context'
 import {
-  StepExecutionResult,
+  newStepResult,
   WhimbrelContext,
   ContextMutator,
   ExecutionStep,
@@ -103,19 +103,6 @@ const makeStepRunner = (ctx: WhimbrelContext, step: ExecutionStep): StepRunner =
     return new DryStepRunner(ctx, step)
   } else {
     return new LiveStepRunner(ctx, step)
-  }
-}
-
-/**
- * Convenience-function that creates a valid empty StepExecutionResult.
- */
-export const newStepResult = (): StepExecutionResult => {
-  return {
-    mutations: {
-      fs: [],
-      vcs: [],
-      ctx: [],
-    },
   }
 }
 
