@@ -35,6 +35,9 @@ export type {
 } from './context'
 export type {
   DeclaredFacet,
+  DetectFunction,
+  DetectedFacet,
+  FacetDetectionResult,
   FacetDeclaration,
   FacetId,
   FacetModule,

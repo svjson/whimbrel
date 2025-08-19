@@ -98,6 +98,11 @@ export interface FacetRegistry {
   lookupTask(taskId: string): Task
 }
 
+/**
+ * Structure used by facet implementations to communicate detection result.
+ *
+ * This is the return type of `DetectFunction`.
+ */
 export type DetectedFacet = {
   detected: true
   facet?: {
