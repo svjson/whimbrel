@@ -18,7 +18,8 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "test": "npm run --workspaces test --if-present"
+    "test": "npm run --workspaces test --if-present",
+    "typecheck": "npm run --workspaces typecheck --if-present"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

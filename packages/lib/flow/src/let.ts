@@ -1,12 +1,4 @@
-import {
-  Flow,
-  LetJournalFormatter,
-  LetOptionParams,
-  LetOptions,
-  LetValue,
-  NameValuePair,
-  pushScope,
-} from './dsl'
+import { Flow, LetOptionParams, LetOptions, LetValue, pushScope } from './dsl'
 
 const resolveValue = async <T, NS>(valueDefinition: LetValue<T, NS>): Promise<T> => {
   return valueDefinition as T
@@ -51,16 +43,21 @@ export const defineLet = <T, NS>(
       options = normalizeOptions(options)
 
       let journalValue = { name, value: letValue }
+      let privateEntry = false
 
       if (typeof options.journal === 'function') {
         journalValue = options.journal(journalValue)
+      }
+
+      if (typeof options.private === 'function') {
+        privateEntry = options.private(journalValue)
       }
 
       flow.ctx.acceptJournalEntry({
         origin: 'flow',
         type: 'let',
         payload: journalValue,
-        private: options.private,
+        private: privateEntry,
       })
     },
   })

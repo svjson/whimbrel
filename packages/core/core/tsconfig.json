@@ -8,6 +8,6 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["src", "test", "../../cli/src/console-appender.ts", "../../lib/walk/test/resolve.test.ts"],
+  "include": ["src", "test"],
   "exclude": ["dist"]
 }

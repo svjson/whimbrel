@@ -25,6 +25,7 @@ describe('Flow DSL', () => {
         {
           origin: 'flow',
           type: 'let',
+          private: false,
           payload: {
             name: 'myVar',
             value: 'Value for Let-Money!',
@@ -50,6 +51,7 @@ describe('Flow DSL', () => {
         {
           origin: 'flow',
           type: 'let',
+          private: false,
           payload: {
             name: 'my_var',
             value: 'big value',
@@ -76,6 +78,7 @@ describe('Flow DSL', () => {
         {
           origin: 'flow',
           type: 'let',
+          private: false,
           payload: {
             name: 'my_var',
             value: 'big value',
