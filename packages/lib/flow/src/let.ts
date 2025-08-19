@@ -1,25 +1,67 @@
-import { Flow, LetOptions, LetValue, pushScope } from './dsl'
+import {
+  Flow,
+  LetJournalFormatter,
+  LetOptionParams,
+  LetOptions,
+  LetValue,
+  NameValuePair,
+  pushScope,
+} from './dsl'
 
 const resolveValue = async <T, NS>(valueDefinition: LetValue<T, NS>): Promise<T> => {
   return valueDefinition as T
+}
+
+const normalizeOptions = (options: LetOptions): LetOptionParams => {
+  if (typeof options === 'function') {
+    return { journal: options }
+  }
+
+  if (typeof options === 'boolean') {
+    return { private: options }
+  }
+
+  if (typeof options === 'string') {
+    return { journal: ({ value }) => ({ name: options, value }) }
+  }
+
+  if (typeof options.journal === 'string') {
+    options.journal = ({ value }) => ({
+      name: options.journal as string,
+      value,
+    })
+  }
+
+  return options
 }
 
 export const defineLet = <T, NS>(
   flow: Flow,
   name: string,
   value: LetValue<T, NS>,
-  options?: LetOptions
+  options: LetOptions = {}
 ) => {
-  options = options ?? {}
-
   flow.forms.push({
     type: 'let',
     run: async () => {
       const letValue = await resolveValue(value)
-
       const scope = pushScope(flow)
-      const letEntry = { name, value: letValue }
       scope.namespace[name] = letValue
+
+      options = normalizeOptions(options)
+
+      let journalValue = { name, value: letValue }
+
+      if (typeof options.journal === 'function') {
+        journalValue = options.journal(journalValue)
+      }
+
+      flow.ctx.acceptJournalEntry({
+        origin: 'flow',
+        type: 'let',
+        payload: journalValue,
+        private: options.private,
+      })
     },
   })
 }

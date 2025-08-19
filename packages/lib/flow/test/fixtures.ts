@@ -1,14 +1,41 @@
-import { Mutation, WhimbrelContext, WhimbrelContextOptions } from '@whimbrel/core-api'
+import {
+  ApplicationLog,
+  FacetRegistry,
+  FileSystem,
+  Formatter,
+  JournalEntry,
+  makeNullExecutionStep,
+  Mutation,
+  WhimbrelContext,
+  WhimbrelContextOptions,
+  WhimbrelEvent,
+} from '@whimbrel/core-api'
 
-export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelContext => {
+export const makeWhimbrelContext = (
+  opts: WhimbrelContextOptions,
+  journal: JournalEntry[] = []
+): WhimbrelContext => {
   return {
     cwd: '',
-    disk: undefined,
-    facets: undefined,
-    log: undefined,
-    options: undefined,
-    acceptMutation: function (mutation: Mutation): void {
-      throw new Error('Function not implemented.')
+    dryRun: false,
+    disk: undefined as FileSystem,
+    facets: undefined as FacetRegistry,
+    log: undefined as ApplicationLog,
+    formatter: undefined as Formatter,
+    sources: {},
+    targets: {},
+    step: makeNullExecutionStep(),
+    options: { prop: {} },
+    emitEvent: (event: WhimbrelEvent) => {
+      throw new Error(`Unexpected event: ${event}`)
     },
+    acceptMutation: (mutation: Mutation) => {
+      throw new Error(`Unexpected mutation: ${mutation}`)
+    },
+    acceptJournalEntry:
+      opts.acceptJournalEntry ??
+      ((entry: JournalEntry) => {
+        journal.push(entry)
+      }),
   }
 }

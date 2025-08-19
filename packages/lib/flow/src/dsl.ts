@@ -18,7 +18,23 @@ export type LetValueProvider<T, NS> = (ns: NS) => T | Promise<T>
 
 export type LetValue<T, NS> = LetValueProvider<T, NS> | T
 
-export type LetOptions = {}
+export interface NameValuePair {
+  name: string
+  value: any
+}
+
+export type LetJournalFormatter = (letResult: NameValuePair) => NameValuePair
+export type LetJournalPrivateFunction = (letResult: NameValuePair) => boolean
+
+export type LetJournalOption = LetJournalFormatter | string
+export type LetPrivateOption = LetJournalPrivateFunction | boolean
+
+export interface LetOptionParams {
+  journal?: LetJournalOption
+  private?: LetPrivateOption
+}
+
+export type LetOptions = LetOptionParams | LetJournalOption | boolean
 
 export type LetForm<NS> = <T, LN extends string>(
   name: LN,

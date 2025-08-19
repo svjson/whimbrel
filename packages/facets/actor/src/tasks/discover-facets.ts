@@ -57,17 +57,23 @@ export const execute = async (ctx: WhimbrelContext) => {
     .map(([f, _]) => f)
 
   await beginFlow(ctx)
-    .let('language', facetsOfType(facets, 'language').join(', '), { report })
-    .let('vcs', facetsOfType(facets, 'version-control').join(', '), { report })
-    .let('engine', facetsOfType(facets, 'engine').join(', '), { report })
-    .let('package-manager', facetsOfType(facets, 'pkg-manager').join(', '), { report })
-    .let('package-file', facetsOfType(facets, 'pkgfile').join(', '), { report })
-    .let('build-tool', facetsOfType(facets, 'build-tool').join(', '), { report })
-    .let('build-config', facetsOfType(facets, 'build-config').join(', '), { report })
-    .let('ci', facetsOfType(facets, 'ci').join(', '), { report })
-    .let('license', license, { report })
-    .let('readme', readme, { report })
-    .let('facets', facetsNotOfTypes(facets, enumRoles, listed).join(', '), { report })
+    .let('language', facetsOfType(facets, 'language').join(', '), { private: report })
+    .let('vcs', facetsOfType(facets, 'version-control').join(', '), { private: report })
+    .let('engine', facetsOfType(facets, 'engine').join(', '), { private: report })
+    .let('package-manager', facetsOfType(facets, 'pkg-manager').join(', '), {
+      private: report,
+    })
+    .let('package-file', facetsOfType(facets, 'pkgfile').join(', '), { private: report })
+    .let('build-tool', facetsOfType(facets, 'build-tool').join(', '), { private: report })
+    .let('build-config', facetsOfType(facets, 'build-config').join(', '), {
+      private: report,
+    })
+    .let('ci', facetsOfType(facets, 'ci').join(', '), { private: report })
+    .let('license', license, { private: report })
+    .let('readme', readme, { private: report })
+    .let('facets', facetsNotOfTypes(facets, enumRoles, listed).join(', '), {
+      private: report,
+    })
     .run()
 }
 

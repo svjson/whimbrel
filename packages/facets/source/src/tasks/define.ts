@@ -3,11 +3,13 @@ import path from 'node:path'
 import {
   Actor,
   ContextMutator,
+  FileEntry,
   makeTask,
   WhimbrelContext,
   WhimbrelError,
 } from '@whimbrel/core-api'
 import { resolve } from '@whimbrel/walk'
+import { DiskFileSystem } from '@whimbrel/filesystem'
 
 export const SOURCE__DEFINE = 'source:define'
 
@@ -78,6 +80,7 @@ export const Define = makeTask({
   id: SOURCE__DEFINE,
   name: 'Define Source',
   execute,
+  dryExecute,
 })
 
 export default Define
