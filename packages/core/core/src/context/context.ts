@@ -1,11 +1,12 @@
 import {
-  Mutation,
+  AcceptMutationHandler,
   WhimbrelContext,
   WhimbrelCommandOptions,
   WhimbrelContextOptions,
   WhimbrelEvent,
   makeNullExecutionStep,
   Formatter,
+  defaultMutationHandler,
 } from '@whimbrel/core-api'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
 import { DiskFileSystem } from '@whimbrel/filesystem'
@@ -35,6 +36,7 @@ export const makeWhimbrelContext = async (
     cwd,
     facets,
     formatter = DefaultFormatter,
+    acceptMutation,
     memCacheOnly = false,
   } = contextOptions
 
@@ -52,11 +54,12 @@ export const makeWhimbrelContext = async (
     sources: {},
     targets: {},
     stepResult: undefined,
-    acceptMutation: (mutation: Mutation) => {},
+    acceptMutation: acceptMutation ?? (null as AcceptMutationHandler),
     emitEvent: (event: WhimbrelEvent) => {},
   }
 
   ctx.formatter = new formatter(ctx)
+  ctx.acceptMutation = ctx.acceptMutation ?? defaultMutationHandler(ctx)
 
   return ctx
 }

@@ -1,8 +1,8 @@
 import { Actor, ActorType } from './actor'
 import { WhimbrelContext } from './context'
 import { WhimbrelError } from './core'
-import { StepExecutionResult } from './execution'
 import { FileSystemMutation } from './fs'
+import { VCSMutation } from './vcs'
 
 /**
  * Enum-type for mutations.
@@ -13,6 +13,7 @@ export type MutationType = 'create' | 'delete' | 'modify'
  * Describes a significant mutation of the WhimbrelContext
  */
 export interface ContextMutation {
+  mutationType: 'ctx'
   type: ContextMutationType
   path: string
   key: string
@@ -21,7 +22,7 @@ export interface ContextMutation {
 /**
  * Base-type for all types of mutations.
  */
-export type Mutation = FileSystemMutation | ContextMutation
+export type Mutation = FileSystemMutation | ContextMutation | VCSMutation
 
 /**
  * Enum-type for Context mutations.
@@ -34,15 +35,27 @@ export type ContextMutationType = 'set' | 'add'
 type ActorAction = 'add' | 'set'
 
 /**
- * Utility function for reporting a Context-mutation during
- * step execution.
+ *
  */
-const stepCtxMutation = (
-  stepResult: StepExecutionResult | undefined,
-  mutation: ContextMutation
-) => {
-  if (!stepResult) return
-  stepResult.mutations.ctx.push(mutation)
+export type AcceptMutationHandler = (mutation: Mutation) => void
+
+export const defaultMutationHandler = (ctx: WhimbrelContext): AcceptMutationHandler => {
+  return (mutation: Mutation) => {
+    const { stepResult } = ctx
+    if (stepResult) {
+      switch (mutation.mutationType) {
+        case 'ctx':
+          stepResult.mutations[mutation.mutationType].push(mutation)
+          break
+        case 'fs':
+          stepResult.mutations[mutation.mutationType].push(mutation)
+          break
+        case 'vcs':
+          stepResult.mutations[mutation.mutationType].push(mutation)
+          break
+      }
+    }
+  }
 }
 
 /**
@@ -100,7 +113,8 @@ export class ContextMutator {
   addSource(source: Actor) {
     const validated = validateActorOperation(this.ctx, 'source', 'add', source)
     this.ctx.sources[validated.name] = validated
-    stepCtxMutation(this.ctx.stepResult, {
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
       type: 'add',
       path: 'source',
       key: validated.name,
@@ -118,7 +132,8 @@ export class ContextMutator {
   addTarget(target: Actor) {
     const validated = validateActorOperation(this.ctx, 'target', 'add', target)
     this.ctx.target[validated.name] = validated
-    stepCtxMutation(this.ctx.stepResult, {
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
       type: 'add',
       path: 'target',
       key: validated.name,
@@ -139,7 +154,8 @@ export class ContextMutator {
   setSource(source: Actor | string) {
     const validated = validateActorOperation(this.ctx, 'source', 'set', source)
     this.ctx.source = validated
-    stepCtxMutation(this.ctx.stepResult, {
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
       type: 'set',
       path: 'source',
       key: validated.name,
@@ -160,7 +176,8 @@ export class ContextMutator {
   setTarget(target: Actor | string) {
     const validated = validateActorOperation(this.ctx, 'target', 'set', target)
     this.ctx.target = validated
-    stepCtxMutation(this.ctx.stepResult, {
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
       type: 'set',
       path: 'target',
       key: validated.name,
@@ -180,7 +197,8 @@ export class ContextMutator {
   setRootTarget(target: Actor | string) {
     const validated = validateActorOperation(this.ctx, 'rootTarget', 'set', target)
     this.ctx.rootTarget = validated
-    stepCtxMutation(this.ctx.stepResult, {
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
       type: 'set',
       path: 'rootTarget',
       key: validated.name,

@@ -9,6 +9,7 @@ export type FsObjectType = 'file' | 'directory'
  * Structure of reported mutations on a FileSystem.
  */
 export interface FileSystemMutation {
+  mutationType: 'fs'
   type: MutationType
   object: FsObjectType
   path: string

@@ -26,8 +26,13 @@ export class FileSystemMutationReporter implements FileSystemReporter {
   /**
    * Private convenience function that creates a file system mutation object.
    */
-  #fsMutation(mutationType: MutationType, fsType: FsObjectType, path: string) {
+  #fsMutation(
+    mutationType: MutationType,
+    fsType: FsObjectType,
+    path: string
+  ): FileSystemMutation {
     return {
+      mutationType: 'fs',
       type: mutationType,
       object: fsType,
       path,

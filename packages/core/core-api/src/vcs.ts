@@ -1,1 +1,3 @@
-export interface VCSMutation {}
+export interface VCSMutation {
+  mutationType: 'vcs'
+}

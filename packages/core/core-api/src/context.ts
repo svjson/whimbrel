@@ -4,7 +4,7 @@ import { ExecutionStep, StepExecutionResult } from './execution'
 import { FacetRegistry } from './facet'
 import { FileSystem } from './fs'
 import { ApplicationLog, Formatter } from './log'
-import { Mutation } from './mutation'
+import { AcceptMutationHandler } from './mutation'
 
 type Class<T> = new (...args: any[]) => T
 
@@ -30,6 +30,7 @@ export interface WhimbrelContextOptions {
   dir?: string
   log?: ApplicationLog
   memCacheOnly?: boolean
+  acceptMutation?: AcceptMutationHandler
 }
 
 /**
@@ -95,4 +96,5 @@ export interface WhimbrelContext {
   options: WhimbrelCommandOptions
   emitEvent(event: WhimbrelEvent): void
   acceptMutation(mutation: Mutation): void
+  acceptMutation: AcceptMutationHandler
 }

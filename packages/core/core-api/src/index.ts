@@ -8,8 +8,8 @@ export { FacetImplementationError, makeFacetModule } from './facet'
 export { toFileSystemReadOptions, toFileSystemWriteOptions } from './fs'
 export { makeTask, moduleTasks, NoOpExecution } from './task'
 export { Formatter, NullAppender, indent } from './log'
-export { ContextMutator } from './mutation'
 export { makeNullExecutionStep } from './execution'
+export { defaultMutationHandler, ContextMutator } from './mutation'
 
 export type { Actor } from './actor'
 export type {
@@ -60,7 +60,7 @@ export type {
   FsObjectType,
 } from './fs'
 export type { ApplicationLog } from './log'
-export type { Mutation, MutationType } from './mutation'
+export type { AcceptMutationHandler, Mutation, MutationType } from './mutation'
 export type {
   Blueprint,
   ExecutionPlan,
