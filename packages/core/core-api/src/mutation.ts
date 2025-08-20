@@ -131,7 +131,7 @@ export class ContextMutator {
    */
   addTarget(target: Actor) {
     const validated = validateActorOperation(this.ctx, 'target', 'add', target)
-    this.ctx.target[validated.name] = validated
+    this.ctx.targets[validated.name] = validated
     this.ctx.acceptMutation({
       mutationType: 'ctx',
       type: 'add',

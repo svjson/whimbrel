@@ -93,7 +93,7 @@ export const DiscoverFacets = makeTask({
     actor: {
       type: 'actor',
       required: true,
-      defaults: [{ ref: 'source' }],
+      defaults: [{ ref: 'source' }, { ref: 'target' }],
     },
   },
 })

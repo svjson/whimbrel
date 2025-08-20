@@ -2,7 +2,12 @@ import path from 'node:path'
 
 import { Command } from 'commander'
 import { Blueprint, WhimbrelContext } from '@whimbrel/core-api'
-import { makeRunner, makeWhimbrelContext, materializePlan } from '@whimbrel/core'
+import {
+  inferPreparationSteps,
+  makeRunner,
+  makeWhimbrelContext,
+  materializePlan,
+} from '@whimbrel/core'
 
 import { executeCommand, withCommonOptions } from './common'
 import { CLIFormatter, ConsoleAppender } from '@src/output'
@@ -49,12 +54,13 @@ export const executeTask = async (
   taskId: string,
   targetDir: string
 ) => {
-  ctx.facets.lookupTask(taskId)
+  const task = ctx.facets.lookupTask(taskId)
 
   ctx.log.banner('Execute Task', taskId, targetDir)
 
   const blueprint: Blueprint = {
     steps: [
+      ...inferPreparationSteps(ctx, task),
       {
         type: taskId,
       },
