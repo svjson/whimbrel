@@ -1,7 +1,7 @@
 {
-  "name": "@whimbrel/core",
+  "name": "@whimbrel/target",
   "version": "0.0.1",
-  "description": "Whimbrel Core Library",
+  "description": "Core Target Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,30 +11,28 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@whimbrel/actor": "^0.0.1",
     "@whimbrel/core-api": "^0.0.1",
     "@whimbrel/facet": "^0.0.1",
-    "@whimbrel/filesystem": "^0.0.1",
-    "@whimbrel/walk": "^0.0.1",
-    "@whimbrel/source": "^0.0.1",
-    "@whimbrel/target": "^0.0.1"
+    "@whimbrel/flow": "^0.0.1",
+    "@whimbrel/walk": "^0.0.1"
   },
   "dependencies": {
-    "@whimbrel/actor": "*",
     "@whimbrel/core-api": "*",
     "@whimbrel/facet": "*",
-    "@whimbrel/filesystem": "*",
-    "@whimbrel/walk": "*",
-    "@whimbrel/source": "*",
-    "@whimbrel/target": "*"
+    "@whimbrel/flow": "*",
+    "@whimbrel/walk": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "vite": "^7.1.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }
