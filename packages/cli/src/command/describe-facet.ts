@@ -3,7 +3,7 @@ import path from 'node:path'
 import { Command } from 'commander'
 import { makeWhimbrelContext } from '@whimbrel/core'
 import { makeFacetRegistry } from '@src/facets'
-import { ConsoleAppender } from '@src/log/console-appender'
+import { ConsoleAppender } from '@src/output/console-appender'
 import { WhimbrelContext } from '@whimbrel/core-api'
 import { executeCommand } from './common'
 

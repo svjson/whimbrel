@@ -10,9 +10,8 @@ import {
 } from '@whimbrel/core'
 
 import { executeCommand, withCommonOptions } from './common'
-import { ConsoleAppender } from '@src/log/console-appender'
+import { CLIFormatter, ConsoleAppender } from '@src/output'
 import { makeFacetRegistry } from '@src/facets'
-import { CLIFormatter } from '@src/log/formatter'
 
 /**
  * Defines the Analyze CLI command.

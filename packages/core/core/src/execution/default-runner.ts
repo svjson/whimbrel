@@ -80,9 +80,17 @@ export class DefaultRunner extends Runner {
           stepId: node.id,
         }
       }
-      this.ctx.log.info(` * ${this.ctx.formatter.formatStepTitle(node.step)}`)
+      this.ctx.log.info(`* ${this.ctx.formatter.formatStepTitle(node.step)}`)
       this.ctx.emitEvent(makeStepEvent(EVENT__STEP_EXECUTION_INITIATED, node.step))
       const nodeResult = await node.run()
+
+      const formattedStepResult = this.ctx.formatter.formatStepResult(this.ctx.stepResult)
+      this.ctx.log.indent()
+      if (formattedStepResult) {
+        this.ctx.log.info(formattedStepResult)
+      }
+      this.ctx.log.deindent()
+
       if (!nodeResult.success) {
         throw new WhimbrelError(nodeResult.message)
       }

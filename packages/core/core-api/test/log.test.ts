@@ -28,5 +28,24 @@ describe('log', () => {
         expected: '    Test',
       },
     ])
+
+    it('should indent each line of a string with line breaks', () => {
+      expect(
+        indent(
+          2,
+          [
+            'Line #1 goes first',
+            'Line #2 comes after',
+            'Line #3 is last, and also gets indented',
+          ].join('\n')
+        )
+      ).toEqual(
+        [
+          '    Line #1 goes first',
+          '    Line #2 comes after',
+          '    Line #3 is last, and also gets indented',
+        ].join('\n')
+      )
+    })
   })
 })

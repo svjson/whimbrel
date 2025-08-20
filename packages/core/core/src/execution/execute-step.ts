@@ -119,7 +119,6 @@ export const executeStep = async (
     stepRunner.prepareExecution()
     stepRunner.applyMeta()
     await stepRunner.executeTask()
-
     return { success: true }
   } catch (e) {
     if (!(e instanceof WhimbrelError)) {

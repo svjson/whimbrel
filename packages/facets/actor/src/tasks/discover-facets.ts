@@ -36,7 +36,7 @@ const ENUM_ROLES = [
   'ci',
 ]
 
-const report = ({ value }) => typeof value === 'string' && value.length > 0
+const emptyResult = ({ value }) => !(typeof value === 'string' && value.length > 0)
 
 export const execute = async (ctx: WhimbrelContext) => {
   const { actor } = ctx.step.inputs
@@ -57,22 +57,30 @@ export const execute = async (ctx: WhimbrelContext) => {
     .map(([f, _]) => f)
 
   await beginFlow(ctx)
-    .let('language', facetsOfType(facets, 'language').join(', '), { private: report })
-    .let('vcs', facetsOfType(facets, 'version-control').join(', '), { private: report })
-    .let('engine', facetsOfType(facets, 'engine').join(', '), { private: report })
+    .let('language', facetsOfType(facets, 'language').join(', '), {
+      private: emptyResult,
+    })
+    .let('vcs', facetsOfType(facets, 'version-control').join(', '), {
+      private: emptyResult,
+    })
+    .let('engine', facetsOfType(facets, 'engine').join(', '), { private: emptyResult })
     .let('package-manager', facetsOfType(facets, 'pkg-manager').join(', '), {
-      private: report,
+      private: emptyResult,
     })
-    .let('package-file', facetsOfType(facets, 'pkgfile').join(', '), { private: report })
-    .let('build-tool', facetsOfType(facets, 'build-tool').join(', '), { private: report })
+    .let('package-file', facetsOfType(facets, 'pkgfile').join(', '), {
+      private: emptyResult,
+    })
+    .let('build-tool', facetsOfType(facets, 'build-tool').join(', '), {
+      private: emptyResult,
+    })
     .let('build-config', facetsOfType(facets, 'build-config').join(', '), {
-      private: report,
+      private: emptyResult,
     })
-    .let('ci', facetsOfType(facets, 'ci').join(', '), { private: report })
-    .let('license', license, { private: report })
-    .let('readme', readme, { private: report })
+    .let('ci', facetsOfType(facets, 'ci').join(', '), { private: emptyResult })
+    .let('license', license, { private: emptyResult })
+    .let('readme', readme, { private: emptyResult })
     .let('facets', facetsNotOfTypes(facets, enumRoles, listed).join(', '), {
-      private: report,
+      private: emptyResult,
     })
     .run()
 }

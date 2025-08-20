@@ -69,8 +69,13 @@ export type {
   FileSystemWriteOptions,
   FsObjectType,
 } from './fs'
-export type { ApplicationLog } from './log'
-export type { AcceptMutationHandler, Mutation, MutationType } from './mutation'
+export type { ApplicationLog, FileListOptions } from './log'
+export type {
+  AcceptMutationHandler,
+  ContextMutation,
+  Mutation,
+  MutationType,
+} from './mutation'
 export type {
   Blueprint,
   ExecutionPlan,
@@ -80,3 +85,4 @@ export type {
   StepAugmentation,
   StepAugmentationRules,
 } from './plan'
+export type { VCSMutation, VCSFileEntry, VCSMutationType } from './vcs'
