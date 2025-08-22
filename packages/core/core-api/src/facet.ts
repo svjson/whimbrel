@@ -1,3 +1,4 @@
+import { Actor } from './actor'
 import { WhimbrelContext } from './context'
 import { WhimbrelError } from './core'
 import { TaskAugmentations } from './plan'
@@ -33,6 +34,20 @@ export interface DeclaredFacet<T = any> {
   scope: FacetScope<T>
 }
 
+export interface FacetQuery {
+  type: string
+  actor?: Actor
+}
+
+export interface FacetQueryResult {
+  source: FacetId
+  result: any
+}
+
+export type FacetQueryFunction = (ctx: WhimbrelContext, query: FacetQuery) => Promise<any>
+
+export type QueryIndex = Record<string, FacetQueryFunction>
+
 /**
  * Allows describing a Facet without providing properties for which there
  * are suitable default values (empty arrays or objects, etc).
@@ -40,7 +55,7 @@ export interface DeclaredFacet<T = any> {
 export interface FacetModulePrototype {
   id: FacetId
   tasks?: Record<TaskId, Task>
-  queryIndex?: any
+  queryIndex?: QueryIndex
   taskAugmentations?: TaskAugmentations
   implicits?: FacetDeclaration[]
   detect?: DetectFunction

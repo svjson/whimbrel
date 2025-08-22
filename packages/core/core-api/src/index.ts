@@ -55,6 +55,9 @@ export type {
   FacetScope,
   FacetScopes,
   FacetScopePrototype,
+  FacetQuery,
+  FacetQueryFunction,
+  FacetQueryResult,
 } from './facet'
 export type {
   FileEntry,
