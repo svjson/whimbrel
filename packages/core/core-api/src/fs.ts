@@ -106,7 +106,7 @@ export type FileSystemWriteOptions = FileSystemFileOptions | string
  */
 export type FileSystemScanOptions = {
   exclude?: FsObjectType[]
-  ignorePredicate?: Function
+  ignorePredicate?: (entry: FileEntry) => boolean
   depth?: number
   filter?: (entry: FileEntry) => boolean
   sort?: boolean
@@ -263,6 +263,11 @@ export interface FileSystem {
    *
    * @param dirPath - The path of the directory to scan.
    * @param opts - Options for the scan operation, including filtering, depth, and sorting.
+   * @param opts.exclude - Types of objects to exclude from the scan.
+   * @param opts.ignorePredicate - A function to determine if an entry should be ignored.
+   * @param opts.depth - The maximum depth to scan, where 0 is the current directory.
+   * @param opts.filter - A function to filter entries, returning true to include the entry.
+   * @param opts.sort - If true, sort the entries by path.
    * @return A promise that resolves to an array of `FileEntry` objects.
    */
   scanDir(dirPath: string, opts: FileSystemScanOptions): Promise<FileEntry[]>
