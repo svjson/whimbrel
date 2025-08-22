@@ -1,6 +1,23 @@
-import { Flow, LetOptionParams, LetOptions, LetValue, pushScope } from './dsl'
+import {
+  Flow,
+  LetOptionParams,
+  LetOptions,
+  LetValue,
+  LetValueProvider,
+  pushScope,
+} from './dsl'
 
-const resolveValue = async <T, NS>(valueDefinition: LetValue<T, NS>): Promise<T> => {
+function isProvider<T, NS>(v: LetValue<T, NS>): v is LetValueProvider<T, NS> {
+  return typeof v === 'function'
+}
+
+const resolveValue = async <T, NS>(
+  namespace: NS,
+  valueDefinition: LetValue<T, NS>
+): Promise<T> => {
+  if (isProvider(valueDefinition)) {
+    return (await valueDefinition(namespace)) as T
+  }
   return valueDefinition as T
 }
 
@@ -10,7 +27,7 @@ const normalizeOptions = (options: LetOptions): LetOptionParams => {
   }
 
   if (typeof options === 'boolean') {
-    return { private: options }
+    return { private: () => options }
   }
 
   if (typeof options === 'string') {
@@ -36,7 +53,8 @@ export const defineLet = <T, NS>(
   flow.forms.push({
     type: 'let',
     run: async () => {
-      const letValue = await resolveValue(value)
+      const letValue = await resolveValue(flow.getNamespace<NS>(), value)
+
       const scope = pushScope(flow)
       scope.namespace[name] = letValue
 
