@@ -21,7 +21,10 @@ interface DetectionStage {
 /**
  * Map of facets and their scopes during the facet detection operation.
  */
-type DetectedFacets = Record<FacetId, FacetScope>
+type DetectedFacets = {
+  detected: Record<FacetId, FacetScope>
+  unknown: Set<string>
+}
 
 /**
  * The context tracking a detection operation.
@@ -49,11 +52,16 @@ const collectFacet = async (
   }
   stack.push(stage)
 
-  if (Object.hasOwn(result, facet.id)) {
-    concatDistinct(result[facet.id].roles, scope.roles)
-    mergeLeft(result[facet.id].config, scope.config ?? {})
+  if (!facet) {
+    detectionCtx.result.unknown.add(stage.facet)
+    return
+  }
+
+  if (Object.hasOwn(result.detected, facet.id)) {
+    concatDistinct(result.detected[facet.id].roles, scope.roles)
+    mergeLeft(result.detected[facet.id].config, scope.config ?? {})
   } else {
-    result[facet.id] = { ...scope }
+    result.detected[facet.id] = { ...scope }
   }
 
   for (const implicit of facet.implicits) {
@@ -96,7 +104,6 @@ const detectFacet = async (detectionCtx: DetectionContext, facetModule: FacetMod
     return
   }
   const { facet, advice } = detectionResult
-
   const invalidDetectionResult = () =>
     new FacetImplementationError(
       `Facet with id '${facetModule.id} returned an invalid FacetDetectionResult`,
@@ -144,7 +151,10 @@ export const detectFacets = async (
     ctx,
     dir,
     stack: [],
-    result: {},
+    result: {
+      detected: {},
+      unknown: new Set(),
+    },
   }
 
   for (const facet of ctx.facets.all()) {

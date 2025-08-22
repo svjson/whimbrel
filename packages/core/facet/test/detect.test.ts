@@ -54,18 +54,21 @@ describe('detectFacets', () => {
       })
 
       // When
-      const detected = await detectFacets(ctx, '/somewhere')
+      const result = await detectFacets(ctx, '/somewhere')
 
       // Then
-      expect(detected).toEqual({
-        'git-dummy': {
-          roles: ['version-control'],
-          config: {},
-        },
-        'fake-facet': {
-          roles: ['engine'],
-          config: {
-            mainFile: 'engine.ini',
+      expect(result).toEqual({
+        unknown: new Set(),
+        detected: {
+          'git-dummy': {
+            roles: ['version-control'],
+            config: {},
+          },
+          'fake-facet': {
+            roles: ['engine'],
+            config: {
+              mainFile: 'engine.ini',
+            },
           },
         },
       })
@@ -117,22 +120,25 @@ describe('detectFacets', () => {
       })
 
       // When
-      const detected = await detectFacets(ctx, '/somewhere')
+      const result = await detectFacets(ctx, '/somewhere')
 
       // Then
-      expect(detected).toEqual({
-        npm: {
-          roles: ['pkg-manager'],
-          config: {},
-        },
-        node: {
-          roles: [],
-          config: {},
-        },
-        'package.json': {
-          roles: ['pkg-config'],
-          config: {
-            path: '/somewhere/package.json',
+      expect(result).toEqual({
+        unknown: new Set(),
+        detected: {
+          npm: {
+            roles: ['pkg-manager'],
+            config: {},
+          },
+          node: {
+            roles: [],
+            config: {},
+          },
+          'package.json': {
+            roles: ['pkg-config'],
+            config: {
+              path: '/somewhere/package.json',
+            },
           },
         },
       })
@@ -182,22 +188,25 @@ describe('detectFacets', () => {
       })
 
       // When
-      const detected = await detectFacets(ctx, '/somewhere')
+      const result = await detectFacets(ctx, '/somewhere')
 
       // Then
-      expect(detected).toEqual({
-        npm: {
-          roles: ['pkg-manager'],
-          config: {},
-        },
-        node: {
-          roles: [],
-          config: {},
-        },
-        'package.json': {
-          roles: ['pkg-config'],
-          config: {
-            path: '/somewhere/package.json',
+      expect(result).toEqual({
+        unknown: new Set(),
+        detected: {
+          npm: {
+            roles: ['pkg-manager'],
+            config: {},
+          },
+          node: {
+            roles: [],
+            config: {},
+          },
+          'package.json': {
+            roles: ['pkg-config'],
+            config: {
+              path: '/somewhere/package.json',
+            },
           },
         },
       })
@@ -286,26 +295,29 @@ describe('detectFacets', () => {
       })
 
       // When
-      const detected = await detectFacets(ctx, '/somewhere')
+      const result = await detectFacets(ctx, '/somewhere')
 
       // Then
-      expect(detected).toEqual({
-        npm: {
-          roles: ['pkg-manager'],
-          config: {},
-        },
-        node: {
-          roles: ['engine', 'script-runner'],
-          config: {},
-        },
-        'package.json': {
-          roles: ['pkg-config', 'module-configuration'],
-          config: {
-            path: '/somewhere/package.json',
-            content: {
-              name: 'operation-cheesemuffin',
-              packageManager: 'npm',
-              version: '0.8.2',
+      expect(result).toEqual({
+        unknown: new Set(),
+        detected: {
+          npm: {
+            roles: ['pkg-manager'],
+            config: {},
+          },
+          node: {
+            roles: ['engine', 'script-runner'],
+            config: {},
+          },
+          'package.json': {
+            roles: ['pkg-config', 'module-configuration'],
+            config: {
+              path: '/somewhere/package.json',
+              content: {
+                name: 'operation-cheesemuffin',
+                packageManager: 'npm',
+                version: '0.8.2',
+              },
             },
           },
         },

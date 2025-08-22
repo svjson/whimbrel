@@ -6,6 +6,7 @@ export { GITIGNORE__CREATE, Create } from './tasks'
 
 export default makeFacetModule({
   id: 'gitignore',
+  implicits: ['node'],
   tasks: moduleTasks(Create),
   detect,
 })

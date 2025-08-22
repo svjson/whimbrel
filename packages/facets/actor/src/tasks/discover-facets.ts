@@ -29,7 +29,7 @@ const ENUM_ROLES = [
   'language',
   'engine',
   'pkg-manager',
-  'pkgfile',
+  'pkg-file',
   'version-control',
   'build-config',
   'build-tool',
@@ -41,7 +41,8 @@ const emptyResult = ({ value }) => !(typeof value === 'string' && value.length >
 export const execute = async (ctx: WhimbrelContext) => {
   const { actor } = ctx.step.inputs
 
-  const facets = await detectFacets(ctx, actor.root)
+  const detectionResult = await detectFacets(ctx, actor.root)
+  const facets = detectionResult.detected
   actor.facets = facets
 
   const enumRoles = [...ENUM_ROLES]
@@ -67,7 +68,7 @@ export const execute = async (ctx: WhimbrelContext) => {
     .let('package-manager', facetsOfType(facets, 'pkg-manager').join(', '), {
       private: emptyResult,
     })
-    .let('package-file', facetsOfType(facets, 'pkgfile').join(', '), {
+    .let('package-file', facetsOfType(facets, 'pkg-file').join(', '), {
       private: emptyResult,
     })
     .let('build-tool', facetsOfType(facets, 'build-tool').join(', '), {
