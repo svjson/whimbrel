@@ -24,17 +24,19 @@
     "@whimbrel/core-api": "^0.0.1",
     "@whimbrel/facet": "^0.0.1",
     "@whimbrel/filesystem": "^0.0.1",
-    "@whimbrel/walk": "^0.0.1",
+    "@whimbrel/project": "^0.0.1",
     "@whimbrel/source": "^0.0.1",
-    "@whimbrel/target": "^0.0.1"
+    "@whimbrel/target": "^0.0.1",
+    "@whimbrel/walk": "^0.0.1"
   },
   "dependencies": {
     "@whimbrel/actor": "*",
     "@whimbrel/core-api": "*",
     "@whimbrel/facet": "*",
     "@whimbrel/filesystem": "*",
-    "@whimbrel/walk": "*",
+    "@whimbrel/project": "*",
     "@whimbrel/source": "*",
-    "@whimbrel/target": "*"
+    "@whimbrel/target": "*",
+    "@whimbrel/walk": "*"
   }
 }

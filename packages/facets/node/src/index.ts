@@ -3,6 +3,6 @@ import { queryIndex } from './query'
 
 export default makeFacetModule({
   id: 'node',
-  implicits: ['package.json'],
+  implicits: [{ facet: 'package.json', scope: { roles: ['pkg-file'] } }, 'project'],
   queryIndex,
 })

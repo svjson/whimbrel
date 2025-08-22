@@ -2,6 +2,7 @@ import Actor from '@whimbrel/actor'
 import Source from '@whimbrel/source'
 import GitIgnore from '@whimbrel/gitignore'
 import PackageJson from '@whimbrel/package-json'
+import Project from '@whimbrel/project'
 import Target from '@whimbrel/target'
 import Npm from '@whimbrel/npm'
 import Node from '@whimbrel/node'
@@ -21,6 +22,7 @@ export const makeFacetRegistry = (): FacetRegistry => {
     Node,
     Npm,
     PackageJson,
+    Project,
     Source,
     Target,
     TsConfigJson,

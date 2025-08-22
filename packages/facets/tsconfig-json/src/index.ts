@@ -3,6 +3,6 @@ import { detect } from './features'
 
 export default makeFacetModule({
   id: 'tsconfig.json',
-  implicits: [{ facet: 'typescript', scope: { roles: ['language'] } }],
+  implicits: [{ facet: 'typescript', scope: { roles: ['language'] } }, 'project'],
   detect,
 })
