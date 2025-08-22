@@ -4,6 +4,7 @@ import GitIgnore from '@whimbrel/gitignore'
 import PackageJson from '@whimbrel/package-json'
 import Target from '@whimbrel/target'
 import Node from '@whimbrel/node'
+import TsConfigJson from '@whimbrel/tsconfig-json'
 import Turbo from '@whimbrel/turborepo'
 
 import { DefaultFacetRegistry } from '@whimbrel/facet'
@@ -20,6 +21,7 @@ export const makeFacetRegistry = (): FacetRegistry => {
     PackageJson,
     Source,
     Target,
+    TsConfigJson,
     Turbo,
   ])
 }

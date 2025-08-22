@@ -11,7 +11,7 @@ describe('queryFacets', () => {
   const DummyNode = makeFacetModule({
     id: 'node',
     queryIndex: {
-      'version-control:ignore-files': (_ctx, _query) => {
+      'version-control:ignore-files': async (_ctx, _query) => {
         return [{ pattern: 'node_modules', groups: ['generated'], source: 'node' }]
       },
     },
@@ -19,7 +19,7 @@ describe('queryFacets', () => {
   const DummyTsConfig = makeFacetModule({
     id: 'tsconfig.json',
     queryIndex: {
-      'version-control:ignore-files': (_ctx, _query) => {
+      'version-control:ignore-files': async (_ctx, _query) => {
         return [{ pattern: 'dist/', groups: ['build'], source: 'tsconfig.json' }]
       },
     },
@@ -27,7 +27,7 @@ describe('queryFacets', () => {
   const DummyVite = makeFacetModule({
     id: 'vite',
     queryIndex: {
-      'version-control:ignore-files': (_ctx, _query) => {},
+      'version-control:ignore-files': async (_ctx, _query) => {},
     },
   })
 
