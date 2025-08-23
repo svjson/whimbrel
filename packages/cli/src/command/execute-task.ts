@@ -9,7 +9,7 @@ import {
   materializePlan,
 } from '@whimbrel/core'
 
-import { executeCommand, withCommonOptions } from './common'
+import { ALL_OPTION_GROUPS, executeCommand, withCommonOptions } from './common'
 import { CLIFormatter, ConsoleAppender } from '@src/output'
 import { makeFacetRegistry } from '@src/facets'
 
@@ -20,26 +20,27 @@ import { makeFacetRegistry } from '@src/facets'
  * It is typically used to run specific tasks defined in facets
  */
 export const addExecuteTaskCommand = (program: Command) => {
-  withCommonOptions(program.command('execute <task-id> [cmdPath]').alias('x')).action(
-    async (taskId: string, cmdPath, options: any) => {
-      executeCommand(async () => {
-        if (!cmdPath) {
-          cmdPath = path.resolve('.')
-        }
-        const context = await makeWhimbrelContext(
-          {
-            cwd: process.cwd(),
-            dir: cmdPath,
-            formatter: CLIFormatter,
-            facets: makeFacetRegistry(),
-            log: new ConsoleAppender(),
-          },
-          options
-        )
-        await executeTask(context, taskId, cmdPath)
-      }, options)
-    }
-  )
+  withCommonOptions(
+    ALL_OPTION_GROUPS,
+    program.command('execute <task-id> [cmdPath]').alias('x')
+  ).action(async (taskId: string, cmdPath, options: any) => {
+    executeCommand(async () => {
+      if (!cmdPath) {
+        cmdPath = path.resolve('.')
+      }
+      const context = await makeWhimbrelContext(
+        {
+          cwd: process.cwd(),
+          dir: cmdPath,
+          formatter: CLIFormatter,
+          facets: makeFacetRegistry(),
+          log: new ConsoleAppender(),
+        },
+        options
+      )
+      await executeTask(context, taskId, cmdPath)
+    }, options)
+  })
 }
 
 /**

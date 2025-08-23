@@ -21,11 +21,11 @@ import { makeFacetRegistry } from '@src/facets'
  */
 export const addAnalyzeCommand = (program: Command) => {
   withCommonOptions(
+    ['output', 'step-tree', 'property'],
     program
       .command('analyze [path]')
       .alias('z')
       .option('-i, --facet-info <facet>', 'Output details of a specific facet')
-      .option('-t, --show-step-ids', 'Output Step ID for each step')
   ).action(async (cmdPath: string, options: any) => {
     executeCommand(async () => {
       if (!cmdPath) {

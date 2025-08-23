@@ -5,29 +5,29 @@ import { makeWhimbrelContext } from '@whimbrel/core'
 import { makeFacetRegistry } from '@src/facets'
 import { ConsoleAppender } from '@src/output/console-appender'
 import { WhimbrelContext } from '@whimbrel/core-api'
-import { executeCommand } from './common'
+import { executeCommand, withCommonOptions } from './common'
 
 export const addDescribeFacetCommand = (program: Command) => {
-  program
-    .command('describe-facet <facet-id>')
-    .alias('f')
-    .action(async (facetId: string) => {
-      executeCommand(
-        async () => {
-          const context = await makeWhimbrelContext(
-            {
-              cwd: process.cwd(),
-              dir: path.resolve('.'),
-              facets: makeFacetRegistry(),
-              log: new ConsoleAppender(),
-            },
-            { prop: {} }
-          )
-          await describeFacet(context, facetId)
-        },
-        { prop: {} }
-      )
-    })
+  withCommonOptions(
+    ['output'],
+    program.command('describe-facet <facet-id>').alias('f')
+  ).action(async (facetId: string) => {
+    executeCommand(
+      async () => {
+        const context = await makeWhimbrelContext(
+          {
+            cwd: process.cwd(),
+            dir: path.resolve('.'),
+            facets: makeFacetRegistry(),
+            log: new ConsoleAppender(),
+          },
+          { prop: {} }
+        )
+        await describeFacet(context, facetId)
+      },
+      { prop: {} }
+    )
+  })
 }
 
 export const describeFacet = async (ctx: WhimbrelContext, facetId: string) => {

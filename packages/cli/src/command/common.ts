@@ -4,18 +4,40 @@ import { PlanError } from './types'
 
 export type WhimbrelCommand = () => Promise<void>
 
+export type OptionGroup = 'output' | 'operation' | 'step-tree' | 'property'
+
+export const ALL_OPTION_GROUPS: OptionGroup[] = [
+  'output',
+  'step-tree',
+  'operation',
+  'property',
+]
+
 /**
  * Adds common options to the command builder.
  *
  * @param cmdBuilder - The command builder to which options will be added.
  * @return - The command builder with common options added.
  */
-export const withCommonOptions = (cmdBuilder: Command) => {
-  return cmdBuilder
-    .option('-f, --force', 'Force operation')
-    .option('-v, --verbose', 'Verbose output')
-    .option('-s, --silent', 'No output')
-    .option(
+export const withCommonOptions = (groups: OptionGroup[], cmdBuilder: Command) => {
+  if (groups.includes('operation')) {
+    cmdBuilder.option('-f, --force', 'Force operation')
+  }
+
+  if (groups.includes('step-tree')) {
+    cmdBuilder.option('-t, --show-step-ids', 'Output Step ID for each step')
+  }
+
+  if (groups.includes('output')) {
+    cmdBuilder
+      .option('-v, --verbose', 'Verbose output')
+      .option('-s, --silent', 'No output')
+      .option('--no-color', 'No color output')
+      .option('--plain', 'No ANSI codes. Just plain appending output')
+  }
+
+  if (groups.includes('property')) {
+    cmdBuilder.option(
       '-p, --prop <key=value>',
       'Set a property (can be used multiple times)',
       (value: string, previous: any) => {
@@ -28,8 +50,8 @@ export const withCommonOptions = (cmdBuilder: Command) => {
       },
       {}
     )
-    .option('--no-color', 'No color output')
-    .option('--plain', 'No ANSI codes. Just plain appending output')
+  }
+  return cmdBuilder
 }
 
 /**
