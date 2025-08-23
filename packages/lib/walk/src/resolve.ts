@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { readPath } from './read-write'
+import { readPath } from './path'
 
 export type ParameterType = 'object' | 'string' | 'path' | 'relative-path'
 

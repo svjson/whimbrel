@@ -1,6 +1,7 @@
 export { walkPath } from './walk-path'
 export { walk } from './walk'
-export { readPath, writePath, readClosest, mergeLeft } from './read-write'
+export { readPath, writePath, deletePath, readClosest } from './path'
+export { mergeLeft } from './merge'
 export { propertyPaths, containsAll } from './query'
 export { resolve, resolvePlaceholderValue } from './resolve'
 

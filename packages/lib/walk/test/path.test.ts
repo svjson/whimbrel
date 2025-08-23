@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { mergeLeft, readClosest, readPath, writePath } from '@src/index'
+import { readClosest, readPath, writePath } from '@src/index'
 
 describe('writePath', () => {
   it('should write to root level property', () => {
@@ -213,91 +213,5 @@ describe('readClosest', () => {
       stderr: '"terror error"',
     })
     expect(arrPathResult).toEqual(strPathResult)
-  })
-})
-
-describe('mergeLeft', () => {
-  it('should deep-merge objects', () => {
-    // Given
-    const a = {
-      it: {
-        was: {
-          the: {
-            best: {
-              of: 'times',
-            },
-          },
-        },
-      },
-    }
-
-    const b = {
-      it: {
-        was: {
-          the: {
-            worst: {
-              of: 'times',
-            },
-          },
-        },
-      },
-    }
-
-    // When
-    const merged = mergeLeft({}, a, b)
-
-    // Then
-    expect(merged).toEqual({
-      it: {
-        was: {
-          the: {
-            best: {
-              of: 'times',
-            },
-            worst: {
-              of: 'times',
-            },
-          },
-        },
-      },
-    })
-  })
-
-  it('should respect keys with periods', () => {
-    const a = {
-      'myfile.txt': 'contains stuff!',
-      'gizmo.test.js': 'contains code!',
-    }
-
-    const b = {
-      'cheeses.tar.gz': 'compressed cheese',
-    }
-
-    // When
-    const merged = mergeLeft({}, a, b)
-
-    // Then
-    expect(merged).toEqual({
-      'myfile.txt': 'contains stuff!',
-      'gizmo.test.js': 'contains code!',
-      'cheeses.tar.gz': 'compressed cheese',
-    })
-  })
-
-  it('should merge flat objects', () => {
-    expect(mergeLeft({ a: 1, b: 2 }, { b: 3, c: 4 }, { c: 5, d: 6 })).toEqual({
-      a: 1,
-      b: 3,
-      c: 5,
-      d: 6,
-    })
-  })
-
-  it('should ignore undefined inputs', () => {
-    expect(mergeLeft({ a: 1, b: 2 }, undefined, { b: 4, c: 8 })).toEqual({
-      a: 1,
-      b: 4,
-      c: 8,
-    })
   })
 })

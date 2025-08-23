@@ -1,5 +1,4 @@
 import type { PropertyPath } from './types'
-import { walk } from './walk'
 import { walkPath } from './walk-path'
 
 /**
@@ -94,33 +93,4 @@ export const readClosest = (object: any, propertyPath: PropertyPath) => {
  */
 export const deletePath = (object: any, propertyPath: PropertyPath) => {
   return walkPath(object, propertyPath, null, (node, propName) => delete node[propName])
-}
-
-/**
- * Utility function for merging properties from multiple source objects into a target object.
- * It will overwrite properties in the target object with those from the sources,
- * but only if the property does not already exist in the target.
- * This is a left merge operation.
- *
- * ```ts
- * mergeLeft(
- *  { a: 1, b: 2 },
- *  { b: 3, c: 4 },
- *  { c: 5, d: 6 }
- * )
- * // => { a: 1, b: 3, c: 5, d: 6 }
- * ```
- * @param target - The target object to merge into.
- * @param sources - The source objects to merge from.
- *
- * @return The modified `target` object.
- */
-export const mergeLeft = (target: any, ...sources: any) => {
-  sources.forEach((obj: any) => {
-    walk(obj, {
-      onEnd: ({ path, value }) => writePath(target, path, value),
-    })
-  })
-
-  return target
 }
