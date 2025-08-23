@@ -3,6 +3,7 @@ import path from 'node:path'
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { queryFacets } from '@whimbrel/facet'
 import { beginFlow } from '@whimbrel/flow'
+import { unique } from '@whimbrel/array'
 
 export const GITIGNORE__CREATE = 'gitignore:create'
 
@@ -14,15 +15,17 @@ const execute = async (ctx: WhimbrelContext) => {
       'queryResult',
       queryFacets(ctx, actor, {
         type: 'version-control:ignore-files',
+        actor,
+        subModules: true,
       }),
       true
     )
-    .let('contributors', ({ queryResult }) => queryResult.map((qr) => qr.source))
+    .let('contributors', ({ queryResult }) => unique(queryResult.map((qr) => qr.source)))
     .let('ignoreFiles', ({ queryResult }) => queryResult.flatMap((qr) => qr.result), true)
     .do(async ({ ignoreFiles }) => {
       const contents = [
         '# --- Ignore Files ---',
-        ...ignoreFiles.map((p) => p.pattern),
+        ...unique(ignoreFiles.map((p) => p.pattern)),
         '',
       ]
       await ctx.disk.write(
