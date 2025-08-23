@@ -18,5 +18,23 @@ export const queryFacets = async (
       }
     }
   }
+
+  if (query.subModules && actor.facets.project?.config?.subModules) {
+    for (const subModule of actor.facets.project?.config?.subModules) {
+      const moduleActor =
+        Object.values(ctx.targets).find((t) => t.root === subModule.root) ??
+        Object.values(ctx.sources).find((s) => s.root === subModule.root)
+
+      if (moduleActor) {
+        queryResults.push(
+          ...(await queryFacets(ctx, moduleActor, {
+            ...query,
+            actor: query.actor ? moduleActor : undefined,
+          }))
+        )
+      }
+    }
+  }
+
   return queryResults
 }

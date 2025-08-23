@@ -87,6 +87,9 @@ class DryStepRunner extends StepRunner {
    */
   async runPostExecutionActions(): Promise<void> {
     this.step.expectedResult = this.ctx.stepResult
+    for (const param of this.step.meta.resolvedParameters ?? []) {
+      delete this.step.inputs[param]
+    }
   }
 }
 

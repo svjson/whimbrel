@@ -17,6 +17,7 @@ export const ensureStepParameters = (ctx: WhimbrelContext, step: ExecutionStep) 
       const candidate = resolveParameter(ctx, details)
       if (candidate) {
         step.inputs[param] = candidate
+        ;(step.meta.resolvedParameters ??= []).push(param)
         continue
       }
 

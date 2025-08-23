@@ -37,6 +37,7 @@ export interface DeclaredFacet<T = any> {
 export interface FacetQuery {
   type: string
   actor?: Actor
+  subModules?: boolean
 }
 
 export interface FacetQueryResult {
