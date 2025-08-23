@@ -1,0 +1,4 @@
+# --- Ignore Files ---
+node_modules
+.turbo
+dist/
