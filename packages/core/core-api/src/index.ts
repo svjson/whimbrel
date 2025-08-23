@@ -15,7 +15,7 @@ export {
   newStepResult,
 } from './execution'
 
-export type { Actor } from './actor'
+export type { Actor, ActorId, ActorType, ActorMetaData } from './actor'
 export type {
   EventType,
   StepEvent,
@@ -28,6 +28,7 @@ export type {
   JournalEntry,
   JournalEntryOrigin,
   ExecutionStep,
+  StepBinding,
   StepExecutionResult,
 } from './execution'
 export type {
@@ -39,6 +40,7 @@ export type {
   TaskPrototype,
 } from './task'
 export type {
+  GetActorFunction,
   WhimbrelContext,
   WhimbrelCommandOptions,
   WhimbrelContextOptions,

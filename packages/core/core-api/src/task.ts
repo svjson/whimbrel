@@ -17,6 +17,10 @@ export type ExecuteTaskFunction = (ctx: WhimbrelContext) => Promise<void>
 export interface Task {
   id: TaskId
   name: string
+  bind: {
+    inheritSource: boolean
+    inheritTarget: boolean
+  }
   execute: ExecuteTaskFunction
   dryExecute: ExecuteTaskFunction
   parameters: TaskParameters
@@ -65,6 +69,10 @@ export const NoOpExecution = (_ctx: WhimbrelContext) => null
 export interface TaskPrototype {
   id: TaskId
   name?: string
+  bind?: {
+    inheritSource?: boolean
+    inheritTarget?: boolean
+  }
   execute?: ExecuteTaskFunction
   dryExecute?: ExecuteTaskFunction
   parameters?: TaskParameters
@@ -79,6 +87,10 @@ export const makeTask = (proto: TaskPrototype): Task => {
   return {
     id: proto.id,
     name: proto.name,
+    bind: {
+      inheritSource: proto.bind?.inheritSource !== false,
+      inheritTarget: proto.bind?.inheritSource !== false,
+    },
     execute: proto.execute ?? NoOpExecution,
     dryExecute: proto.dryExecute ?? proto.execute ?? NoOpExecution,
     parameters: proto.parameters,

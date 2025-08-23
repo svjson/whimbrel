@@ -1,4 +1,6 @@
-import { ExecutionStep, StepMeta } from './execution'
+import { Actor } from './actor'
+import { WhimbrelContext } from './context'
+import { ExecutionStep, StepBinding } from './execution'
 import { TaskId, TaskParameters } from './task'
 
 /**
@@ -11,7 +13,8 @@ export interface ExecutionStepBlueprint {
   pinned?: boolean
   inputs?: any
   parameters?: TaskParameters
-  meta?: StepMeta
+  meta?: any
+  bind?: StepBinding
   steps?: ExecutionStepBlueprint[]
 }
 
@@ -40,11 +43,26 @@ export interface StepAugmentationRules {}
  */
 export type StepAugmentation = ExecutionStepBlueprint & StepAugmentationRules
 
+export interface StepAugmentationConditionParams {
+  ctx: WhimbrelContext
+  step: ExecutionStep
+  actor?: Actor
+}
+
+export type StepAugmentationCondition = (
+  params: StepAugmentationConditionParams
+) => Promise<boolean>
+
+export type StepAugmentationGenerator = (
+  params: StepAugmentationConditionParams
+) => Promise<StepAugmentation[]>
+
 /**
  * Describes the augmentations available for a Task.
  */
 export interface TaskAugmentation {
-  steps: StepAugmentation[]
+  condition?: StepAugmentationCondition
+  steps: StepAugmentation[] | StepAugmentationGenerator
 }
 
 /**

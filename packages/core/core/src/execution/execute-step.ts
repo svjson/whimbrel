@@ -35,14 +35,16 @@ abstract class StepRunner {
    * Apply the meta-directive of the step, switching the current source
    * and target of the context.
    */
-  applyMeta() {
+  applyBindings() {
     const context = new ContextMutator(this.ctx)
-    if (this.step.meta) {
-      if (this.step.meta.source && this.ctx.sources[this.step.meta.source]) {
-        context.setSource(this.step.meta.source)
+    if (this.step.bind) {
+      const { source, target } = this.step.bind
+
+      if (source && this.ctx.sources[source]) {
+        context.setSource(source)
       }
-      if (this.step.meta.target && this.ctx.targets[this.step.meta.target]) {
-        context.setTarget(this.step.meta.target)
+      if (target && this.ctx.targets[target]) {
+        context.setTarget(target)
       }
     }
   }
@@ -54,6 +56,8 @@ abstract class StepRunner {
     const executeFunction = this.getTaskExecutable()
     await executeFunction(this.ctx)
   }
+
+  abstract runPostExecutionActions(): Promise<void>
 
   /**
    * Get the executable function of the task associated with this step.
@@ -76,6 +80,14 @@ class DryStepRunner extends StepRunner {
   getTaskExecutable(): ExecuteTaskFunction {
     return this.step.task.dryExecute
   }
+
+  /**
+   * Capture the step execution result as the expected output of this
+   * this step.
+   */
+  async runPostExecutionActions(): Promise<void> {
+    this.step.expectedResult = this.ctx.stepResult
+  }
 }
 
 /**
@@ -93,6 +105,8 @@ class LiveStepRunner extends StepRunner {
   getTaskExecutable(): ExecuteTaskFunction {
     return this.step.task.execute
   }
+
+  async runPostExecutionActions(): Promise<void> {}
 }
 
 /**
@@ -117,8 +131,9 @@ export const executeStep = async (
   const stepRunner = makeStepRunner(ctx, step)
   try {
     stepRunner.prepareExecution()
-    stepRunner.applyMeta()
+    stepRunner.applyBindings()
     await stepRunner.executeTask()
+    await stepRunner.runPostExecutionActions()
     return { success: true }
   } catch (e) {
     if (!(e instanceof WhimbrelError)) {

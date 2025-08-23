@@ -6,6 +6,28 @@ export default makeFacetModule({
   id: 'actor',
   tasks: moduleTasks(Analyze, DiscoverFacets),
   taskAugmentations: {
+    'source:define': {
+      steps: [
+        {
+          type: ACTOR__ANALYZE,
+          pinned: true,
+          inputs: {
+            actor: { ref: 'source' },
+          },
+        },
+      ],
+    },
+    'target:define': {
+      steps: [
+        {
+          type: ACTOR__ANALYZE,
+          pinned: true,
+          inputs: {
+            actor: { ref: 'target' },
+          },
+        },
+      ],
+    },
     [ACTOR__ANALYZE]: {
       steps: [
         {

@@ -1,4 +1,6 @@
 import {
+  ActorId,
+  ActorType,
   AcceptMutationHandler,
   WhimbrelContext,
   WhimbrelCommandOptions,
@@ -9,6 +11,7 @@ import {
   defaultJournalEntryHandler,
   defaultMutationHandler,
   AcceptJournalEntryHandler,
+  Actor,
 } from '@whimbrel/core-api'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
 import { DiskFileSystem } from '@whimbrel/filesystem'
@@ -45,7 +48,7 @@ export const makeWhimbrelContext = async (
 
   commandOptions = commandOptions ?? { prop: {} }
 
-  const ctx = {
+  const ctx: WhimbrelContext = {
     cwd: cwd ?? dir ?? '.',
     disk: contextOptions.disk ?? DiskFileSystem,
     dryRun: false,
@@ -59,7 +62,24 @@ export const makeWhimbrelContext = async (
     stepResult: undefined,
     acceptMutation: acceptMutation ?? (null as AcceptMutationHandler),
     acceptJournalEntry: acceptJournalEntry ?? (null as AcceptJournalEntryHandler),
-    emitEvent: (event: WhimbrelEvent) => {},
+    emitEvent: (_event: WhimbrelEvent) => {},
+    getActor: (type: ActorType, id: ActorId): Actor | undefined => {
+      switch (type) {
+        case 'source':
+          return ctx.sources[id]
+        case 'target':
+          return ctx.targets[id]
+        case 'rootTarget':
+          return ctx.rootTarget?.id === id ? ctx.rootTarget : undefined
+      }
+    },
+    resetActors: () => {
+      ctx.sources = {}
+      ctx.targets = {}
+      ctx.rootTarget = null
+      ctx.target = null
+      ctx.source = null
+    },
   }
 
   ctx.formatter = new formatter(ctx)

@@ -8,7 +8,7 @@ import ActorFacet, {
   DiscoverFacets,
 } from '@whimbrel/actor'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
-import { ExecutionStepBlueprint } from '@whimbrel/core-api'
+import { ExecutionStepBlueprint, newStepResult } from '@whimbrel/core-api'
 import { generateExecutionStep } from '@src/plan/materialize'
 
 describe('materialize', () => {
@@ -29,9 +29,12 @@ describe('materialize', () => {
       expect(executionStep).toEqual({
         id: SOURCE__DEFINE,
         name: 'Define Source',
+        parents: [],
         task: Define,
         inputs: {},
         parameters: {},
+        expectedResult: newStepResult(),
+        bind: {},
         meta: {},
         treeState: {
           state: 'default',
@@ -56,9 +59,12 @@ describe('materialize', () => {
       expect(executionStep).toEqual({
         id: ACTOR__DISCOVER_FACETS,
         name: 'Discover Actor Facets',
+        parents: [],
         task: DiscoverFacets,
         inputs: {},
+        bind: {},
         meta: {},
+        expectedResult: newStepResult(),
         parameters: {
           actor: {
             type: 'actor',
@@ -75,7 +81,7 @@ describe('materialize', () => {
   })
 
   describe('materializePlan', () => {
-    it('should create an execution plan and attach augmented step', async () => {
+    it('should create an execution plan and attach augmented steps', async () => {
       // Given
       const ctx = await makeWhimbrelContext({
         facets: new DefaultFacetRegistry([SourceFacet, ActorFacet]),
@@ -90,14 +96,15 @@ describe('materialize', () => {
         steps: [
           expect.objectContaining({
             id: SOURCE__DEFINE,
-            steps: [],
-          }),
-          expect.objectContaining({
-            id: ACTOR__ANALYZE,
             steps: [
               expect.objectContaining({
-                id: ACTOR__DISCOVER_FACETS,
-                parameters: DiscoverFacets.parameters,
+                id: ACTOR__ANALYZE,
+                steps: [
+                  expect.objectContaining({
+                    id: ACTOR__DISCOVER_FACETS,
+                    parameters: DiscoverFacets.parameters,
+                  }),
+                ],
               }),
             ],
           }),

@@ -1,6 +1,8 @@
+import { StepBinding } from '@whimbrel/core-api'
 import { performDryRun } from '@src/execution'
 import { DryRunError, resetDryRun } from '@src/execution/dry-run'
 import { mergeLeft } from '@whimbrel/walk'
+import { includesEqual } from '@whimbrel/array'
 
 import {
   ExecutionPlan,
@@ -10,6 +12,9 @@ import {
   ExecutionStepBlueprint,
   StepAugmentation,
   Task,
+  Actor,
+  WhimbrelError,
+  newStepResult,
 } from '@whimbrel/core-api'
 import { PlanError } from './error'
 
@@ -20,6 +25,12 @@ interface MaterializationContext {
   iteration: number
 }
 
+interface IterationContext {
+  sources: Record<string, Actor>
+  targets: Record<string, Actor>
+  additionalSteps: number
+}
+
 export const generateExecutionStep = (
   ctx: WhimbrelContext,
   bpStep: ExecutionStepBlueprint | StepAugmentation
@@ -28,15 +39,18 @@ export const generateExecutionStep = (
 
   return {
     id: bpStep.type,
-    name: bpStep.name ?? task.name,
+    parents: [],
+    name: bpStep.name ?? task.name ?? task.id,
     task: task,
+    bind: bpStep.bind ?? {},
     meta: bpStep.meta ?? {},
     inputs: mergeLeft({}, bpStep.inputs),
     parameters: task.parameters ?? {},
+    expectedResult: newStepResult(),
     treeState: {
       state: 'default',
     },
-    steps: [],
+    steps: bpStep.steps ? bpStep.steps.map((s) => generateExecutionStep(ctx, s)) : [],
   }
 }
 
@@ -58,7 +72,12 @@ const generateInitialStepTree = (
  * @param stepTree - The step tree to check for adjustments.
  * @return {boolean} - Returns true if the plan has been adjusted, false otherwise.
  */
-const isPlanAdjusted = (_ctx: WhimbrelContext, _stepTree: ExecutionStep[]): boolean => {
+const isPlanAdjusted = (
+  _ctx: WhimbrelContext,
+  iCtx: IterationContext,
+  _stepTree: ExecutionStep[]
+): boolean => {
+  if (iCtx.additionalSteps > 0) return true
   return false
 }
 
@@ -88,7 +107,7 @@ export const materializePlan = async (
     complete: false,
     lastError: null,
     statusText: 'Materializing plan..',
-    iteration: 1,
+    iteration: 0,
   }
 
   const isLastError = (e: DryRunError) =>
@@ -97,9 +116,19 @@ export const materializePlan = async (
   ctx.log.showStatus(mCtx.statusText)
 
   while (!mCtx.complete) {
+    mCtx.iteration++
+    if (mCtx.iteration > 20) {
+      throw new WhimbrelError('Plan Materialization Failed: Too many iterations.')
+    }
+    const iterCtx: IterationContext = {
+      sources: ctx.sources,
+      targets: ctx.targets,
+      additionalSteps: 0,
+    }
+
     ctx.log.updateStatus(mCtx.statusText + '.'.repeat(mCtx.iteration))
 
-    await expandStepTree(ctx, stepTree)
+    await expandStepTree(ctx, iterCtx, stepTree)
     try {
       await performDryRun(ctx, { steps: stepTree })
     } catch (e) {
@@ -116,7 +145,7 @@ export const materializePlan = async (
       }
     }
 
-    if (!isPlanAdjusted(ctx, stepTree)) {
+    if (!isPlanAdjusted(ctx, iterCtx, stepTree)) {
       mCtx.complete = true
     }
     mCtx.lastError = null
@@ -144,11 +173,12 @@ export const materializePlan = async (
  */
 const expandStepTree = async (
   ctx: WhimbrelContext,
+  iCtx: IterationContext,
   stepTree: ExecutionStep[],
   parent?: ExecutionStep
-) => {
+): Promise<void> => {
   for (const step of stepTree) {
-    await expandStep(ctx, step, parent)
+    await expandStep(ctx, iCtx, step, parent)
   }
 }
 
@@ -167,12 +197,16 @@ const expandStepTree = async (
  */
 const expandStep = async (
   ctx: WhimbrelContext,
+  iterCtx: IterationContext,
   step: ExecutionStep,
   parent?: ExecutionStep
 ): Promise<void> => {
   try {
-    attachStepAugmentations(ctx, step)
-    await expandStepTree(ctx, step.steps, step)
+    prepareBinding(step, parent)
+    assignId(step)
+    assignParents(step, parent)
+    await attachStepAugmentations(ctx, iterCtx, step)
+    await expandStepTree(ctx, iterCtx, step.steps, step)
   } catch (e) {
     if (e instanceof PlanError) {
       throw e
@@ -183,14 +217,85 @@ const expandStep = async (
   }
 }
 
+const assignParents = (step: ExecutionStep, parent?: ExecutionStep) => {
+  if (parent && parent.parents.length > 10) throw new WhimbrelError('Exceeded max depth')
+  step.parents = parent ? [...parent.parents, parent.id] : []
+}
+
+const prepareBinding = (step: ExecutionStep, parent?: ExecutionStep) => {
+  const inherited: StepBinding = {}
+  if (parent?.bind?.source && step.task.bind.inheritSource)
+    inherited.source = parent.bind.source
+  if (parent?.bind?.target && step.task.bind.inheritTarget)
+    inherited.target = parent.bind.target
+  if (parent?.bind.key) {
+    inherited.key = parent.bind.key
+  }
+
+  step.bind = mergeLeft({}, inherited, step.bind)
+}
+
+const assignId = (step: ExecutionStep) => {
+  const parts = []
+  const { bind } = step
+
+  const { target, key } = bind
+  if (key && bind[key]) {
+    parts.push(bind[key])
+  } else if (key) {
+    const keyMutations = step.expectedResult.mutations.ctx
+      .filter((p) => p.type === 'add' && p.path === key)
+      .map((p) => p.key)
+
+    const [actorId] = keyMutations
+
+    if (actorId) {
+      parts.push(actorId)
+      bind[key] = actorId
+    }
+  } else if (target) {
+    parts.push(target)
+  }
+
+  parts.push(step.task.id)
+
+  step.id = parts.join(':')
+}
+
 /**
  * Allow any active facets to augment and attach child steps to `step`.
  */
-const attachStepAugmentations = (ctx: WhimbrelContext, step: ExecutionStep) => {
+const attachStepAugmentations = async (
+  ctx: WhimbrelContext,
+  iterCtx: IterationContext,
+  step: ExecutionStep
+) => {
+  if (!step.meta.appliedAugmentations) step.meta.appliedAugmentations = []
+
   for (const facet of ctx.facets.all()) {
     const augmentationEntry = facet.taskAugmentations[step.task.id]
     if (!augmentationEntry) continue
-    for (const augStep of augmentationEntry.steps) {
+
+    if (augmentationEntry.condition) {
+      if (!augmentationEntry.condition({ ctx, step })) {
+        continue
+      }
+    }
+
+    const stepAugmentations: StepAugmentation[] = []
+
+    if (Array.isArray(augmentationEntry.steps)) {
+      stepAugmentations.push(...augmentationEntry.steps)
+    } else if (typeof augmentationEntry.steps === 'function') {
+      stepAugmentations.push(...(await augmentationEntry.steps({ ctx, step })))
+    }
+
+    for (const augStep of stepAugmentations) {
+      if (includesEqual(step.meta.appliedAugmentations, augStep)) {
+        continue
+      }
+      step.meta.appliedAugmentations.push(augStep)
+      iterCtx.additionalSteps++
       step.steps.push(generateExecutionStep(ctx, augStep))
     }
   }

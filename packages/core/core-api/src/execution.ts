@@ -18,6 +18,10 @@ export interface ExecutionStep {
    */
   id: string
   /**
+   * The StepIds of the direct parents of this step, if any.
+   */
+  parents: string[]
+  /**
    * The human-readable name of the Step, as shown in the step tree output
    * of a plan.
    */
@@ -36,10 +40,19 @@ export interface ExecutionStep {
    */
   parameters: TaskParameters
   /**
-   * Meta-directives for this step, controlling the selection of source
+   * Bind-directives for this step, controlling the selection of source
    * and target actors or this step and its children.
    */
-  meta: StepMeta
+  bind: StepBinding
+  /**
+   * Meta-data collection or this step.
+   */
+  meta: any
+  /**
+   * The expected result of this execution step. This is determined during
+   * plan materialization.
+   */
+  expectedResult: StepExecutionResult
   /**
    * The "state" of this step in the execution tree. Typically determined
    * during plan materialization, and is used to signal if a step is satisfied
@@ -57,9 +70,10 @@ export interface ExecutionStep {
  * Meta-directive structure for this step, describing selection of source
  * and target actors.
  */
-export interface StepMeta {
+export interface StepBinding {
   source?: string
   target?: string
+  key?: 'source' | 'target' | 'rootTarget'
 }
 
 /**
@@ -109,6 +123,7 @@ export const newStepResult = (): StepExecutionResult => {
 export const makeNullExecutionStep = (): ExecutionStep => {
   return {
     id: 'none',
+    parents: [],
     name: 'None',
     task: makeTask({
       id: 'none',
@@ -118,6 +133,8 @@ export const makeNullExecutionStep = (): ExecutionStep => {
     treeState: {
       state: 'default',
     },
+    expectedResult: newStepResult(),
+    bind: {},
     meta: {},
     steps: [],
   }

@@ -37,9 +37,9 @@ const resolveTargetName = async (
 const dryExecute = async (ctx: WhimbrelContext) => {
   await execute(ctx)
 
-  const { source } = ctx
+  const { target } = ctx
 
-  const importEntries = await DiskFileSystem.scanDir(source.root, {
+  const importEntries = await DiskFileSystem.scanDir(target.root, {
     sort: true,
     ignorePredicate: (entry: FileEntry) => {
       return path.basename(entry.path) === 'node_modules'
@@ -64,8 +64,11 @@ const dryExecute = async (ctx: WhimbrelContext) => {
 const execute = async (ctx: WhimbrelContext) => {
   const { inputs } = ctx.step
 
+  const actorName = await resolveTargetName(ctx, inputs.target)
+
   const target: Actor = {
-    name: await resolveTargetName(ctx, inputs.target),
+    id: actorName,
+    name: actorName,
     root: await resolve('path', ctx, inputs, 'target.path'),
     meta: inputs.meta ?? {},
     facets: {},
@@ -79,6 +82,9 @@ const execute = async (ctx: WhimbrelContext) => {
 export const Define = makeTask({
   id: TARGET__DEFINE,
   name: 'Define Target',
+  bind: {
+    inheritTarget: false,
+  },
   execute,
   dryExecute,
 })

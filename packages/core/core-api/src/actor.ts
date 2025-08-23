@@ -11,10 +11,16 @@ export type ActorType = 'target' | 'source' | 'rootTarget'
 export interface ActorMetaData {}
 
 /**
+ *
+ */
+export type ActorId = string
+
+/**
  * Describes an Actor of a WhimbrelContext - the main objects read from
  * or operated on, e.g, a project in the file system.
  */
 export interface Actor {
+  id: ActorId
   name: string
   root: string
   facets: Record<FacetId, FacetScope>

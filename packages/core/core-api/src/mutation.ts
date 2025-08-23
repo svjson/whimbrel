@@ -153,6 +153,7 @@ export class ContextMutator {
    */
   setSource(source: Actor | string) {
     const validated = validateActorOperation(this.ctx, 'source', 'set', source)
+    if (this.ctx.source?.id === validated.id) return
     this.ctx.source = validated
     this.ctx.acceptMutation({
       mutationType: 'ctx',
@@ -175,6 +176,7 @@ export class ContextMutator {
    */
   setTarget(target: Actor | string) {
     const validated = validateActorOperation(this.ctx, 'target', 'set', target)
+    if (this.ctx.target?.id === validated.id) return
     this.ctx.target = validated
     this.ctx.acceptMutation({
       mutationType: 'ctx',

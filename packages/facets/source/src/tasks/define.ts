@@ -64,8 +64,11 @@ const dryExecute = async (ctx: WhimbrelContext) => {
 const execute = async (ctx: WhimbrelContext) => {
   const { inputs } = ctx.step
 
+  const actorName = await resolveSourceName(ctx, inputs.source)
+
   const source: Actor = {
-    name: await resolveSourceName(ctx, inputs.source),
+    id: actorName,
+    name: actorName,
     root: await resolve('path', ctx, inputs, 'source.path'),
     meta: inputs.meta ?? {},
     facets: {},
@@ -79,6 +82,9 @@ const execute = async (ctx: WhimbrelContext) => {
 export const Define = makeTask({
   id: SOURCE__DEFINE,
   name: 'Define Source',
+  bind: {
+    inheritSource: false,
+  },
   execute,
   dryExecute,
 })

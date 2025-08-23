@@ -15,7 +15,7 @@ export const makeWhimbrelContext = (
   opts: WhimbrelContextOptions,
   journal: JournalEntry[] = []
 ): WhimbrelContext => {
-  return {
+  const ctx: WhimbrelContext = {
     cwd: '',
     dryRun: false,
     disk: undefined as FileSystem,
@@ -32,10 +32,14 @@ export const makeWhimbrelContext = (
     acceptMutation: (mutation: Mutation) => {
       throw new Error(`Unexpected mutation: ${mutation}`)
     },
+    getActor: () => null,
+    resetActors: () => null,
     acceptJournalEntry:
       opts.acceptJournalEntry ??
       ((entry: JournalEntry) => {
         journal.push(entry)
       }),
   }
+
+  return ctx
 }

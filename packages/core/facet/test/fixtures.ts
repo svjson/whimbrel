@@ -1,4 +1,6 @@
 import {
+  ActorId,
+  ActorType,
   ApplicationLog,
   FileSystemMutation,
   Formatter,
@@ -13,7 +15,7 @@ import { DefaultFacetRegistry } from '@src/index'
 export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelContext => {
   const { facets } = opts
 
-  return {
+  const ctx: WhimbrelContext = {
     cwd: '.',
     dryRun: false,
     facets: facets ?? new DefaultFacetRegistry(),
@@ -33,5 +35,15 @@ export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelConte
     sources: {},
     step: makeNullExecutionStep(),
     targets: {},
+    resetActors: () => {
+      ctx.sources = {}
+      ctx.targets = {}
+      ctx.rootTarget = null
+      ctx.target = null
+      ctx.source = null
+    },
+    getActor: (type: ActorType, id: ActorId) => undefined,
   }
+
+  return ctx
 }

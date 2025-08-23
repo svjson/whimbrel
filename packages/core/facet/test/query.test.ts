@@ -37,6 +37,7 @@ describe('queryFacets', () => {
       facets: new DefaultFacetRegistry([NoQueryIndexFacet]),
     })
     const actor: Actor = {
+      id: 'monkey-business',
       name: 'Monkey Business',
       root: '/tmp/somewhere',
       facets: {
@@ -65,6 +66,7 @@ describe('queryFacets', () => {
       ]),
     })
     const actor: Actor = {
+      id: 'monkey-business',
       name: 'Monkey Business',
       root: '/tmp/somewhere',
       facets: {

@@ -32,19 +32,14 @@ describe('inferPreparationSteps', () => {
       {
         type: SOURCE__DEFINE,
         name: 'Define Source',
+        bind: {
+          key: 'source',
+        },
         pinned: true,
         inputs: {
           source: {
             path: '/cwd/path',
           },
-        },
-      },
-      {
-        type: ACTOR__ANALYZE,
-        name: 'Analyze',
-        pinned: true,
-        inputs: {
-          actor: { ref: 'source' },
         },
       },
     ])
@@ -75,19 +70,14 @@ describe('inferPreparationSteps', () => {
       {
         type: TARGET__DEFINE,
         name: 'Define Target',
+        bind: {
+          key: 'target',
+        },
         pinned: true,
         inputs: {
           target: {
             path: '/cwd/path',
           },
-        },
-      },
-      {
-        type: ACTOR__ANALYZE,
-        name: 'Analyze',
-        pinned: true,
-        inputs: {
-          actor: { ref: 'target' },
         },
       },
     ])

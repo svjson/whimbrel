@@ -111,6 +111,7 @@ export class DefaultRunner extends Runner {
    * Run the wrapped Execution-plan.
    */
   async run(): Promise<TreeExecutionResult> {
+    this.ctx.resetActors()
     const execTree = buildExecTree(this.ctx, this.plan)
     return await this.executeTree(execTree)
   }
