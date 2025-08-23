@@ -20,7 +20,9 @@ const execute = async (ctx: WhimbrelContext) => {
       }),
       true
     )
-    .let('contributors', ({ queryResult }) => unique(queryResult.map((qr) => qr.source)))
+    .let('contributors', ({ queryResult }) =>
+      unique(queryResult.map((qr) => qr.source)).join(', ')
+    )
     .let('ignoreFiles', ({ queryResult }) => queryResult.flatMap((qr) => qr.result), true)
     .do(async ({ ignoreFiles }) => {
       const contents = [
