@@ -10,6 +10,7 @@ import { addCommands } from './command'
 
 const program = new Command()
 
-addCommands(program)
+const preParser = addCommands(program)
 
+preParser.parse()
 program.parse()

@@ -7,7 +7,21 @@ import { addExecuteTaskCommand } from './execute-task'
  * Register all CLI commands to the main Commander instance.
  */
 export const addCommands = (program: Command) => {
+  const preParserProgram = new Command()
+
   addAnalyzeCommand(program)
   addDescribeFacetCommand(program)
-  addExecuteTaskCommand(program)
+  addExecuteTaskCommand(program, preParserProgram)
+
+  for (const cmd of program.commands) {
+    let preParserCmd = preParserProgram.commands.find((p) => p.name() === cmd.name())
+    if (!preParserCmd) {
+      preParserCmd = preParserProgram.command(cmd.name())
+      cmd.aliases().forEach((a) => preParserCmd.alias(a))
+      preParserCmd.allowExcessArguments()
+      preParserCmd.allowUnknownOption()
+    }
+  }
+
+  return preParserProgram
 }

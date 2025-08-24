@@ -1,7 +1,7 @@
 import path from 'node:path'
 
 import { Command } from 'commander'
-import { Blueprint, WhimbrelContext } from '@whimbrel/core-api'
+import { Blueprint, Task, WhimbrelContext } from '@whimbrel/core-api'
 import {
   inferPreparationSteps,
   makeRunner,
@@ -19,28 +19,62 @@ import { makeFacetRegistry } from '@src/facets'
  * This task executes a specific task identified by its ID.
  * It is typically used to run specific tasks defined in facets
  */
-export const addExecuteTaskCommand = (program: Command) => {
-  withCommonOptions(
-    ALL_OPTION_GROUPS,
-    program.command('execute <task-id> [cmdPath]').alias('x')
-  ).action(async (taskId: string, cmdPath, options: any) => {
-    executeCommand(async () => {
-      if (!cmdPath) {
-        cmdPath = path.resolve('.')
+export const addExecuteTaskCommand = (program: Command, preParser: Command) => {
+  const executeTaskCommand = program.command('execute <task-id> [cmdPath]').alias('x')
+  withCommonOptions(ALL_OPTION_GROUPS, executeTaskCommand).action(
+    async (taskId: string, cmdPath, options: any) => {
+      executeCommand(async () => {
+        if (!cmdPath) {
+          cmdPath = path.resolve('.')
+        }
+        const context = await makeWhimbrelContext(
+          {
+            cwd: process.cwd(),
+            dir: cmdPath,
+            formatter: CLIFormatter,
+            facets: makeFacetRegistry(),
+            log: new ConsoleAppender(),
+          },
+          options
+        )
+        await executeTask(context, taskId, cmdPath)
+      }, options)
+    }
+  )
+
+  preParser
+    .command('execute <task-id> [cmdPath]')
+    .alias('x')
+    .allowExcessArguments()
+    .allowUnknownOption()
+    .action(async (taskId: string, _cmdPath, _options: any) => {
+      const facets = makeFacetRegistry()
+      const task = facets.lookupTask(taskId)
+
+      for (const [param, spec] of Object.entries(task.parameters)) {
+        if (spec.type === 'string') {
+          if (spec.required) {
+            executeTaskCommand.requiredOption(`--${param} <${param}>`)
+          } else {
+            executeTaskCommand.option(`--${param} <${param}>`)
+          }
+        }
       }
-      const context = await makeWhimbrelContext(
-        {
-          cwd: process.cwd(),
-          dir: cmdPath,
-          formatter: CLIFormatter,
-          facets: makeFacetRegistry(),
-          log: new ConsoleAppender(),
-        },
-        options
-      )
-      await executeTask(context, taskId, cmdPath)
-    }, options)
-  })
+    })
+}
+
+const resolveCommandInputs = (ctx: WhimbrelContext, task: Task) => {
+  const opts = ctx.options as any
+  const inputs: any = {}
+
+  for (const [param, spec] of Object.entries(task.parameters)) {
+    if (spec.type !== 'string') continue
+    if (Object.hasOwn(opts, param)) {
+      inputs[param] = opts[param]
+    }
+  }
+
+  return inputs
 }
 
 /**
@@ -64,6 +98,7 @@ export const executeTask = async (
       ...inferPreparationSteps(ctx, task),
       {
         type: taskId,
+        inputs: resolveCommandInputs(ctx, task),
       },
     ],
   }

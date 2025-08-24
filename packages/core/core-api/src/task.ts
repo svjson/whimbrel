@@ -29,7 +29,7 @@ export interface Task {
 /**
  * Enum-type for value types of TaskParameters.
  */
-export type RequirementType = 'actor'
+export type RequirementType = 'actor' | 'string'
 
 /**
  * Describes a parameter as a reference to a value existing elsewhere.
@@ -50,6 +50,12 @@ export interface TaskParameter {
   type: RequirementType
   required: boolean
   defaults: ValueProvider[]
+}
+
+export interface TaskParameterDeclaration {
+  type: RequirementType
+  required?: boolean
+  defaults?: ValueProvider[]
 }
 
 /**
@@ -75,7 +81,7 @@ export interface TaskPrototype {
   }
   execute?: ExecuteTaskFunction
   dryExecute?: ExecuteTaskFunction
-  parameters?: TaskParameters
+  parameters?: Record<string, TaskParameterDeclaration>
 }
 
 /**
@@ -93,7 +99,14 @@ export const makeTask = (proto: TaskPrototype): Task => {
     },
     execute: proto.execute ?? NoOpExecution,
     dryExecute: proto.dryExecute ?? proto.execute ?? NoOpExecution,
-    parameters: proto.parameters,
+    parameters: Object.entries(proto.parameters ?? {}).reduce((result, [name, entry]) => {
+      result[name] = {
+        ...entry,
+        required: entry.required ?? false,
+        defaults: entry.defaults ?? [],
+      }
+      return result
+    }, {} as TaskParameters),
   }
 }
 
