@@ -1,8 +1,8 @@
 import path from 'node:path'
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
-import { readPath, writePath } from '@whimbrel/walk'
+import { deletePath, readPath } from '@whimbrel/walk'
 
-export const PACKAGE_JSON__ADD_SCRIPT = 'package.json:add-script'
+export const PACKAGE_JSON__REMOVE_SCRIPT = 'package.json:remove-script'
 
 const execute = async (ctx: WhimbrelContext) => {
   const { target, name, script } = ctx.step.inputs
@@ -14,18 +14,18 @@ const execute = async (ctx: WhimbrelContext) => {
   const pkgJsonPath = path.join(target.root, 'package.json')
   const packageJson = await ctx.disk.readJson(pkgJsonPath)
 
-  if (readPath(packageJson, ['scripts', name]) === script) {
+  if (script && readPath(packageJson, ['scripts', name]) !== script) {
     return
   }
 
-  writePath(packageJson, ['scripts', name], script)
+  deletePath(packageJson, ['scripts', name])
 
   await ctx.disk.writeJson(pkgJsonPath, packageJson)
 }
 
-export const AddScript = makeTask({
-  id: PACKAGE_JSON__ADD_SCRIPT,
-  name: 'Add package.json Script',
+export const RemoveScript = makeTask({
+  id: PACKAGE_JSON__REMOVE_SCRIPT,
+  name: 'Remove package.json Script',
   execute: execute,
   parameters: {
     target: {
@@ -39,7 +39,7 @@ export const AddScript = makeTask({
     },
     script: {
       type: 'string',
-      required: true,
+      required: false,
     },
   },
 })
