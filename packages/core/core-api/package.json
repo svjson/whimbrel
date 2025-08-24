@@ -17,7 +17,8 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "clean": "rimraf ./dist"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

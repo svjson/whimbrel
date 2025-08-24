@@ -10,12 +10,16 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@whimbrel/core-api": "*"
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*"
   }
 }

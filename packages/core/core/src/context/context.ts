@@ -14,7 +14,11 @@ import {
   Actor,
 } from '@whimbrel/core-api'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
-import { DiskFileSystem } from '@whimbrel/filesystem'
+import {
+  ContextFileSystem,
+  DiskFileSystem,
+  FileSystemMutationReporter,
+} from '@whimbrel/filesystem'
 import { makeLogger } from '../log'
 import { DefaultFormatter } from '@src/log/formatter'
 
@@ -87,6 +91,9 @@ export const makeWhimbrelContext = async (
   ctx.formatter = new formatter(ctx)
   ctx.acceptMutation = ctx.acceptMutation ?? defaultMutationHandler(ctx)
   ctx.acceptJournalEntry = ctx.acceptJournalEntry ?? defaultJournalEntryHandler(ctx)
+  // if (!(ctx.disk instanceof ContextFileSystem)) {
+  //   ctx.disk = new ContextFileSystem(ctx.disk, new FileSystemMutationReporter(ctx))
+  // }
 
   return ctx
 }

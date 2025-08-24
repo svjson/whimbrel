@@ -19,6 +19,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "clean": "npm run --workspaces clean --if-present",
     "test": "npm run --workspaces test --if-present",
     "typecheck": "npm run --workspaces typecheck --if-present"
   },
