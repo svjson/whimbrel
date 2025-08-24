@@ -3,13 +3,15 @@ import { describe, expect, test } from 'vitest'
 
 import { Create, GITIGNORE__CREATE } from '@src/tasks/create'
 import { stepExecutionFixture } from '@whimbrel-test/step-execution-fixtures'
-import { createDirectory, populateDirectory } from '@whimbrel-test/tree-fixtures'
+import makeTreeFixture from '@whimbrel-test/tree-fixtures'
+import { DiskFileSystem } from '@whimbrel/filesystem'
 import { makeFacetScope } from '@whimbrel/facet'
 import NodeFacet from '@whimbrel/node'
 import TsConfigFacet from '@whimbrel/tsconfig-json'
 import { Actor, newStepResult } from '@whimbrel/core-api'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
+const { createDirectory, populateDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe(GITIGNORE__CREATE, () => {
   stepExecutionTest({

@@ -1,8 +1,11 @@
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { memFsContext } from '@whimbrel-test/context-fixtures'
-import { createDirectory } from '@whimbrel-test/tree-fixtures'
+import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { detect } from '@src/features/detect'
+import { DiskFileSystem } from '@whimbrel/filesystem'
+
+const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('detect', () => {
   it('should detect npm if specified as packageManager in package.json', async () => {

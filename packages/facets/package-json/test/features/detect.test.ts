@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { memFsContext } from '@whimbrel-test/context-fixtures'
-import { createDirectory } from '@whimbrel-test/tree-fixtures'
+import makeTreeFixture from '@whimbrel-test/tree-fixtures'
+import { DiskFileSystem } from '@whimbrel/filesystem'
+
 import { detect } from '@src/features/detect'
+
+const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('detect', () => {
   it('should not detect package.json when there is no package.json file', async () => {

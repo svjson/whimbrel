@@ -1,12 +1,15 @@
 import path from 'node:path'
 import { describe, expect, test } from 'vitest'
 
-import { AddScript, PACKAGE_JSON__ADD_SCRIPT } from '@src/tasks/add-script'
 import { stepExecutionFixture } from '@whimbrel-test/step-execution-fixtures'
-import { createDirectory, populateDirectory } from '@whimbrel-test/tree-fixtures'
+import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { makeFacetScope } from '@whimbrel/facet'
 import { Actor, newStepResult } from '@whimbrel/core-api'
+import { DiskFileSystem } from '@whimbrel/filesystem'
 
+import { AddScript, PACKAGE_JSON__ADD_SCRIPT } from '@src/tasks/add-script'
+
+const { createDirectory, populateDirectory } = makeTreeFixture(DiskFileSystem)
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
 
 describe(PACKAGE_JSON__ADD_SCRIPT, () => {

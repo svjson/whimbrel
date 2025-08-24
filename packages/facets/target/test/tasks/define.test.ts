@@ -3,9 +3,11 @@ import { describe, expect, test } from 'vitest'
 
 import Define, { TARGET__DEFINE } from '@src/tasks/define'
 import { stepExecutionFixture } from '@whimbrel-test/step-execution-fixtures'
-import { createDirectory } from '@whimbrel-test/tree-fixtures'
+import makeTreeFixture from '@whimbrel-test/tree-fixtures'
+import { DiskFileSystem } from '@whimbrel/filesystem'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
+const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe(TARGET__DEFINE, () => {
   stepExecutionTest({

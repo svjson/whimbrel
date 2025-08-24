@@ -1,8 +1,10 @@
 import path from 'path'
 import { describe, it, expect } from 'vitest'
 
-import { MemoryFileSystem } from '@src/index'
-import { createDirectory } from '@whimbrel-test/tree-fixtures'
+import { DiskFileSystem, MemoryFileSystem } from '@src/index'
+import { makeTreeFixture } from '@whimbrel-test/tree-fixtures'
+
+const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('MemoryFileSystem', () => {
   describe('read, write, Buffer and encoding', () => {

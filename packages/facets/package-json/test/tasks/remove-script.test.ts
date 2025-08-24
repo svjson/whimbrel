@@ -3,11 +3,14 @@ import { describe, expect, test } from 'vitest'
 
 import { RemoveScript, PACKAGE_JSON__REMOVE_SCRIPT } from '@src/tasks/remove-script'
 import { stepExecutionFixture } from '@whimbrel-test/step-execution-fixtures'
-import { createDirectory, populateDirectory } from '@whimbrel-test/tree-fixtures'
+import { DiskFileSystem } from '@whimbrel/filesystem'
+import makeTreeFixture from '@whimbrel-test/tree-fixtures'
+
 import { makeFacetScope } from '@whimbrel/facet'
 import { Actor, newStepResult } from '@whimbrel/core-api'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
+const { createDirectory, populateDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe(PACKAGE_JSON__REMOVE_SCRIPT, () => {
   const commonProps = {
