@@ -43,6 +43,8 @@ export const makeWhimbrelContext = async (
     formatter = DefaultFormatter,
     acceptJournalEntry,
     acceptMutation,
+    sources,
+    targets,
     memCacheOnly = false,
   } = contextOptions
 
@@ -57,8 +59,8 @@ export const makeWhimbrelContext = async (
     options: commandOptions,
     log: await makeLogger(commandOptions, log),
     step: makeNullExecutionStep(),
-    sources: {},
-    targets: {},
+    sources: sources ?? {},
+    targets: targets ?? {},
     stepResult: undefined,
     acceptMutation: acceptMutation ?? (null as AcceptMutationHandler),
     acceptJournalEntry: acceptJournalEntry ?? (null as AcceptJournalEntryHandler),

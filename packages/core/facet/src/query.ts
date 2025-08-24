@@ -9,7 +9,7 @@ export const queryFacets = async (
 
   for (const facetId of Object.keys(actor.facets)) {
     const facetModule = ctx.facets.get(facetId)
-
+    if (!facetModule) continue
     const queryFunction = facetModule.queryIndex[query.type]
     if (queryFunction) {
       const result = await queryFunction(ctx, query)

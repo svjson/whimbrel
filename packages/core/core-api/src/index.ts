@@ -30,6 +30,7 @@ export type {
   ExecutionStep,
   StepBinding,
   StepExecutionResult,
+  TreeState,
 } from './execution'
 export type {
   ExecuteTaskFunction,

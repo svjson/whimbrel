@@ -14,7 +14,8 @@
     "packages/cli",
     "packages/core/*",
     "packages/lib/*",
-    "packages/facets/*"
+    "packages/facets/*",
+    "packages/test/*"
   ],
   "scripts": {
     "build": "turbo run build",

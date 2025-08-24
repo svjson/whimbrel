@@ -9,6 +9,7 @@ export interface VCSFileEntry {
 
 export interface VCSMutation {
   mutationType: 'vcs'
+  vcs: string
   repository: string
   type: VCSMutationType
   message: string

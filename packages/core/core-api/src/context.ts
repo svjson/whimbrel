@@ -33,6 +33,8 @@ export interface WhimbrelContextOptions {
   cwd?: string
   dir?: string
   log?: ApplicationLog
+  sources?: Record<string, Actor>
+  targets?: Record<string, Actor>
   memCacheOnly?: boolean
   acceptJournalEntry?: AcceptJournalEntryHandler
   acceptMutation?: AcceptMutationHandler

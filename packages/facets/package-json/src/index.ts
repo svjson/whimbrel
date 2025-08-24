@@ -1,5 +1,5 @@
 import { makeFacetModule } from '@whimbrel/core-api'
-import detect from './detect'
+import { detect } from './features'
 
 export default makeFacetModule({
   id: 'package.json',

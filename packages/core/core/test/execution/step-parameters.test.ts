@@ -29,7 +29,10 @@ describe('step-parameters', () => {
       ensureStepParameters(ctx, step)
 
       // Then
-      expect(step).toEqual({ ...stepValues, task })
+      expect(step).toEqual({
+        ...stepValues,
+        task,
+      })
     })
 
     it('should assign `inputs.actor` from { ref: `source` } default value.', async () => {
@@ -75,6 +78,9 @@ describe('step-parameters', () => {
         task,
         inputs: {
           actor: ctx.source,
+        },
+        meta: {
+          resolvedParameters: ['actor'],
         },
       })
     })

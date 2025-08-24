@@ -1,13 +1,14 @@
 import path from 'node:path'
 
 import { FileSystem, WhimbrelError } from '@whimbrel/core-api'
-import { DiskFileSystem } from '@src/index'
-import { ContextFileSystem } from '@src/index'
+import { ContextFileSystem, DiskFileSystem } from '@whimbrel/filesystem'
 
 export type DirectorySpecification = [string, TreeSpecification]
 export interface DirectoryReferenceSpec {
   dir: string
 }
+
+export type FileCollection = Record<string, string | any>
 
 type FileAssetReference<T = string> = {
   [K in string]: { [P in K]: T }
@@ -18,6 +19,7 @@ export type PlaceholderFile = string
 export type TreeSpecification = (
   | DirectorySpecification
   | FileAssetReference
+  | FileCollection
   | PlaceholderFile
 )[]
 
@@ -29,8 +31,11 @@ const ensureFs = (fsImpl: FileSystem) => {
   return fsImpl
 }
 
-export const createDirectory = async (dirSpec: TreeSpecification, fsImpl: FileSystem) => {
-  return await createTree('whim-dir-', dirSpec, fsImpl)
+export const createDirectory = async (
+  dirSpec: TreeSpecification,
+  fsImpl?: FileSystem
+) => {
+  return await createTree('whim-dir-', dirSpec, fsImpl ?? DiskFileSystem)
 }
 
 export const createEmptyDir = async (pattern = 'empty-test', fsImpl: FileSystem) => {
@@ -72,6 +77,14 @@ export const populateDirectory = async (
       } else if (Array.isArray(entry)) {
         const [dirName, subDirSpec] = entry
         await populateDirectory(path.join(dir, dirName), subDirSpec, fsImpl)
+      } else if (typeof entry === 'object') {
+        for (const [fileName, contentSpec] of Object.entries(entry)) {
+          if (typeof contentSpec === 'object') {
+            await fsImpl.writeJson(path.join(dir, fileName), contentSpec)
+          } else {
+            throw new WhimbrelError(`Unsupported content: ${contentSpec}`)
+          }
+        }
       } else {
         throw new WhimbrelError(`Unsupported dir entry: ${entry}`)
       }

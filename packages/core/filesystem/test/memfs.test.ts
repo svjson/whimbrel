@@ -2,7 +2,7 @@ import path from 'path'
 import { describe, it, expect } from 'vitest'
 
 import { MemoryFileSystem } from '@src/index'
-import { createDirectory } from './tree-fixtures'
+import { createDirectory } from '@whimbrel-test/tree-fixtures'
 
 describe('MemoryFileSystem', () => {
   describe('read, write, Buffer and encoding', () => {

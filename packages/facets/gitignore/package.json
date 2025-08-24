@@ -28,6 +28,9 @@
     "@whimbrel/flow": "*"
   },
   "devDependencies": {
+    "@whimbrel-test/step-execution-fixtures": "*",
+    "@whimbrel/node": "*",
+    "@whimbrel/tsconfig-json": "*",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
