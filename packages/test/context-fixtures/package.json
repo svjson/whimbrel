@@ -1,5 +1,6 @@
 {
   "name": "@whimbrel-test/context-fixtures",
+  "version": "0.0.1",
   "private": true,
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
