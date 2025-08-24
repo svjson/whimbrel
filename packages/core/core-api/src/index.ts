@@ -90,5 +90,6 @@ export type {
   TaskAugmentations,
   StepAugmentation,
   StepAugmentationRules,
+  StepAugmentationGenerator,
 } from './plan'
 export type { VCSMutation, VCSFileEntry, VCSMutationType } from './vcs'

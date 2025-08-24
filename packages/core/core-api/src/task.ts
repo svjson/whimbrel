@@ -95,7 +95,7 @@ export const makeTask = (proto: TaskPrototype): Task => {
     name: proto.name,
     bind: {
       inheritSource: proto.bind?.inheritSource !== false,
-      inheritTarget: proto.bind?.inheritSource !== false,
+      inheritTarget: proto.bind?.inheritTarget !== false,
     },
     execute: proto.execute ?? NoOpExecution,
     dryExecute: proto.dryExecute ?? proto.execute ?? NoOpExecution,

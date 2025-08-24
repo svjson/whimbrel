@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { makeWhimbrelContext, materializePlan } from '@src/index'
 import { makeAnalyzeScaffold } from '@src/index'
-import SourceFacet, { Define, SOURCE__DEFINE } from '@whimbrel/source'
+import SourceFacet, { Define as DefineSource, SOURCE__DEFINE } from '@whimbrel/source'
+import TargetFacet, { Define as DefineTarget, TARGET__DEFINE } from '@whimbrel/target'
 import ActorFacet, {
   ACTOR__ANALYZE,
   ACTOR__DISCOVER_FACETS,
@@ -30,7 +31,7 @@ describe('materialize', () => {
         id: SOURCE__DEFINE,
         name: 'Define Source',
         parents: [],
-        task: Define,
+        task: DefineSource,
         inputs: {},
         parameters: {},
         expectedResult: newStepResult(),
@@ -81,7 +82,7 @@ describe('materialize', () => {
   })
 
   describe('materializePlan', () => {
-    it('should create an execution plan and attach augmented steps', async () => {
+    it('should create an execution plan and attach augmented steps for SOURCE__DEFINE', async () => {
       // Given
       const ctx = await makeWhimbrelContext({
         facets: new DefaultFacetRegistry([SourceFacet, ActorFacet]),
@@ -96,6 +97,37 @@ describe('materialize', () => {
         steps: [
           expect.objectContaining({
             id: SOURCE__DEFINE,
+            steps: [
+              expect.objectContaining({
+                id: ACTOR__ANALYZE,
+                steps: [
+                  expect.objectContaining({
+                    id: ACTOR__DISCOVER_FACETS,
+                    parameters: DiscoverFacets.parameters,
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      })
+    })
+
+    it('should create an execution plan and attach augmented steps for TARGET__DEFINE', async () => {
+      // Given
+      const ctx = await makeWhimbrelContext({
+        facets: new DefaultFacetRegistry([TargetFacet, ActorFacet]),
+      })
+      const blueprint = makeAnalyzeScaffold('/tmp/somewhere', 'target')
+
+      // When
+      const plan = await materializePlan(ctx, blueprint)
+
+      // Then
+      expect(plan).toEqual({
+        steps: [
+          expect.objectContaining({
+            id: TARGET__DEFINE,
             steps: [
               expect.objectContaining({
                 id: ACTOR__ANALYZE,

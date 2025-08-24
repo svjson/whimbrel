@@ -9,6 +9,8 @@ import {
   materializePlan,
 } from '@whimbrel/core'
 
+import { PROJECT__EACH_SUBMODULE } from '@whimbrel/project'
+
 import { ALL_OPTION_GROUPS, executeCommand, withCommonOptions } from './common'
 import { CLIFormatter, ConsoleAppender } from '@src/output'
 import { makeFacetRegistry } from '@src/facets'
@@ -20,7 +22,10 @@ import { makeFacetRegistry } from '@src/facets'
  * It is typically used to run specific tasks defined in facets
  */
 export const addExecuteTaskCommand = (program: Command, preParser: Command) => {
-  const executeTaskCommand = program.command('execute <task-id> [cmdPath]').alias('x')
+  const executeTaskCommand = program
+    .command('execute <task-id> [cmdPath]')
+    .alias('x')
+    .option('--submodules', 'Target submodules')
   withCommonOptions(ALL_OPTION_GROUPS, executeTaskCommand).action(
     async (taskId: string, cmdPath, options: any) => {
       executeCommand(async () => {
@@ -91,15 +96,32 @@ export const executeTask = async (
 ) => {
   const task = ctx.facets.lookupTask(taskId)
 
+  const submodules = (ctx.options as any).submodules
+  const inputs = resolveCommandInputs(ctx, task)
+
   ctx.log.banner('Execute Task', taskId, targetDir)
 
   const blueprint: Blueprint = {
     steps: [
       ...inferPreparationSteps(ctx, task),
-      {
-        type: taskId,
-        inputs: resolveCommandInputs(ctx, task),
-      },
+      submodules
+        ? {
+            type: PROJECT__EACH_SUBMODULE,
+            inputs: {
+              ...inputs,
+              task: {
+                type: taskId,
+                inputs,
+              },
+            },
+            parameters: {
+              ...task.parameters,
+            },
+          }
+        : {
+            type: taskId,
+            inputs,
+          },
     ],
   }
 

@@ -1,1 +1,1 @@
-export { actorAnalyzeAugmentation } from './step-augmentation'
+export { actorAnalyzeAugmentation, eachSubmoduleAugmentation } from './step-augmentation'

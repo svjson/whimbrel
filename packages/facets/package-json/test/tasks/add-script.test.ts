@@ -33,7 +33,7 @@ describe(PACKAGE_JSON__ADD_SCRIPT, () => {
       return {
         id: AddScript.id,
         inputs: {
-          actor,
+          target: actor,
           name: 'clean',
           script: 'rimraf ./dist',
         },

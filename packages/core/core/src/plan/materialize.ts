@@ -45,7 +45,9 @@ export const generateExecutionStep = (
     bind: bpStep.bind ?? {},
     meta: bpStep.meta ?? {},
     inputs: mergeLeft({}, bpStep.inputs),
-    parameters: task.parameters ?? {},
+    parameters: task.parameters
+      ? { ...task.parameters, ...(bpStep.parameters ?? {}) }
+      : bpStep.parameters,
     expectedResult: newStepResult(),
     treeState: {
       state: 'default',
@@ -212,7 +214,8 @@ const expandStep = async (
       throw e
     }
     throw new PlanError(
-      `Error while materializing execution plan - Unexpected error while expanding step: ${step.name || step.task.id}`
+      `Error while materializing execution plan - Unexpected error while expanding step: ${step.name || step.task.id}`,
+      e
     )
   }
 }
