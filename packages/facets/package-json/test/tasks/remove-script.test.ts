@@ -78,7 +78,14 @@ describe(PACKAGE_JSON__REMOVE_SCRIPT, () => {
         mutations: {
           vcs: [],
           ctx: [],
-          fs: [],
+          fs: [
+            {
+              mutationType: 'fs',
+              object: 'file',
+              path: path.join(rootPath, 'package.json'),
+              type: 'modify',
+            },
+          ],
         },
       })
 
@@ -117,7 +124,14 @@ describe(PACKAGE_JSON__REMOVE_SCRIPT, () => {
         mutations: {
           vcs: [],
           ctx: [],
-          fs: [],
+          fs: [
+            {
+              mutationType: 'fs',
+              object: 'file',
+              path: path.join(rootPath, 'package.json'),
+              type: 'modify',
+            },
+          ],
         },
       })
 

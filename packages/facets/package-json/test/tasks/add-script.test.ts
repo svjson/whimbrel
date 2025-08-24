@@ -63,7 +63,14 @@ describe(PACKAGE_JSON__ADD_SCRIPT, () => {
         mutations: {
           vcs: [],
           ctx: [],
-          fs: [],
+          fs: [
+            {
+              mutationType: 'fs',
+              object: 'file',
+              path: path.join(rootPath, 'package.json'),
+              type: 'modify',
+            },
+          ],
         },
       })
 

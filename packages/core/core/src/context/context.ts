@@ -91,9 +91,9 @@ export const makeWhimbrelContext = async (
   ctx.formatter = new formatter(ctx)
   ctx.acceptMutation = ctx.acceptMutation ?? defaultMutationHandler(ctx)
   ctx.acceptJournalEntry = ctx.acceptJournalEntry ?? defaultJournalEntryHandler(ctx)
-  // if (!(ctx.disk instanceof ContextFileSystem)) {
-  //   ctx.disk = new ContextFileSystem(ctx.disk, new FileSystemMutationReporter(ctx))
-  // }
+  if (!(ctx.disk instanceof ContextFileSystem)) {
+    ctx.disk = new ContextFileSystem(ctx.disk, new FileSystemMutationReporter(ctx))
+  }
 
   return ctx
 }

@@ -110,7 +110,14 @@ describe(GITIGNORE__CREATE, () => {
         mutations: {
           vcs: [],
           ctx: [],
-          fs: [],
+          fs: [
+            {
+              mutationType: 'fs',
+              object: 'file',
+              path: path.join(rootPath, '.gitignore'),
+              type: 'create',
+            },
+          ],
         },
       })
 
