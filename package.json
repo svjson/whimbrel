@@ -20,6 +20,7 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "npm run --workspaces clean --if-present",
+    "publish": "npm run --workspaces publish --if-present",
     "test": "npm run --workspaces test --if-present",
     "typecheck": "npm run --workspaces typecheck --if-present"
   },

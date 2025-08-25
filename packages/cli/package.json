@@ -21,7 +21,8 @@
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "publish": "npm publish --access public"
   },
   "peerDependencies": {
     "@whimbrel/actor": "^0.0.1",
