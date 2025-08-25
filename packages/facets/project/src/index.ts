@@ -4,7 +4,7 @@ import { actorAnalyzeAugmentation, eachSubmoduleAugmentation } from './features'
 
 export { PROJECT__EACH_SUBMODULE, PROJECT__DEFINE_SUBMODULES } from './tasks'
 
-export default makeFacetModule({
+export const ProjectFacet = makeFacetModule({
   id: 'project',
   tasks: moduleTasks(DefineSubmodules, EachSubmodule),
   taskAugmentations: {
@@ -16,3 +16,5 @@ export default makeFacetModule({
     },
   },
 })
+
+export default ProjectFacet

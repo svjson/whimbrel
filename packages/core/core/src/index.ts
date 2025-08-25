@@ -9,3 +9,9 @@ export {
   stepResultEqual,
 } from './execution'
 export { DefaultFormatter } from './log/formatter'
+
+export * from '@whimbrel/core-api'
+export { ActorFacet } from '@whimbrel/actor'
+export { SourceFacet } from '@whimbrel/source'
+export { TargetFacet } from '@whimbrel/target'
+export { ProjectFacet } from '@whimbrel/project'

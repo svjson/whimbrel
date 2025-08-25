@@ -3,7 +3,9 @@ import { Define } from './tasks'
 
 export { Define, TARGET__DEFINE } from './tasks'
 
-export default makeFacetModule({
+export const TargetFacet = makeFacetModule({
   id: 'target',
   tasks: moduleTasks(Define),
 })
+
+export default TargetFacet
