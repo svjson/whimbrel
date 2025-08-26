@@ -25,7 +25,7 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/actor": "^0.0.1",
+    "@whimbrel/actor": "^0.0.2",
     "@whimbrel/core": "^0.0.2",
     "@whimbrel/core-api": "^0.0.2",
     "@whimbrel/gitignore": "^0.0.1",
@@ -50,6 +50,7 @@
     "strip-ansi": "^7.1.0"
   },
   "devDependencies": {
+    "@whimbrel/actor": "^0.0.2",
     "@whimbrel/core": "^0.0.2",
     "@whimbrel/core-api": "^0.0.2",
     "@whimbrel/gitignore": "^0.0.1",

@@ -1,4 +1,6 @@
+import path from 'node:path'
 import { describe, it, expect } from 'vitest'
+
 import { makeWhimbrelContext, materializePlan } from '@src/index'
 import { makeAnalyzeScaffold } from '@src/index'
 import SourceFacet, { Define as DefineSource, SOURCE__DEFINE } from '@whimbrel/source'
@@ -6,11 +8,16 @@ import TargetFacet, { Define as DefineTarget, TARGET__DEFINE } from '@whimbrel/t
 import ActorFacet, {
   ACTOR__ANALYZE,
   ACTOR__DISCOVER_FACETS,
+  ACTOR__REIFY,
   DiscoverFacets,
 } from '@whimbrel/actor'
+import { makeTreeFixture } from '@whimbrel-test/tree-fixtures'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
 import { ExecutionStepBlueprint, newStepResult } from '@whimbrel/core-api'
 import { generateExecutionStep } from '@src/plan/materialize'
+import { DiskFileSystem } from '@whimbrel/filesystem'
+
+const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('materialize', () => {
   describe('generateExecutionStep', () => {
@@ -87,7 +94,9 @@ describe('materialize', () => {
       const ctx = await makeWhimbrelContext({
         facets: new DefaultFacetRegistry([SourceFacet, ActorFacet]),
       })
-      const blueprint = makeAnalyzeScaffold('/tmp/somewhere')
+      const rootDir = await createDirectory([['my-source', []]])
+      const sourceDir = path.join(rootDir, 'my-source')
+      const blueprint = makeAnalyzeScaffold(sourceDir)
 
       // When
       const plan = await materializePlan(ctx, blueprint)
@@ -97,15 +106,68 @@ describe('materialize', () => {
         steps: [
           expect.objectContaining({
             id: SOURCE__DEFINE,
+            bind: {
+              key: 'source',
+            },
+            inputs: {
+              source: {
+                path: sourceDir,
+              },
+            },
+            expectedResult: {
+              mutations: {
+                fs: [],
+                vcs: [],
+                ctx: [
+                  {
+                    mutationType: 'ctx',
+                    type: 'add',
+                    path: 'sources',
+                    key: 'my-source',
+                  },
+                  {
+                    mutationType: 'ctx',
+                    type: 'set',
+                    path: 'source',
+                    key: 'my-source',
+                  },
+                ],
+              },
+              journal: [],
+            },
             steps: [
               expect.objectContaining({
                 id: ACTOR__ANALYZE,
+                bind: {
+                  key: 'source',
+                },
+                inputs: {
+                  actor: {
+                    ref: 'source',
+                  },
+                },
                 steps: [
                   expect.objectContaining({
                     id: ACTOR__DISCOVER_FACETS,
                     parameters: DiscoverFacets.parameters,
+                    bind: {
+                      key: 'source',
+                    },
+                    inputs: {},
                   }),
                 ],
+              }),
+              expect.objectContaining({
+                id: ACTOR__REIFY,
+                bind: {
+                  key: 'source',
+                },
+                inputs: {
+                  actor: {
+                    ref: 'source',
+                  },
+                },
+                steps: [],
               }),
             ],
           }),
@@ -118,7 +180,9 @@ describe('materialize', () => {
       const ctx = await makeWhimbrelContext({
         facets: new DefaultFacetRegistry([TargetFacet, ActorFacet]),
       })
-      const blueprint = makeAnalyzeScaffold('/tmp/somewhere', 'target')
+      const rootDir = await createDirectory([['my-target', []]])
+      const targetDir = path.join(rootDir, 'my-target')
+      const blueprint = makeAnalyzeScaffold(targetDir, 'target')
 
       // When
       const plan = await materializePlan(ctx, blueprint)
@@ -128,15 +192,47 @@ describe('materialize', () => {
         steps: [
           expect.objectContaining({
             id: TARGET__DEFINE,
+            bind: {
+              key: 'target',
+            },
+            inputs: {
+              target: {
+                path: targetDir,
+              },
+            },
             steps: [
               expect.objectContaining({
                 id: ACTOR__ANALYZE,
+                bind: {
+                  key: 'target',
+                },
+                inputs: {
+                  actor: {
+                    ref: 'target',
+                  },
+                },
                 steps: [
                   expect.objectContaining({
                     id: ACTOR__DISCOVER_FACETS,
                     parameters: DiscoverFacets.parameters,
+                    bind: {
+                      key: 'target',
+                    },
+                    inputs: {},
                   }),
                 ],
+              }),
+              expect.objectContaining({
+                id: ACTOR__REIFY,
+                bind: {
+                  key: 'target',
+                },
+                inputs: {
+                  actor: {
+                    ref: 'target',
+                  },
+                },
+                steps: [],
               }),
             ],
           }),
