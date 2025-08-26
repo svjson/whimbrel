@@ -1,4 +1,3 @@
-import { ContextOperator } from '@src/context'
 import {
   newStepResult,
   WhimbrelContext,
@@ -94,7 +93,7 @@ class DryStepRunner extends StepRunner {
 }
 
 /**
- * StepRunner-implementation for
+ * StepRunner-implementation for live runs
  */
 class LiveStepRunner extends StepRunner {
   constructor(ctx: WhimbrelContext, step: ExecutionStep) {
@@ -146,6 +145,7 @@ export const executeStep = async (
     return {
       success: false,
       message: `${e}`,
+      error: e,
     }
   } finally {
   }

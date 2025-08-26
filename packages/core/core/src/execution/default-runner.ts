@@ -91,8 +91,8 @@ export class DefaultRunner extends Runner {
       }
       this.ctx.log.deindent()
 
-      if (!nodeResult.success) {
-        throw new WhimbrelError(nodeResult.message)
+      if (nodeResult.success === false) {
+        throw nodeResult.error
       }
       this.ctx.log.indent()
 

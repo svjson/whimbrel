@@ -2,13 +2,27 @@ import { ExecutionPlan, ExecutionStep, WhimbrelContext } from '@whimbrel/core-ap
 import { executeStep } from './execute-step'
 
 /**
- * Structure describing the result of the execution of a single node of a
+ * Structure describing a successful execution of a single node of a
+ * three of ExecutionNodes
+ */
+export interface SuccessfulNodeExecution {
+  success: true
+}
+
+/**
+ * Structure describing a failed execution of a single node of a
  * tree of ExecutionNodes.
  */
-export interface NodeExecutionResult {
-  success: boolean
-  message?: string
+export interface FailedNodeExecution {
+  success: false
+  message: string
+  error: Error
 }
+
+/**
+ * Execution result of a single node of a tree of ExecutionNodes
+ */
+export type NodeExecutionResult = SuccessfulNodeExecution | FailedNodeExecution
 
 /**
  * Structure describing the result of the full execution of a tree of

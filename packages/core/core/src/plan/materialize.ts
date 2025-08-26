@@ -76,10 +76,12 @@ const generateInitialStepTree = (
  */
 const isPlanAdjusted = (
   _ctx: WhimbrelContext,
+  mCtx: MaterializationContext,
   iCtx: IterationContext,
   _stepTree: ExecutionStep[]
 ): boolean => {
   if (iCtx.additionalSteps > 0) return true
+  if (mCtx.lastError) return true
   return false
 }
 
@@ -145,9 +147,10 @@ export const materializePlan = async (
         resetDryRun(ctx, stepTree)
         continue
       }
+      throw e
     }
 
-    if (!isPlanAdjusted(ctx, iterCtx, stepTree)) {
+    if (!isPlanAdjusted(ctx, mCtx, iterCtx, stepTree)) {
       mCtx.complete = true
     }
     mCtx.lastError = null
