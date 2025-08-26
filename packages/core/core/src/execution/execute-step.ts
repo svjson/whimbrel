@@ -7,7 +7,7 @@ import {
   WhimbrelError,
 } from '@whimbrel/core-api'
 import { NodeExecutionResult } from './execution-tree'
-import { ensureStepParameters } from './step-parameters'
+import { ensureStepParameters, restoreInputs } from './step-parameters'
 
 /**
  * Abstract base-class for execution a single step of a Whimbrel-plan.
@@ -86,9 +86,7 @@ class DryStepRunner extends StepRunner {
    */
   async runPostExecutionActions(): Promise<void> {
     this.step.expectedResult = this.ctx.stepResult
-    for (const param of this.step.meta.resolvedParameters ?? []) {
-      delete this.step.inputs[param]
-    }
+    restoreInputs(this.step)
   }
 }
 

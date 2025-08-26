@@ -78,6 +78,65 @@ describe('step-parameters', () => {
         },
         meta: {
           resolvedParameters: ['actor'],
+          originalInputs: {
+            actor: undefined,
+          },
+        },
+      })
+    })
+
+    it('should assign `inputs.actor` from { ref: `source` } input reference value.', async () => {
+      // Given
+      const task = makeTask({ id: 'project:configure' })
+      const ctx = await makeWhimbrelContext({})
+      ctx.source = makeActor({
+        id: 'MyApp',
+        root: '/tmp/somewhere',
+      })
+      const stepValues = {
+        id: 'myapp:project:configure',
+        name: 'Configure MyApp',
+        parents: [],
+        expectedResult: newStepResult(),
+        inputs: {
+          actor: {
+            ref: 'source',
+          },
+        },
+        bind: {},
+        parameters: {
+          actor: {
+            type: 'actor',
+            required: true,
+            defaults: [],
+          },
+        },
+        meta: {},
+        treeState: { state: 'default' },
+        steps: [],
+      }
+      const step: ExecutionStep = {
+        ...structuredClone(stepValues),
+        task,
+      } as ExecutionStep
+
+      // When
+      ensureStepParameters(ctx, step)
+
+      // Then
+      expect(step).toEqual({
+        ...stepValues,
+        task,
+        inputs: {
+          actor: ctx.source,
+        },
+        meta: {
+          resolvedParameters: ['actor'],
+          originalInputs: {
+            actor: {
+              ref: 'source',
+            },
+          },
         },
       })
     })

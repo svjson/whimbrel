@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import {
   ExecutionStep,
   TaskParameter,
@@ -13,11 +14,19 @@ import { resolve } from '@whimbrel/walk'
 export const ensureStepParameters = (ctx: WhimbrelContext, step: ExecutionStep) => {
   for (const [param, details] of Object.entries(step.parameters)) {
     const value = step.inputs[param]
-    if (!value && details.required) {
-      const candidate = resolveParameter(ctx, details)
+    const isReference = value ? equal(Object.keys(value), ['ref']) : false
+    if (isReference) {
+      const candidate = resolve('object', ctx, value)
       if (candidate) {
-        step.inputs[param] = candidate
-        ;(step.meta.resolvedParameters ??= []).push(param)
+        resolveParameter(step, param, candidate)
+        continue
+      }
+    }
+
+    if (!value && details.required) {
+      const candidate = resolveDefault(ctx, details)
+      if (candidate) {
+        resolveParameter(step, param, candidate)
         continue
       }
 
@@ -29,14 +38,42 @@ export const ensureStepParameters = (ctx: WhimbrelContext, step: ExecutionStep) 
 }
 
 /**
- * Resolve a specific parameter, as describe by `details`.
+ * Assign resolved value to inputs and mark as resolved
  */
-const resolveParameter = (ctx: WhimbrelContext, details: TaskParameter): Promise<any> => {
+const resolveParameter = (step: ExecutionStep, param: string, value: any) => {
+  ;(step.meta.originalInputs ??= {})[param] = step.inputs[param]
+  step.inputs[param] = value
+  ;(step.meta.resolvedParameters ??= []).push(param)
+}
+
+/**
+ * Resolve a specific parameter from parameter defaults, as described by
+ * `details`.
+ */
+const resolveDefault = (ctx: WhimbrelContext, details: TaskParameter): Promise<any> => {
   for (const candidate of details.defaults) {
+    // if (equal(Object.keys(candidate), ['bind'])) {
+
+    // } else {
     const resolved = resolve('object', ctx, candidate)
     if (resolved !== null && resolved !== undefined) {
       return resolved
     }
+    // }
   }
   return undefined
+}
+
+/**
+ * Restore any inputs that were resolved to their original values.
+ *
+ * This is a requirement for resolved actors and values that may otherwise
+ * survive between dry run attempts and live runs
+ *
+ * @param step - The execution step to restore inputs for.
+ */
+export const restoreInputs = (step: ExecutionStep): void => {
+  for (const param of step.meta.resolvedParameters ?? []) {
+    step.inputs[param] = step.meta.originalInputs[param]
+  }
 }
