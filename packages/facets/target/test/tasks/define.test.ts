@@ -5,6 +5,7 @@ import Define, { TARGET__DEFINE } from '@src/tasks/define'
 import { stepExecutionFixture } from '@whimbrel-test/step-execution-fixtures'
 import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { DiskFileSystem } from '@whimbrel/filesystem'
+import { makeActor } from '@whimbrel/core-api'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
 const { createDirectory } = makeTreeFixture(DiskFileSystem)
@@ -35,13 +36,15 @@ describe(TARGET__DEFINE, () => {
       expect(ctx.target).toBeDefined()
       expect(Object.keys(ctx.targets)).toEqual([ctx.target.id])
 
-      expect(ctx.target).toEqual({
-        id: 'my-project',
-        name: 'my-project',
-        root: path.join(rootPath, 'my-project'),
-        meta: {},
-        facets: {},
-      })
+      expect(ctx.target).toEqual(
+        makeActor({
+          id: 'my-project',
+          name: 'my-project',
+          root: path.join(rootPath, 'my-project'),
+          meta: {},
+          facets: {},
+        })
+      )
     },
   })
 })

@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest'
 import { stepExecutionFixture } from '@whimbrel-test/step-execution-fixtures'
 import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { makeFacetScope } from '@whimbrel/facet'
-import { Actor, newStepResult } from '@whimbrel/core-api'
+import { makeActor, newStepResult } from '@whimbrel/core-api'
 import { DiskFileSystem } from '@whimbrel/filesystem'
 
 import { AddScript, PACKAGE_JSON__ADD_SCRIPT } from '@src/tasks/add-script'
@@ -20,15 +20,13 @@ describe(PACKAGE_JSON__ADD_SCRIPT, () => {
       const rootPath = await createDirectory([])
       return {
         rootPath,
-        actor: {
+        actor: makeActor({
           id: 'my-project',
-          name: 'my-project',
           root: rootPath,
           facets: {
             'package.json': makeFacetScope(),
           },
-          meta: {},
-        } satisfies Actor,
+        }),
       }
     },
 

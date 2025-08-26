@@ -1,4 +1,5 @@
 export { WhimbrelError } from './core'
+export { makeActor } from './actor'
 export {
   makeStepEvent,
   EVENT__STEP_EXECUTION_INITIATED,
@@ -18,6 +19,7 @@ export {
 export type {
   Actor,
   ActorFilter,
+  ActorId,
   ActorType,
   ActorMetaData,
   GetActorFunction,

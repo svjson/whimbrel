@@ -8,7 +8,7 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import { makeFacetScope } from '@whimbrel/facet'
 import NodeFacet from '@whimbrel/node'
 import TsConfigFacet from '@whimbrel/tsconfig-json'
-import { Actor, newStepResult } from '@whimbrel/core-api'
+import { makeActor, newStepResult } from '@whimbrel/core-api'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
 const { createDirectory, populateDirectory } = makeTreeFixture(DiskFileSystem)
@@ -21,7 +21,7 @@ describe(GITIGNORE__CREATE, () => {
       const rootPath = await createDirectory([])
       return {
         rootPath,
-        actor: {
+        actor: makeActor({
           id: 'my-project',
           name: 'my-project',
           root: rootPath,
@@ -30,7 +30,7 @@ describe(GITIGNORE__CREATE, () => {
             'tsconfig.json': makeFacetScope(),
           },
           meta: {},
-        } satisfies Actor,
+        }),
       }
     },
 

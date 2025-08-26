@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { ensureStepParameters } from '@src/execution/step-parameters'
-import { ExecutionStep, makeTask, newStepResult } from '@whimbrel/core-api'
+import { ExecutionStep, makeActor, makeTask, newStepResult } from '@whimbrel/core-api'
 import { makeWhimbrelContext } from '@src/index'
 
 describe('step-parameters', () => {
@@ -39,13 +39,10 @@ describe('step-parameters', () => {
       // Given
       const task = makeTask({ id: 'project:configure' })
       const ctx = await makeWhimbrelContext({})
-      ctx.source = {
+      ctx.source = makeActor({
         id: 'MyApp',
-        name: 'MyApp',
         root: '/tmp/somewhere',
-        facets: {},
-        meta: {},
-      }
+      })
       const stepValues = {
         id: 'myapp:project:configure',
         name: 'Configure MyApp',

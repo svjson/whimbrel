@@ -4,6 +4,7 @@ import {
   Actor,
   ContextMutator,
   FileEntry,
+  makeActor,
   makeTask,
   WhimbrelContext,
   WhimbrelError,
@@ -66,13 +67,11 @@ const execute = async (ctx: WhimbrelContext) => {
 
   const actorName = await resolveSourceName(ctx, inputs.source)
 
-  const source: Actor = {
+  const source: Actor = makeActor({
     id: actorName,
-    name: actorName,
     root: await resolve('path', ctx, inputs, 'source.path'),
     meta: inputs.meta ?? {},
-    facets: {},
-  }
+  })
 
   const mutator = new ContextMutator(ctx)
   mutator.addSource(source)

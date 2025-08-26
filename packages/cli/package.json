@@ -55,6 +55,8 @@
     "@whimbrel/node": "^0.0.1",
     "@whimbrel/npm": "^0.0.1",
     "@whimbrel/pnpm": "^0.0.1",
+    "@whimbrel/source": "^0.0.2",
+    "@whimbrel/target": "^0.0.2",
     "@whimbrel/tsconfig-json": "^0.0.1",
     "@whimbrel/turborepo": "^0.0.1",
     "@types/node": "^24.3.0",

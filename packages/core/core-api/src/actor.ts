@@ -41,4 +41,34 @@ export interface Actor {
   root: string
   facets: Record<FacetId, FacetScope>
   meta: ActorMetaData
+  subModules: ActorId[]
+}
+
+/**
+ * Describes an Actor of a WhimbrelContext - the main objects read from
+ * or operated on, e.g, a project in the file system.
+ */
+export interface MakeActorParams {
+  id: ActorId
+  name?: string
+  root: string
+  facets?: Record<FacetId, FacetScope>
+  meta?: ActorMetaData
+  subModules?: ActorId[]
+}
+
+/**
+ * Convenience factory-function for Actor.
+ */
+export const makeActor = (params: MakeActorParams): Actor => {
+  return {
+    id: params.id,
+    name: params.name ?? params.id,
+    root: params.root,
+    facets: { ...(params.facets ?? {}) },
+    meta: params.meta ?? params.meta,
+    subModules: params.subModules ?? [],
+  }
+}
+
 }

@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest'
 import { memFsContext } from '@whimbrel-test/context-fixtures'
 import { makeConcreteStep } from '@whimbrel-test/step-fixtures'
 import { actorAnalyzeAugmentation } from '@src/features'
-import { ExecutionStep, makeTask, WhimbrelContext } from '@whimbrel/core-api'
+import { ExecutionStep, makeActor, makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { makeFacetScope } from '@whimbrel/facet'
 import { PROJECT__DEFINE_SUBMODULES } from '@src/tasks'
 
@@ -12,15 +12,13 @@ describe('actor:analyze augmentation', () => {
     // Given
     const ctx = await memFsContext({
       sources: {
-        'my-project': {
+        'my-project': makeActor({
           id: 'my-project',
-          name: 'my-project',
           root: '/tmp/somewhere',
           facets: {
             project: makeFacetScope(),
           },
-          meta: {},
-        },
+        }),
       },
     })
     const analyzeStep: ExecutionStep = makeConcreteStep({
@@ -45,9 +43,8 @@ describe('actor:analyze augmentation', () => {
     // Given
     const ctx = await memFsContext({
       sources: {
-        'my-project': {
+        'my-project': makeActor({
           id: 'my-project',
-          name: 'my-project',
           root: '/tmp/somewhere',
           facets: {
             project: makeFacetScope({
@@ -66,8 +63,7 @@ describe('actor:analyze augmentation', () => {
               },
             }),
           },
-          meta: {},
-        },
+        }),
       },
     })
     const analyzeStep: ExecutionStep = makeConcreteStep({

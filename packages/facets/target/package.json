@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/target",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Core Target Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,8 +22,8 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.1",
     "@whimbrel/facet": "^0.0.1",
+    "@whimbrel/core-api": "^0.0.2",
     "@whimbrel/flow": "^0.0.1",
     "@whimbrel/walk": "^0.0.1"
   },

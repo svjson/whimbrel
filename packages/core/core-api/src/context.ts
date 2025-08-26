@@ -33,8 +33,8 @@ export interface WhimbrelContextOptions {
   cwd?: string
   dir?: string
   log?: ApplicationLog
-  sources?: Record<string, Actor>
-  targets?: Record<string, Actor>
+  sources?: Record<ActorId, Actor>
+  targets?: Record<ActorId, Actor>
   memCacheOnly?: boolean
   acceptJournalEntry?: AcceptJournalEntryHandler
   acceptMutation?: AcceptMutationHandler
@@ -93,8 +93,8 @@ export interface WhimbrelContext {
   facets: FacetRegistry
   formatter: Formatter
   log: ApplicationLog
-  sources: Record<string, Actor>
-  targets: Record<string, Actor>
+  sources: Record<ActorId, Actor>
+  targets: Record<ActorId, Actor>
   rootTarget?: Actor
   target?: Actor
   source?: Actor

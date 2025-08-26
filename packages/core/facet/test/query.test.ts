@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { makeWhimbrelContext } from './fixtures'
 import { DefaultFacetRegistry } from '@src/index'
-import { Actor, makeFacetModule } from '@whimbrel/core-api'
 import { makeFacetScope, queryFacets } from '@src/index'
+import { Actor, FacetQueryResult, makeActor, makeFacetModule } from '@whimbrel/core-api'
 
 describe('queryFacets', () => {
   const NoQueryIndexFacet = makeFacetModule({
@@ -36,15 +36,14 @@ describe('queryFacets', () => {
     const ctx = makeWhimbrelContext({
       facets: new DefaultFacetRegistry([NoQueryIndexFacet]),
     })
-    const actor: Actor = {
+    const actor: Actor = makeActor({
       id: 'monkey-business',
       name: 'Monkey Business',
       root: '/tmp/somewhere',
       facets: {
         'no-query-index-facet': makeFacetScope({}),
       },
-      meta: {},
-    }
+    })
 
     // When
     const queryResult = await queryFacets(ctx, actor, {
@@ -65,7 +64,7 @@ describe('queryFacets', () => {
         DummyTsConfig,
       ]),
     })
-    const actor: Actor = {
+    const actor: Actor = makeActor({
       id: 'monkey-business',
       name: 'Monkey Business',
       root: '/tmp/somewhere',
@@ -75,8 +74,7 @@ describe('queryFacets', () => {
         'tsconfig.json': makeFacetScope({}),
         vite: makeFacetScope({}),
       },
-      meta: {},
-    }
+    })
     // When
     const queryResult = await queryFacets(ctx, actor, {
       type: 'version-control:ignore-files',
