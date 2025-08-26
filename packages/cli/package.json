@@ -1,6 +1,6 @@
 {
   "name": "whimbrel",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI-based automation tool",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -26,7 +26,6 @@
   },
   "peerDependencies": {
     "@whimbrel/actor": "^0.0.1",
-    "@whimbrel/core": "^0.0.1",
     "@whimbrel/core-api": "^0.0.1",
     "@whimbrel/gitignore": "^0.0.1",
     "@whimbrel/node": "^0.0.1",
@@ -45,7 +44,6 @@
   },
   "dependencies": {
     "@whimbrel/actor": "^0.0.1",
-    "@whimbrel/core": "^0.0.1",
     "@whimbrel/core-api": "^0.0.1",
     "@whimbrel/gitignore": "^0.0.1",
     "@whimbrel/node": "^0.0.1",

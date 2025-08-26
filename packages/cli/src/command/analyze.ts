@@ -2,12 +2,7 @@ import path from 'node:path'
 
 import { Command } from 'commander'
 import { WhimbrelContext } from '@whimbrel/core-api'
-import {
-  makeAnalyzeScaffold,
-  makeRunner,
-  makeWhimbrelContext,
-  materializePlan,
-} from '@whimbrel/core'
+import { analyzePath, makeWhimbrelContext } from '@whimbrel/core'
 
 import { executeCommand, withCommonOptions } from './common'
 import { CLIFormatter, ConsoleAppender } from '@src/output'
@@ -41,7 +36,7 @@ export const addAnalyzeCommand = (program: Command) => {
         },
         options
       )
-      await analyzePath(context, cmdPath)
+      await runCommand(context, cmdPath)
     }, options)
   })
 }
@@ -55,11 +50,8 @@ export const addAnalyzeCommand = (program: Command) => {
  * @param ctx - The Whimbrel context containing configuration and state.
  * @param targetDir - The directory to analyze for facets.
  */
-export const analyzePath = async (ctx: WhimbrelContext, targetDir: string) => {
+export const runCommand = async (ctx: WhimbrelContext, targetDir: string) => {
   ctx.log.banner('Analyze path', targetDir)
 
-  const blueprint = makeAnalyzeScaffold(targetDir)
-  const plan = await materializePlan(ctx, blueprint)
-  const runner = makeRunner(ctx, plan)
-  await runner.run()
+  await analyzePath(ctx, targetDir)
 }

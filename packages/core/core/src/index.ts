@@ -9,6 +9,7 @@ export {
   stepResultEqual,
 } from './execution'
 export { DefaultFormatter } from './log/formatter'
+export { analyzePath } from './facade'
 
 export * from '@whimbrel/core-api'
 export { ActorFacet } from '@whimbrel/actor'
