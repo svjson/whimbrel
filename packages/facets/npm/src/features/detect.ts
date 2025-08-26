@@ -2,6 +2,7 @@ import path from 'node:path'
 
 import { DetectedFacet, DetectFunction, WhimbrelContext } from '@whimbrel/core-api'
 import { readPath } from '@whimbrel/walk'
+import { ProjectConfig } from '@whimbrel/project'
 
 const isDeclared = (pkgJson: any) => {
   const packageManager = pkgJson.packageManager
@@ -84,6 +85,7 @@ export const detect: DetectFunction = async (ctx, dir) => {
       const globs = Array.isArray(workspaces) ? workspaces : workspaces.packages
 
       const subModules = await resolveWorkspaces(ctx, globs, dir)
+
       detectResult.advice = {
         facets: [
           {
@@ -96,7 +98,7 @@ export const detect: DetectFunction = async (ctx, dir) => {
                   root: modulePath,
                   relativeRoot: path.relative(dir, modulePath),
                 })),
-              },
+              } as ProjectConfig,
             },
           },
         ],
