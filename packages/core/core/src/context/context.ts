@@ -1,5 +1,6 @@
 import {
   ActorId,
+  ActorFilter,
   ActorType,
   AcceptMutationHandler,
   WhimbrelContext,
@@ -21,6 +22,19 @@ import {
 } from '@whimbrel/filesystem'
 import { makeLogger } from '../log'
 import { DefaultFormatter } from '@src/log/formatter'
+
+const getActorByCriteria = (
+  coll: Record<ActorId, Actor>,
+  criteria: ActorId | ActorFilter
+) => {
+  if (typeof criteria === 'string') {
+    return coll[criteria]
+  }
+
+  return Object.values(coll).find((actor) => {
+    if (criteria.root && actor.root === criteria.root) return actor
+  })
+}
 
 /**
  * Factory-function for WhimbrelContext.
@@ -69,14 +83,16 @@ export const makeWhimbrelContext = async (
     acceptMutation: acceptMutation ?? (null as AcceptMutationHandler),
     acceptJournalEntry: acceptJournalEntry ?? (null as AcceptJournalEntryHandler),
     emitEvent: (_event: WhimbrelEvent) => {},
-    getActor: (type: ActorType, id: ActorId): Actor | undefined => {
+    getActor: (type: ActorType, criteria: ActorId | ActorFilter): Actor | undefined => {
       switch (type) {
         case 'source':
-          return ctx.sources[id]
+          return getActorByCriteria(ctx.sources, criteria)
         case 'target':
-          return ctx.targets[id]
+          return getActorByCriteria(ctx.targets, criteria)
         case 'rootTarget':
-          return ctx.rootTarget?.id === id ? ctx.rootTarget : undefined
+          return ctx.rootTarget
+            ? getActorByCriteria({ [ctx.rootTarget.id]: ctx.rootTarget }, criteria)
+            : undefined
       }
     },
     resetActors: () => {

@@ -11,7 +11,23 @@ export type ActorType = 'target' | 'source' | 'rootTarget'
 export interface ActorMetaData {}
 
 /**
- *
+ * Filter used for searching for actors
+ */
+export interface ActorFilter {
+  root?: string
+}
+
+/**
+ * Function signature for retrieving a single actor from a container of
+ * actors, e.g, WhimbrelContext
+ */
+export type GetActorFunction = (
+  type: ActorType,
+  actorId: ActorId | ActorFilter
+) => Actor | undefined
+
+/**
+ * Marker type for Actor IDs
  */
 export type ActorId = string
 

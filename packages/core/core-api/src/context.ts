@@ -1,4 +1,4 @@
-import { Actor, ActorId, ActorType } from './actor'
+import { Actor, ActorId, ActorType, GetActorFunction } from './actor'
 import { WhimbrelEvent } from './event'
 import {
   AcceptJournalEntryHandler,
@@ -60,8 +60,6 @@ export interface WhimbrelCommandOptions {
   showStepIds?: boolean
   prop: Record<string, string>
 }
-
-export type GetActorFunction = (type: ActorType, actorId: ActorId) => Actor | undefined
 
 /**
  * WhimbrelContext - the main owner of state during Whimbrel operations.
