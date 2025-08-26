@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { juxt } from '@src/index'
+import { juxt, leftPad } from '@src/index'
 
 describe('juxt', () => {
   it('juxtaposes two arrays of string of equal length', () => {
@@ -33,5 +33,27 @@ describe('juxt', () => {
       ['two', 2],
       ['three', 3],
     ])
+  })
+})
+
+describe('leftPad', () => {
+  it('should pad the array with an additional undefined value', () => {
+    // When
+    const [actorId, facetId, taskId] = leftPad(['actor', 'analyze'], 3)
+
+    // Then
+    expect(actorId).toBeUndefined()
+    expect(facetId).toEqual('actor')
+    expect(taskId).toEqual('analyze')
+  })
+
+  it('should return the array unchanged', () => {
+    // When
+    const [actorId, facetId, taskId] = leftPad(['whimbrel', 'actor', 'analyze'], 3)
+
+    // Then
+    expect(actorId).toEqual('whimbrel')
+    expect(facetId).toEqual('actor')
+    expect(taskId).toEqual('analyze')
   })
 })

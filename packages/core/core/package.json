@@ -23,6 +23,7 @@
   },
   "peerDependencies": {
     "@whimbrel/actor": "^0.0.2",
+    "@whimbrel/array": "^0.0.2",
     "@whimbrel/core-api": "^0.0.2",
     "@whimbrel/facet": "^0.0.2",
     "@whimbrel/filesystem": "^0.0.1",
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@whimbrel-test/tree-fixtures": "^0.0.1",
     "@whimbrel/actor": "^0.0.2",
+    "@whimbrel/array": "^0.0.2",
     "@whimbrel/core-api": "^0.0.2",
     "@whimbrel/facet": "^0.0.2",
     "@whimbrel/filesystem": "^0.0.1",

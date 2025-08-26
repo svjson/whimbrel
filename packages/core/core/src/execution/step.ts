@@ -1,10 +1,12 @@
+import { leftPad } from '@whimbrel/array'
+
 /**
  * Split the segments of a selector, and arrange them in the correct order
  * allowing optional leading parts to be omitted.
  */
 const selectorParts = (selector: string) => {
   const parts = selector.split(':')
-  return [...Array(3 - parts.length).fill(null), ...parts]
+  return leftPad(parts, 3)
 }
 
 /**
@@ -25,7 +27,7 @@ export const matchesStepIdSelector = (selector: string, stepId: string) => {
   const stepIdSegments = selectorParts(stepId)
 
   for (let i = 0; i < 3; i++) {
-    if (['*', null].includes(selectorSegments[i])) continue
+    if (['*', undefined].includes(selectorSegments[i])) continue
     if (selectorSegments[i] !== stepIdSegments[i]) return false
   }
   return true

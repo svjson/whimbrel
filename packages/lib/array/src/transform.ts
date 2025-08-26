@@ -19,3 +19,20 @@
  */
 export const juxt = <TypeA, TypeB>(arr1: TypeA[], arr2: TypeB[]): [TypeA, TypeB][] =>
   Array.from({ length: Math.max(arr1.length, arr2.length) }, (_, i) => [arr1[i], arr2[i]])
+
+/**
+ * Left-pads an array with `undefined` values to reach a specified maximum length.
+ *
+ * If the array is already at or above the specified length, it is returned unchanged.
+ *
+ * Example:
+ * ```ts
+ * leftPad(['a', 'b', 'c'], 5)
+ * // => [undefined, undefined, 'a', 'b', 'c']
+ *
+ * const [actorId, facetId, taskId] = leftPad(segments, 3)
+ * ```
+ */
+export const leftPad = (array: any[], maxLength: number) => {
+  return [...Array(maxLength - array.length).fill(undefined), ...array]
+}
