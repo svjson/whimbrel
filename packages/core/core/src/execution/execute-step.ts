@@ -132,8 +132,8 @@ export const executeStep = async (
 ): Promise<NodeExecutionResult> => {
   const stepRunner = makeStepRunner(ctx, step)
   try {
-    stepRunner.prepareExecution()
     stepRunner.applyBindings()
+    stepRunner.prepareExecution()
     await stepRunner.executeTask()
     await stepRunner.runPostExecutionActions()
     return { success: true }
