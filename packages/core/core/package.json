@@ -26,19 +26,18 @@
     "@whimbrel/core-api": "^0.0.2",
     "@whimbrel/facet": "^0.0.2",
     "@whimbrel/filesystem": "^0.0.1",
-    "@whimbrel/project": "^0.0.1",
+    "@whimbrel/project": "^0.0.2",
     "@whimbrel/source": "^0.0.2",
     "@whimbrel/target": "^0.0.2",
     "@whimbrel/walk": "^0.0.1"
   },
-  "dependencies": {
-    "@whimbrel/actor": "*",
-    "@whimbrel/core-api": "*",
-    "@whimbrel/facet": "*",
-    "@whimbrel/filesystem": "*",
-    "@whimbrel/project": "*",
-    "@whimbrel/source": "*",
-    "@whimbrel/target": "*",
-    "@whimbrel/walk": "*"
+  "devDependencies": {
+    "@whimbrel/core-api": "^0.0.2",
+    "@whimbrel/facet": "^0.0.2",
+    "@whimbrel/filesystem": "^0.0.1",
+    "@whimbrel/project": "^0.0.2",
+    "@whimbrel/source": "^0.0.2",
+    "@whimbrel/target": "^0.0.2",
+    "@whimbrel/walk": "^0.0.1"
   }
 }

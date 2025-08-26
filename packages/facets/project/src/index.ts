@@ -17,4 +17,14 @@ export const ProjectFacet = makeFacetModule({
   },
 })
 
+export interface ProjectConfig {
+  type?: 'default' | 'root' | 'monorepo'
+  subModules?: {
+    actorId?: string
+    name: string
+    root: string
+    relativeRoot: string
+  }[]
+}
+
 export default ProjectFacet

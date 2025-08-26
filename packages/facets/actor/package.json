@@ -22,18 +22,18 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.1",
-    "@whimbrel/facet": "^0.0.1",
+    "@whimbrel/core-api": "^0.0.2",
+    "@whimbrel/facet": "^0.0.2",
+    "@whimbrel/project": "^0.0.2",
     "@whimbrel/flow": "^0.0.1",
     "@whimbrel/walk": "^0.0.1"
   },
-  "dependencies": {
-    "@whimbrel/core-api": "*",
-    "@whimbrel/facet": "*",
-    "@whimbrel/flow": "*",
-    "@whimbrel/walk": "*"
-  },
   "devDependencies": {
+    "@whimbrel/core-api": "^0.0.2",
+    "@whimbrel/project": "^0.0.2",
+    "@whimbrel/facet": "^0.0.2",
+    "@whimbrel/flow": "^0.0.1",
+    "@whimbrel/walk": "^0.0.1",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
