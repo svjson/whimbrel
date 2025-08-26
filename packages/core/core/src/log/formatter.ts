@@ -168,6 +168,8 @@ export class DefaultFormatter implements Formatter {
         type = 'source'
       } else if (m.path === 'targets' || m.path === 'target') {
         type = 'target'
+      } else {
+        type = m.path.split('.').at(-1)
       }
 
       if (bullet && type && subject && !added.includes(subject)) {

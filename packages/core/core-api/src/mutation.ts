@@ -78,10 +78,10 @@ const validateActorOperation = (
   }
 
   if (typeof actor === 'string') {
-    const actorName = actor
-    actor = (type === 'source' ? ctx.sources : ctx.targets)[actor]
+    const actorId = actor
+    actor = ctx.getActor(type, actor)
     if (!actor) {
-      throw new WhimbrelError(`No ${type} with name '${actorName}' has been defined.`)
+      throw new WhimbrelError(`No ${type} with id '${actorId}' has been defined.`)
     }
   }
 
@@ -89,18 +89,52 @@ const validateActorOperation = (
     throw new WhimbrelError(`Invalid ${type}: ${JSON.stringify(actor)}`)
   }
 
-  if (action === 'add' && (type === 'source' ? ctx.sources : ctx.targets)[actor.name]) {
-    throw new WhimbrelError(`Argument ${type} already defined: '${actor.name}'`)
+  if (action === 'add' && ctx.getActor(type, actor.id)) {
+    throw new WhimbrelError(`Argument ${type} already defined: '${actor.id}'`)
   }
 
   return actor
 }
+
+type MutableArrayKeys<T> = {
+  [P in keyof T]-?: NonNullable<T[P]> extends Array<any> ? P : never
+}[keyof T]
+
+type Elem<T, K extends keyof T> = NonNullable<T[K]> extends Array<infer U> ? U : never
 
 /**
  * Convenience wrapper for performing context mutations.
  */
 export class ContextMutator {
   constructor(private ctx: WhimbrelContext) {}
+
+  setActorProperty<K extends keyof Actor>(actor: Actor, property: K, value: Actor[K]) {
+    actor[property] = value
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
+      type: 'set',
+      // TODO: Change this to an actual object path
+      path: `actor:${actor.id}.${property}`,
+      key: String(value),
+    })
+  }
+
+  addActorElement<K extends MutableArrayKeys<Actor>>(
+    actor: Actor,
+    property: K,
+    value: Elem<Actor, K>
+  ) {
+    const array = (actor[property] ??= [] as unknown as NonNullable<Actor[K]>)
+
+    ;(array as Array<Elem<Actor, K>>).push(value)
+    this.ctx.acceptMutation({
+      mutationType: 'ctx',
+      type: 'add',
+      // TODO: Change this to an actual object path
+      path: `actor:${actor.id}.${property}`,
+      key: String(value),
+    })
+  }
 
   /**
    * Add/register a new Source Actor in the Whimbrel Context.
@@ -116,7 +150,7 @@ export class ContextMutator {
     this.ctx.acceptMutation({
       mutationType: 'ctx',
       type: 'add',
-      path: 'source',
+      path: 'sources',
       key: validated.name,
     })
   }
@@ -135,7 +169,7 @@ export class ContextMutator {
     this.ctx.acceptMutation({
       mutationType: 'ctx',
       type: 'add',
-      path: 'target',
+      path: 'targets',
       key: validated.name,
     })
   }
