@@ -58,6 +58,7 @@ export interface WhimbrelCommandOptions {
   verbose?: boolean
   haltAt?: string
   showStepIds?: boolean
+  showFacetDetails?: string
   prop: Record<string, string>
 }
 

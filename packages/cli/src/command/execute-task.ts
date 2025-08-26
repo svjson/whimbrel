@@ -7,6 +7,7 @@ import {
   makeRunner,
   makeWhimbrelContext,
   materializePlan,
+  outputPostExecutionReports,
 } from '@whimbrel/core'
 
 import { PROJECT__EACH_SUBMODULE } from '@whimbrel/project'
@@ -128,4 +129,6 @@ export const executeTask = async (
   const plan = await materializePlan(ctx, blueprint)
   const runner = makeRunner(ctx, plan)
   await runner.run()
+
+  await outputPostExecutionReports(ctx)
 }

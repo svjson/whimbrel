@@ -2,7 +2,11 @@ import path from 'node:path'
 
 import { Command } from 'commander'
 import { WhimbrelContext } from '@whimbrel/core-api'
-import { analyzePath, makeWhimbrelContext } from '@whimbrel/core'
+import {
+  analyzePath,
+  makeWhimbrelContext,
+  outputPostExecutionReports,
+} from '@whimbrel/core'
 
 import { executeCommand, withCommonOptions } from './common'
 import { CLIFormatter, ConsoleAppender } from '@src/output'
@@ -54,4 +58,5 @@ export const runCommand = async (ctx: WhimbrelContext, targetDir: string) => {
   ctx.log.banner('Analyze path', targetDir)
 
   await analyzePath(ctx, targetDir)
+  await outputPostExecutionReports(ctx)
 }

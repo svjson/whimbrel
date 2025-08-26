@@ -8,6 +8,7 @@ export {
   matchesStepIdSelector,
   stepResultEqual,
 } from './execution'
+export { outputPostExecutionReports } from './report'
 export { DefaultFormatter } from './log/formatter'
 export { analyzePath } from './facade'
 

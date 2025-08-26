@@ -26,6 +26,10 @@ export const withCommonOptions = (groups: OptionGroup[], cmdBuilder: Command) =>
 
   if (groups.includes('step-tree')) {
     cmdBuilder.option('-t, --show-step-ids', 'Output Step ID for each step')
+    cmdBuilder.option(
+      '-d, --show-facet-details [pattern]',
+      'Output Facet details for one or all actors.'
+    )
   }
 
   if (groups.includes('output')) {
