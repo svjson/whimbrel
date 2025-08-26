@@ -1,5 +1,6 @@
 export { WhimbrelError } from './core'
 export { makeActor } from './actor'
+export { actorFacetConfig, actorFacetScope } from './actor'
 export {
   makeStepEvent,
   EVENT__STEP_EXECUTION_INITIATED,

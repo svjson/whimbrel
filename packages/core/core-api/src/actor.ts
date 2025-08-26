@@ -71,4 +71,16 @@ export const makeActor = (params: MakeActorParams): Actor => {
   }
 }
 
+export const actorFacetScope = (
+  actor: Actor,
+  facetId: FacetId
+): FacetScope | undefined => {
+  return actor.facets[facetId]
+}
+
+export const actorFacetConfig = <T = any>(
+  actor: Actor,
+  facetId: FacetId
+): T | undefined => {
+  return actorFacetScope(actor, facetId)?.config
 }

@@ -1,6 +1,5 @@
 import { PROJECT__DEFINE_SUBMODULES } from '@src/tasks'
-import { StepAugmentationGenerator } from '@whimbrel/core-api'
-import { readPath } from '@whimbrel/walk'
+import { actorFacetConfig, StepAugmentationGenerator } from '@whimbrel/core-api'
 
 export const actorAnalyzeAugmentation: StepAugmentationGenerator = async ({
   ctx,
@@ -10,20 +9,16 @@ export const actorAnalyzeAugmentation: StepAugmentationGenerator = async ({
   if (!actorId) return []
   const actor = ctx.getActor(step.bind.key, actorId)
   if (!actor) return []
-  const projectFacet = actor.facets.project
+  const projectCfg = actorFacetConfig(actor, 'project')
   if (
-    !(
-      projectFacet &&
-      Array.isArray(projectFacet.config.subModules) &&
-      projectFacet.config.subModules.length
-    )
+    !(projectCfg && Array.isArray(projectCfg.subModules) && projectCfg.subModules.length)
   )
     return []
   const defineTask = step.bind.key === 'source' ? 'source:define' : 'target:define'
   return [
     {
       type: PROJECT__DEFINE_SUBMODULES,
-      steps: projectFacet.config.subModules.map((subModule: any) => ({
+      steps: projectCfg.subModules.map((subModule: any) => ({
         type: defineTask,
         inputs: {
           [step.bind.key]: {
