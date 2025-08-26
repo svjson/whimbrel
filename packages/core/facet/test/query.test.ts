@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { makeWhimbrelContext } from './fixtures'
 import { DefaultFacetRegistry } from '@src/index'
-import { makeFacetScope, queryFacets } from '@src/index'
 import { Actor, FacetQueryResult, makeActor, makeFacetModule } from '@whimbrel/core-api'
+import { makeFacetScope, pickRankedResult, queryFacets } from '@src/index'
 
 describe('queryFacets', () => {
   const NoQueryIndexFacet = makeFacetModule({
@@ -91,5 +91,44 @@ describe('queryFacets', () => {
         result: [{ pattern: 'dist/', groups: ['build'], source: 'tsconfig.json' }],
       },
     ])
+  })
+})
+
+describe('pickRankedResult', () => {
+  it('should pick the result from the first source/ranking match', () => {
+    // Given
+    const actor: Actor = makeActor({
+      id: 'my-actor',
+      name: 'Actor Actorsson',
+      root: '/tmp/somwhere',
+      facets: {
+        npm: makeFacetScope({ roles: ['pkg-manager'] }),
+        'package.json': makeFacetScope({ roles: ['pkg-file'] }),
+        git: makeFacetScope({ roles: ['vcs'] }),
+      },
+    })
+
+    const queryResult: FacetQueryResult[] = [
+      {
+        source: 'git',
+        result: { name: 'my-project' },
+      },
+      {
+        source: 'package.json',
+        result: { name: '@me/my-spiffy-project' },
+      },
+      {
+        source: 'npm',
+        result: { name: 'yawn, I should not even have responded...' },
+      },
+    ]
+
+    // When
+    const picked = pickRankedResult(actor, queryResult, [{ role: 'pkg-file' }])
+
+    // Then
+    expect(picked).toEqual({
+      name: '@me/my-spiffy-project',
+    })
   })
 })

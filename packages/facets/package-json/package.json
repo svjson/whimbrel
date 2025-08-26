@@ -22,18 +22,15 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/facet": "^0.0.1",
-    "@whimbrel/flow": "^0.0.1"
-  },
-  "dependencies": {
-    "@whimbrel/core-api": "*",
-    "@whimbrel/facet": "*",
-    "@whimbrel/flow": "*"
     "@whimbrel/core-api": "^0.0.2",
+    "@whimbrel/facet": "^0.0.2",
+    "@whimbrel/flow": "^0.0.1",
     "@whimbrel/struct-file": "^0.0.1"
   },
   "devDependencies": {
     "@whimbrel/core-api": "^0.0.2",
+    "@whimbrel/facet": "^0.0.2",
+    "@whimbrel/flow": "^0.0.1",
     "@whimbrel/struct-file": "^0.0.1",
     "@whimbrel-test/tree-fixtures": "*",
     "@whimbrel-test/context-fixtures": "*",
