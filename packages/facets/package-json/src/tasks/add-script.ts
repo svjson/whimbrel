@@ -1,6 +1,5 @@
-import path from 'node:path'
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
-import { readPath, writePath } from '@whimbrel/walk'
+import { PackageJSON } from '@src/adapters'
 
 export const PACKAGE_JSON__ADD_SCRIPT = 'package.json:add-script'
 
@@ -11,16 +10,15 @@ const execute = async (ctx: WhimbrelContext) => {
     return
   }
 
-  const pkgJsonPath = path.join(target.root, 'package.json')
-  const packageJson = await ctx.disk.readJson(pkgJsonPath)
+  const packageJson = await PackageJSON.read(ctx.disk, [target.root, 'package.json'])
 
-  if (readPath(packageJson, ['scripts', name]) === script) {
+  if (packageJson.get(['scripts', name]) === script) {
     return
   }
 
-  writePath(packageJson, ['scripts', name], script)
+  packageJson.set(['scripts', name], script)
 
-  await ctx.disk.writeJson(pkgJsonPath, packageJson)
+  await packageJson.write()
 }
 
 export const AddScript = makeTask({
@@ -43,3 +41,5 @@ export const AddScript = makeTask({
     },
   },
 })
+
+export default AddScript

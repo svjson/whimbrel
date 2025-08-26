@@ -1,6 +1,5 @@
-import path from 'node:path'
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
-import { deletePath, readPath } from '@whimbrel/walk'
+import { PackageJSON } from '@src/adapters'
 
 export const PACKAGE_JSON__REMOVE_SCRIPT = 'package.json:remove-script'
 
@@ -11,16 +10,15 @@ const execute = async (ctx: WhimbrelContext) => {
     return
   }
 
-  const pkgJsonPath = path.join(target.root, 'package.json')
-  const packageJson = await ctx.disk.readJson(pkgJsonPath)
+  const packageJson = await PackageJSON.read(ctx.disk, [target.root, 'package.json'])
 
-  if (script && readPath(packageJson, ['scripts', name]) !== script) {
+  if (script && packageJson.get(['scripts', name]) !== script) {
     return
   }
 
-  deletePath(packageJson, ['scripts', name])
+  packageJson.delete(['scripts', name])
 
-  await ctx.disk.writeJson(pkgJsonPath, packageJson)
+  await packageJson.write()
 }
 
 export const RemoveScript = makeTask({
