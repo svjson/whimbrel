@@ -32,7 +32,9 @@ interface MaterializationContext {
 interface IterationContext {
   sources: Record<string, Actor>
   targets: Record<string, Actor>
-  additionalSteps: number
+  newSteps: number
+  totalNewSteps: number
+  expandIterations: number
 }
 
 interface ExpectationNode {
@@ -90,7 +92,7 @@ const isPlanAdjusted = (
   iCtx: IterationContext,
   stepTree: ExecutionStep[]
 ): boolean => {
-  if (iCtx.additionalSteps > 0 || mCtx.lastError) {
+  if (iCtx.totalNewSteps > 0 || mCtx.lastError) {
     mCtx.cleanRuns = 0
     return true
   }
@@ -164,12 +166,25 @@ export const materializePlan = async (
     const iterCtx: IterationContext = {
       sources: ctx.sources,
       targets: ctx.targets,
-      additionalSteps: 0,
+      newSteps: 0,
+      totalNewSteps: 0,
+      expandIterations: 0,
     }
 
     ctx.log.updateStatus(mCtx.statusText + '.'.repeat(mCtx.iteration))
 
-    await expandStepTree(ctx, iterCtx, stepTree)
+    do {
+      if (iterCtx.expandIterations > 20) {
+        throw new WhimbrelError(
+          'Plan Materialization Failed: Too many tree expansion iterations.'
+        )
+      }
+      iterCtx.newSteps = 0
+      await expandStepTree(ctx, iterCtx, stepTree)
+      iterCtx.totalNewSteps += iterCtx.newSteps
+      iterCtx.expandIterations++
+    } while (iterCtx.newSteps > 0)
+
     try {
       await performDryRun(ctx, { steps: stepTree })
     } catch (e) {
@@ -339,7 +354,7 @@ const attachStepAugmentations = async (
         continue
       }
       step.meta.appliedAugmentations.push(augStep)
-      iterCtx.additionalSteps++
+      iterCtx.newSteps++
       step.steps.push(generateExecutionStep(ctx, augStep))
     }
   }
