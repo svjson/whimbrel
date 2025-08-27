@@ -150,7 +150,7 @@ export class DefaultFormatter implements Formatter {
 
   formatContextMutations(mutations: ContextMutation[]) {
     const lines = []
-    const added = []
+    const added: Record<string, string[]> = {}
 
     mutations.forEach((m) => {
       let bullet: string
@@ -172,14 +172,36 @@ export class DefaultFormatter implements Formatter {
         type = m.path.split('.').at(-1)
       }
 
-      if (bullet && type && subject && !added.includes(subject)) {
+      if (
+        bullet &&
+        ['source', 'target'].includes(type) &&
+        subject &&
+        !(added[type] ??= []).includes(subject)
+      ) {
         lines.push(this.contextSymbols.mutation(bullet, type, subject))
       }
 
       if (m.type === 'add') {
-        added.push(subject)
+        ;(added[type] ??= []).push(subject)
       }
     })
+
+    const keyFormats = {
+      subModules: 'sub-modules',
+    }
+
+    Object.entries(added)
+      .filter(([key]) => !['source', 'target'].includes(key))
+      .forEach(([key, values]) => {
+        const formattedKey = keyFormats[key] ?? key
+        lines.push(
+          this.contextSymbols.mutation(
+            this.contextSymbols.add,
+            formattedKey,
+            values.join(', ')
+          )
+        )
+      })
 
     return lines.join('\n')
   }
