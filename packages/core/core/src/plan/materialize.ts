@@ -147,7 +147,7 @@ export const materializePlan = async (
   const mCtx: MaterializationContext = {
     complete: false,
     lastError: null,
-    statusText: 'Materializing plan..',
+    statusText: 'Materializing plan',
     iteration: 0,
     cleanRuns: 0,
     lastExpectationTree: [],
