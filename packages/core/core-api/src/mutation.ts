@@ -108,7 +108,18 @@ type Elem<T, K extends keyof T> = NonNullable<T[K]> extends Array<infer U> ? U :
 export class ContextMutator {
   constructor(private ctx: WhimbrelContext) {}
 
-  setActorProperty<K extends keyof Actor>(actor: Actor, property: K, value: Actor[K]) {
+  /**
+   * Set a property of an actor and report the mutation.
+   *
+   * @param actor - The Actor whose property is to be set.
+   * @param property - The property of the Actor to set.
+   * @param value - The value to set the property to.
+   */
+  setActorProperty<K extends keyof Actor>(
+    actor: Actor,
+    property: K,
+    value: Actor[K]
+  ): void {
     actor[property] = value
     this.ctx.acceptMutation({
       mutationType: 'ctx',

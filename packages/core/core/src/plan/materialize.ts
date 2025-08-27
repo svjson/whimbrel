@@ -1,4 +1,6 @@
-import { StepBinding } from '@whimbrel/core-api'
+import equal from 'fast-deep-equal'
+
+import { StepBinding, StepExecutionResult } from '@whimbrel/core-api'
 import { performDryRun } from '@src/execution'
 import { DryRunError, resetDryRun } from '@src/execution/dry-run'
 import { mergeLeft } from '@whimbrel/walk'
@@ -23,12 +25,20 @@ interface MaterializationContext {
   lastError: DryRunError | null
   statusText: string
   iteration: number
+  cleanRuns: number
+  lastExpectationTree: ExpectationNode[]
 }
 
 interface IterationContext {
   sources: Record<string, Actor>
   targets: Record<string, Actor>
   additionalSteps: number
+}
+
+interface ExpectationNode {
+  id: string
+  result: StepExecutionResult
+  children: ExpectationNode[]
 }
 
 export const generateExecutionStep = (
@@ -67,8 +77,8 @@ const generateInitialStepTree = (
 }
 
 /**
- * Determine if the completed dry-run of `stepTree` has mutated the plan,
- * and thus needs to be re-evaluated.
+ * Determine if the completed dry-run of `stepTree` has mutated the plan
+ * or generated different results, and thus needs to be re-evaluated.
  *
  * @param ctx - The context containing collaborators and options.
  * @param stepTree - The step tree to check for adjustments.
@@ -78,11 +88,36 @@ const isPlanAdjusted = (
   _ctx: WhimbrelContext,
   mCtx: MaterializationContext,
   iCtx: IterationContext,
-  _stepTree: ExecutionStep[]
+  stepTree: ExecutionStep[]
 ): boolean => {
-  if (iCtx.additionalSteps > 0) return true
-  if (mCtx.lastError) return true
-  return false
+  if (iCtx.additionalSteps > 0 || mCtx.lastError) {
+    mCtx.cleanRuns = 0
+    return true
+  }
+
+  const expectationTree = buildExpectationTree(stepTree)
+
+  if (equal(expectationTree, mCtx.lastExpectationTree)) {
+    mCtx.cleanRuns++
+  } else {
+    mCtx.cleanRuns = 0
+  }
+
+  mCtx.lastExpectationTree = expectationTree
+
+  return mCtx.cleanRuns < 2
+}
+
+const buildExpectationNode = (step: ExecutionStep): ExpectationNode => {
+  return {
+    id: step.id,
+    result: step.expectedResult,
+    children: buildExpectationTree(step.steps),
+  }
+}
+
+const buildExpectationTree = (stepTree: ExecutionStep[]): ExpectationNode[] => {
+  return stepTree.map((step) => buildExpectationNode(step))
 }
 
 /**
@@ -112,6 +147,8 @@ export const materializePlan = async (
     lastError: null,
     statusText: 'Materializing plan..',
     iteration: 0,
+    cleanRuns: 0,
+    lastExpectationTree: [],
   }
 
   const isLastError = (e: DryRunError) =>
