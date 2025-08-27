@@ -1,6 +1,7 @@
 import path from 'node:path'
 
 import { FacetDetectionResult, DetectFunction, WhimbrelContext } from '@whimbrel/core-api'
+import { PackageJSON } from '@whimbrel/package-json'
 
 export const detect: DetectFunction = async (
   ctx: WhimbrelContext,
@@ -9,13 +10,8 @@ export const detect: DetectFunction = async (
   const packageJsonPath = path.join(dir, 'package.json')
 
   if (await ctx.disk.exists(packageJsonPath)) {
-    const pkgJson = await ctx.disk.readJson(packageJsonPath)
-    const dependency = [
-      ...Object.keys(pkgJson.dependencies ?? {}),
-      ...Object.keys(pkgJson.devDependencies ?? {}),
-    ].includes('turbo')
-
-    if (dependency) {
+    const pkgJson = await PackageJSON.read(ctx.disk, packageJsonPath)
+    if (pkgJson.hasDependency('turbo')) {
       return {
         detected: true,
         facet: {

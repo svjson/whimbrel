@@ -43,6 +43,14 @@ export class PackageJSON extends JSONFile {
     super({ path, content, storage: disk, keyOrder: PACKAGE_JSON_KEY_ORDER })
   }
 
+  hasDependency(dependency: string) {
+    return (
+      this.get('dependencies', []).includes(dependency) ||
+      this.get('devDependencies', []).includes(dependency) ||
+      this.get('peerDependencies', []).includes(dependency)
+    )
+  }
+
   static async read(disk: FileSystem, filePath: string | string[]): Promise<PackageJSON> {
     const actualPath = Array.isArray(filePath) ? path.join(...filePath) : filePath
     if (await disk.exists(actualPath)) {
