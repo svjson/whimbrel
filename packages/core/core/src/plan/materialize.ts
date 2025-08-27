@@ -286,8 +286,9 @@ const assignId = (step: ExecutionStep) => {
   if (key && bind[key]) {
     parts.push(bind[key])
   } else if (key) {
+    const mutationPath = key === 'source' ? 'sources' : 'targets'
     const keyMutations = step.expectedResult.mutations.ctx
-      .filter((p) => p.type === 'add' && p.path === key)
+      .filter((p) => p.type === 'add' && p.path === mutationPath)
       .map((p) => p.key)
 
     const [actorId] = keyMutations
