@@ -156,13 +156,7 @@ export class DefaultFormatter implements Formatter {
       let bullet: string
       let type: string
       let subject: string
-      if (m.type === 'add') {
-        bullet = this.contextSymbols.add
-        subject = m.key
-      } else if (m.type === 'set') {
-        bullet = this.contextSymbols.set
-        subject = m.key
-      }
+      let reportSingle = false
 
       if (m.path === 'sources' || m.path === 'source') {
         type = 'source'
@@ -172,12 +166,17 @@ export class DefaultFormatter implements Formatter {
         type = m.path.split('.').at(-1)
       }
 
-      if (
-        bullet &&
-        ['source', 'target'].includes(type) &&
-        subject &&
-        !(added[type] ??= []).includes(subject)
-      ) {
+      if (m.type === 'add') {
+        bullet = this.contextSymbols.add
+        subject = m.key
+        reportSingle = ['source', 'target'].includes(type)
+      } else if (m.type === 'set') {
+        bullet = this.contextSymbols.set
+        subject = m.key
+        reportSingle = !(added[type] ??= []).includes(subject)
+      }
+
+      if (reportSingle) {
         lines.push(this.contextSymbols.mutation(bullet, type, subject))
       }
 
@@ -191,7 +190,7 @@ export class DefaultFormatter implements Formatter {
     }
 
     Object.entries(added)
-      .filter(([key]) => !['source', 'target'].includes(key))
+      .filter(([key, values]) => !['source', 'target'].includes(key) && values.length)
       .forEach(([key, values]) => {
         const formattedKey = keyFormats[key] ?? key
         lines.push(
