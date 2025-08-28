@@ -39,6 +39,10 @@ export abstract class StructuredFile<ModelFormat = any, SerializedFormat = strin
 
   abstract containsAll(property: PropertyPath, values: any[]): boolean
 
+  getPath(): string {
+    return this.path
+  }
+
   getContent(): ModelFormat {
     return this.content
   }
