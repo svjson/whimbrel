@@ -7,7 +7,7 @@ export const actorAnalyzeAugmentation: StepAugmentationGenerator = async ({
 }) => {
   const actorId = step.bind[step.bind.key]
   if (!actorId) return []
-  const actor = ctx.getActor(step.bind.key, actorId)
+  const actor = ctx.getActor(actorId, step.bind.key)
   if (!actor) return []
   const projectCfg = actorFacetConfig(actor, 'project')
   if (
@@ -33,12 +33,12 @@ export const actorAnalyzeAugmentation: StepAugmentationGenerator = async ({
 export const eachSubmoduleAugmentation: StepAugmentationGenerator = async ({ step }) => {
   const actor = step.inputs.materialized?.actor ?? step.inputs.materialized?.target
   if (!actor) return []
-  const projectFacet = actor.facets.project
-  if (!(projectFacet && Array.isArray(projectFacet.config.subModules))) return []
+  const projectConfig = actorFacetConfig(actor, 'project')
+  if (!Array.isArray(projectConfig?.subModules)) return []
   const inputs = { ...step.inputs }
   delete inputs.materialized
 
-  return projectFacet.config.subModules.map((module: any) => ({
+  return projectConfig.subModules.map((module: any) => ({
     ...inputs.task,
     bind: {
       target: module.name,

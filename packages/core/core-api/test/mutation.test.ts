@@ -27,7 +27,7 @@ describe('ContextMutator', () => {
     it('should set `name` and report mutation', () => {
       // Given
       const { ctx, mutator, mutations } = makeFixture()
-      const actor = ctx.getActor('source', 'my-actor')
+      const actor = ctx.getActor('my-actor', 'source')
 
       // When
       mutator.setActorProperty(actor, 'name', 'Stig-Britt')
@@ -49,7 +49,7 @@ describe('ContextMutator', () => {
     it('should add an element to an array member and report mutation', () => {
       // Given
       const { ctx, mutator, mutations } = makeFixture()
-      const actor = ctx.getActor('source', 'my-actor')
+      const actor = ctx.getActor('my-actor', 'source')
 
       // When
       mutator.addActorElement(actor, 'subModules', 'spiffy-module')

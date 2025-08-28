@@ -26,7 +26,7 @@ describe('WhimbrelContext implementation', () => {
     })
     it('should get source actor by id', async () => {
       // When
-      const result = ctx.getActor('source', 'other-actor')
+      const result = ctx.getActor('other-actor', 'source')
 
       // Then
       expect(result).toBe(TEST_ACTOR__OTHER_ACTOR)
@@ -34,7 +34,7 @@ describe('WhimbrelContext implementation', () => {
 
     it('should get source actor by root path filter', async () => {
       // When
-      const result = ctx.getActor('source', { root: '/tmp/elsewhere' })
+      const result = ctx.getActor({ root: '/tmp/elsewhere' }, 'source')
 
       // Then
       expect(result).toBe(TEST_ACTOR__OTHER_ACTOR)

@@ -83,15 +83,23 @@ export const makeWhimbrelContext = async (
     acceptMutation: acceptMutation ?? (null as AcceptMutationHandler),
     acceptJournalEntry: acceptJournalEntry ?? (null as AcceptJournalEntryHandler),
     emitEvent: (_event: WhimbrelEvent) => {},
-    getActor: (type: ActorType, criteria: ActorId | ActorFilter): Actor | undefined => {
+    getActor(identifier: ActorId | ActorFilter, type?: ActorType): Actor | undefined {
       switch (type) {
+        case undefined:
+          return getActorByCriteria(
+            {
+              ...ctx.sources,
+              ...ctx.targets,
+            },
+            identifier
+          )
         case 'source':
-          return getActorByCriteria(ctx.sources, criteria)
+          return getActorByCriteria(ctx.sources, identifier)
         case 'target':
-          return getActorByCriteria(ctx.targets, criteria)
+          return getActorByCriteria(ctx.targets, identifier)
         case 'rootTarget':
           return ctx.rootTarget
-            ? getActorByCriteria({ [ctx.rootTarget.id]: ctx.rootTarget }, criteria)
+            ? getActorByCriteria({ [ctx.rootTarget.id]: ctx.rootTarget }, identifier)
             : undefined
       }
     },

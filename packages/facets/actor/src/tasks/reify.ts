@@ -25,7 +25,7 @@ export const execute = async (ctx: WhimbrelContext) => {
 
   const projectConfig = actorFacetConfig<ProjectConfig>(actor, 'project')
   for (const sub of projectConfig?.subModules ?? []) {
-    const subActor = ctx.getActor('source', { root: sub.root })
+    const subActor = ctx.getActor({ root: sub.root })
     if (subActor) {
       mutator.addActorElement(actor, 'subModules', subActor.id)
     }

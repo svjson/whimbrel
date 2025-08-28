@@ -1,4 +1,4 @@
-import { Actor, ActorId, ActorType, GetActorFunction } from './actor'
+import { Actor, ActorFilter, ActorId, ActorType, GetActorFunction } from './actor'
 import { WhimbrelEvent } from './event'
 import {
   AcceptJournalEntryHandler,

@@ -79,7 +79,7 @@ const validateActorOperation = (
 
   if (typeof actor === 'string') {
     const actorId = actor
-    actor = ctx.getActor(type, actor)
+    actor = ctx.getActor(actor, type)
     if (!actor) {
       throw new WhimbrelError(`No ${type} with id '${actorId}' has been defined.`)
     }
@@ -89,7 +89,7 @@ const validateActorOperation = (
     throw new WhimbrelError(`Invalid ${type}: ${JSON.stringify(actor)}`)
   }
 
-  if (action === 'add' && ctx.getActor(type, actor.id)) {
+  if (action === 'add' && ctx.getActor(actor.id, type)) {
     throw new WhimbrelError(`Argument ${type} already defined: '${actor.id}'`)
   }
 

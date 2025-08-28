@@ -42,7 +42,7 @@ export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelConte
       ctx.target = null
       ctx.source = null
     },
-    getActor: (type: ActorType, id: ActorId) => undefined,
+    getActor: (id: ActorId, type?: ActorType) => undefined,
   }
 
   return ctx

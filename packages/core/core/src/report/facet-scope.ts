@@ -10,7 +10,7 @@ export const outputFacetScope = (ctx: WhimbrelContext, scopeKey: string) => {
 
   for (const actorId of actors) {
     ctx.log.info()
-    const actor = ctx.getActor('source', actorId) ?? ctx.getActor('target', actorId)
+    const actor = ctx.getActor(actorId)
     if (!actor) {
       ctx.log.banner('Facet Scope', actorId, facetId)
       ctx.log.warn(`Unknown actor: ${actorId}`)

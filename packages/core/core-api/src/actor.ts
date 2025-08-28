@@ -22,8 +22,8 @@ export interface ActorFilter {
  * actors, e.g, WhimbrelContext
  */
 export type GetActorFunction = (
-  type: ActorType,
-  actorId: ActorId | ActorFilter
+  identifier: ActorId | ActorFilter,
+  type?: ActorType
 ) => Actor | undefined
 
 /**
