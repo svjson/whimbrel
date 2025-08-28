@@ -37,9 +37,9 @@ export class PackageJSON extends JSONFile {
     content,
     disk,
   }: {
-    path: string
+    path?: string
     content: string | any
-    disk: FileSystem
+    disk?: FileSystem
   }) {
     super({ path, content, storage: disk, keyOrder: PACKAGE_JSON_KEY_ORDER })
   }
