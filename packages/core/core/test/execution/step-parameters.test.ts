@@ -78,9 +78,6 @@ describe('step-parameters', () => {
         },
         meta: {
           resolvedParameters: ['actor'],
-          originalInputs: {
-            actor: undefined,
-          },
         },
       })
     })

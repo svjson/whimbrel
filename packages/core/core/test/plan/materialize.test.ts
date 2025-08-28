@@ -105,8 +105,9 @@ describe('materialize', () => {
       expect(plan).toEqual({
         steps: [
           expect.objectContaining({
-            id: SOURCE__DEFINE,
+            id: `my-source:${SOURCE__DEFINE}`,
             bind: {
+              source: 'my-source',
               key: 'source',
             },
             inputs: {
@@ -137,8 +138,9 @@ describe('materialize', () => {
             },
             steps: [
               expect.objectContaining({
-                id: ACTOR__ANALYZE,
+                id: `my-source:${ACTOR__ANALYZE}`,
                 bind: {
+                  source: 'my-source',
                   key: 'source',
                 },
                 inputs: {
@@ -148,9 +150,10 @@ describe('materialize', () => {
                 },
                 steps: [
                   expect.objectContaining({
-                    id: ACTOR__DISCOVER_FACETS,
+                    id: `my-source:${ACTOR__DISCOVER_FACETS}`,
                     parameters: DiscoverFacets.parameters,
                     bind: {
+                      source: 'my-source',
                       key: 'source',
                     },
                     inputs: {},
@@ -158,8 +161,9 @@ describe('materialize', () => {
                 ],
               }),
               expect.objectContaining({
-                id: ACTOR__REIFY,
+                id: `my-source:${ACTOR__REIFY}`,
                 bind: {
+                  source: 'my-source',
                   key: 'source',
                 },
                 inputs: {
@@ -191,8 +195,9 @@ describe('materialize', () => {
       expect(plan).toEqual({
         steps: [
           expect.objectContaining({
-            id: TARGET__DEFINE,
+            id: `my-target:${TARGET__DEFINE}`,
             bind: {
+              target: 'my-target',
               key: 'target',
             },
             inputs: {
@@ -202,8 +207,9 @@ describe('materialize', () => {
             },
             steps: [
               expect.objectContaining({
-                id: ACTOR__ANALYZE,
+                id: `my-target:${ACTOR__ANALYZE}`,
                 bind: {
+                  target: 'my-target',
                   key: 'target',
                 },
                 inputs: {
@@ -213,9 +219,10 @@ describe('materialize', () => {
                 },
                 steps: [
                   expect.objectContaining({
-                    id: ACTOR__DISCOVER_FACETS,
+                    id: `my-target:${ACTOR__DISCOVER_FACETS}`,
                     parameters: DiscoverFacets.parameters,
                     bind: {
+                      target: 'my-target',
                       key: 'target',
                     },
                     inputs: {},
@@ -223,8 +230,9 @@ describe('materialize', () => {
                 ],
               }),
               expect.objectContaining({
-                id: ACTOR__REIFY,
+                id: `my-target:${ACTOR__REIFY}`,
                 bind: {
+                  target: 'my-target',
                   key: 'target',
                 },
                 inputs: {

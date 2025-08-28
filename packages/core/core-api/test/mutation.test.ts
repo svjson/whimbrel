@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { makeTestContext } from './fixtures'
-import { makeActor } from '.'
-import { ContextMutator } from '.'
+import { makeActor, ContextMutator } from '@src/index'
 
 describe('ContextMutator', () => {
   const makeFixture = () => {

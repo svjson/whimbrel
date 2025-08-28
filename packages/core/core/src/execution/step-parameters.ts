@@ -41,7 +41,9 @@ export const ensureStepParameters = (ctx: WhimbrelContext, step: ExecutionStep) 
  * Assign resolved value to inputs and mark as resolved
  */
 const resolveParameter = (step: ExecutionStep, param: string, value: any) => {
-  ;(step.meta.originalInputs ??= {})[param] = step.inputs[param]
+  if (step.inputs[param] !== undefined) {
+    ;(step.meta.originalInputs ??= {})[param] = step.inputs[param]
+  }
   step.inputs[param] = value
   ;(step.meta.resolvedParameters ??= []).push(param)
 }
@@ -52,14 +54,10 @@ const resolveParameter = (step: ExecutionStep, param: string, value: any) => {
  */
 const resolveDefault = (ctx: WhimbrelContext, details: TaskParameter): Promise<any> => {
   for (const candidate of details.defaults) {
-    // if (equal(Object.keys(candidate), ['bind'])) {
-
-    // } else {
     const resolved = resolve('object', ctx, candidate)
     if (resolved !== null && resolved !== undefined) {
       return resolved
     }
-    // }
   }
   return undefined
 }
@@ -74,6 +72,10 @@ const resolveDefault = (ctx: WhimbrelContext, details: TaskParameter): Promise<a
  */
 export const restoreInputs = (step: ExecutionStep): void => {
   for (const param of step.meta.resolvedParameters ?? []) {
-    step.inputs[param] = step.meta.originalInputs[param]
+    if (Object.hasOwn(step.meta.originalInputs ?? {}, param)) {
+      step.inputs[param] = step.meta.originalInputs[param]
+    } else {
+      delete step.inputs[param]
+    }
   }
 }
