@@ -16,6 +16,7 @@ export interface ActorMetaData {}
 export interface ActorFilter {
   name?: string
   root?: string
+  hasSubmodule?: ActorId
 }
 
 /**
