@@ -8,7 +8,13 @@ export {
 } from './event'
 export { FacetImplementationError, makeFacetModule } from './facet'
 export { toFileSystemReadOptions, toFileSystemWriteOptions } from './fs'
-export { makeTask, moduleTasks, NoOpExecution } from './task'
+export {
+  makeTask,
+  makeTaskParameter,
+  makeTaskParameters,
+  moduleTasks,
+  NoOpExecution,
+} from './task'
 export { Formatter, NullAppender, indent } from './log'
 export { defaultMutationHandler, ContextMutator } from './mutation'
 export {

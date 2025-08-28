@@ -94,6 +94,34 @@ export interface TaskPrototype {
   parameters?: Record<string, TaskParameterDeclaration>
 }
 
+export const makeTaskParameter = (entry: TaskParameterDeclaration) => {
+  return {
+    ...entry,
+    required: entry.required ?? false,
+    cli: entry.cli
+      ? {
+          positional: entry.cli.positional ?? false,
+          excludes: entry.cli.excludes ?? [],
+          sets: entry.cli.sets ?? {},
+        }
+      : {
+          positional: false,
+          excludes: [],
+          sets: {},
+        },
+    defaults: entry.defaults ?? [],
+  }
+}
+
+export const makeTaskParameters = (
+  proto: Record<string, TaskParameterDeclaration> = {}
+) => {
+  return Object.entries(proto ?? {}).reduce((result, [name, entry]) => {
+    result[name] = makeTaskParameter(entry)
+    return result
+  }, {} as TaskParameters)
+}
+
 /**
  * Construct a valid and fully formed Task instance from a
  * TaskPrototype, providing default values for properties not
@@ -109,25 +137,7 @@ export const makeTask = (proto: TaskPrototype): Task => {
     },
     execute: proto.execute ?? NoOpExecution,
     dryExecute: proto.dryExecute ?? proto.execute ?? NoOpExecution,
-    parameters: Object.entries(proto.parameters ?? {}).reduce((result, [name, entry]) => {
-      result[name] = {
-        ...entry,
-        required: entry.required ?? false,
-        cli: entry.cli
-          ? {
-              positional: entry.cli.positional ?? false,
-              excludes: entry.cli.excludes ?? [],
-              sets: entry.cli.sets ?? {},
-            }
-          : {
-              positional: false,
-              excludes: [],
-              sets: {},
-            },
-        defaults: entry.defaults ?? [],
-      }
-      return result
-    }, {} as TaskParameters),
+    parameters: makeTaskParameters(proto.parameters),
   }
 }
 

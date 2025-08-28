@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import { ensureStepParameters } from '@src/execution/step-parameters'
-import { ExecutionStep, makeActor, makeTask, newStepResult } from '@whimbrel/core-api'
+import {
+  ExecutionStep,
+  makeActor,
+  makeTask,
+  makeTaskParameters,
+  newStepResult,
+} from '@whimbrel/core-api'
 import { makeWhimbrelContext } from '@src/index'
 
 describe('step-parameters', () => {
@@ -50,13 +56,13 @@ describe('step-parameters', () => {
         expectedResult: newStepResult(),
         inputs: {},
         bind: {},
-        parameters: {
+        parameters: makeTaskParameters({
           actor: {
             type: 'actor',
             required: true,
             defaults: [{ ref: 'source' }],
           },
-        },
+        }),
         meta: {},
         treeState: { state: 'default' },
         steps: [],
@@ -101,13 +107,13 @@ describe('step-parameters', () => {
           },
         },
         bind: {},
-        parameters: {
+        parameters: makeTaskParameters({
           actor: {
             type: 'actor',
             required: true,
             defaults: [],
           },
-        },
+        }),
         meta: {},
         treeState: { state: 'default' },
         steps: [],
