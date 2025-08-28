@@ -9,7 +9,7 @@
     "dist"
   ],
   "bin": {
-    "whim": "./dist/index.cjs"
+    "whim": "dist/index.cjs"
   },
   "exports": {
     ".": {
