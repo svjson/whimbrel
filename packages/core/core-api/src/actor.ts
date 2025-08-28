@@ -14,6 +14,7 @@ export interface ActorMetaData {}
  * Filter used for searching for actors
  */
 export interface ActorFilter {
+  name?: string
   root?: string
 }
 

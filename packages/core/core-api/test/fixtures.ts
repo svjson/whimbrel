@@ -35,8 +35,8 @@ export const makeTestContext = (
     step: makeNullExecutionStep(),
     options: cmdOpts,
     getActor: function (
-      type: ActorType,
-      actorId: ActorId | ActorFilter
+      actorId: ActorId | ActorFilter,
+      type?: ActorType
     ): Actor | undefined {
       switch (type) {
         case 'source':

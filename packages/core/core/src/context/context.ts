@@ -33,6 +33,7 @@ const getActorByCriteria = (
 
   return Object.values(coll).find((actor) => {
     if (criteria.root && actor.root === criteria.root) return actor
+    if (criteria.name && actor.name === criteria.name) return actor
   })
 }
 

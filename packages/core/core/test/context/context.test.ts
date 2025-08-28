@@ -5,6 +5,7 @@ import { Actor, makeActor, WhimbrelContext } from '@src/index'
 describe('WhimbrelContext implementation', () => {
   const TEST_ACTOR__MY_ACTOR: Actor = makeActor({
     id: 'my-actor',
+    name: 'MyActor',
     root: '/tmp/somewhere',
   })
 
@@ -38,6 +39,22 @@ describe('WhimbrelContext implementation', () => {
 
       // Then
       expect(result).toBe(TEST_ACTOR__OTHER_ACTOR)
+    })
+
+    it('should get source actor by name filter', async () => {
+      // When
+      const result = ctx.getActor({ name: 'MyActor' }, 'source')
+
+      // Then
+      expect(result).toBe(TEST_ACTOR__MY_ACTOR)
+    })
+
+    it('should get actor by name filter, without type spec', async () => {
+      // When
+      const result = ctx.getActor({ name: 'MyActor' })
+
+      // Then
+      expect(result).toBe(TEST_ACTOR__MY_ACTOR)
     })
   })
 })
