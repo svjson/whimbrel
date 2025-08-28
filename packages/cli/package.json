@@ -1,5 +1,5 @@
 {
-  "name": "whimbrel",
+  "name": "whimbrel-cli",
   "version": "0.0.3",
   "description": "CLI-based automation tool",
   "main": "./dist/index.cjs",
