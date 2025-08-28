@@ -1,10 +1,13 @@
 {
   "name": "whimbrel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "CLI-based automation tool",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "bin": {
     "whim": "./dist/index.cjs"
   },
@@ -46,6 +49,7 @@
   "dependencies": {
     "chalk": "^5.6.0",
     "commander": "^14.0.0",
+    "lodash.kebabcase": "^4.1.1",
     "ora": "^8.2.0",
     "strip-ansi": "^7.1.0"
   },

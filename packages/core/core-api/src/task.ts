@@ -29,7 +29,7 @@ export interface Task {
 /**
  * Enum-type for value types of TaskParameters.
  */
-export type RequirementType = 'actor' | 'string'
+export type RequirementType = 'actor' | 'string' | 'boolean'
 
 /**
  * Describes a parameter as a reference to a value existing elsewhere.
@@ -49,12 +49,22 @@ export type ValueProvider = ValueReference | string
 export interface TaskParameter {
   type: RequirementType
   required: boolean
+  cli: {
+    positional: boolean
+    excludes: string[]
+    sets: Record<string, any>
+  }
   defaults: ValueProvider[]
 }
 
 export interface TaskParameterDeclaration {
   type: RequirementType
   required?: boolean
+  cli?: {
+    positional?: boolean
+    excludes?: string[]
+    sets?: Record<string, any>
+  }
   defaults?: ValueProvider[]
 }
 
@@ -103,6 +113,17 @@ export const makeTask = (proto: TaskPrototype): Task => {
       result[name] = {
         ...entry,
         required: entry.required ?? false,
+        cli: entry.cli
+          ? {
+              positional: entry.cli.positional ?? false,
+              excludes: entry.cli.excludes ?? [],
+              sets: entry.cli.sets ?? {},
+            }
+          : {
+              positional: false,
+              excludes: [],
+              sets: {},
+            },
         defaults: entry.defaults ?? [],
       }
       return result

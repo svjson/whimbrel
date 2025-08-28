@@ -1,7 +1,14 @@
 import path from 'node:path'
 
 import { Command } from 'commander'
-import { Blueprint, Task, WhimbrelContext } from '@whimbrel/core-api'
+import kebabCase from 'lodash.kebabcase'
+import {
+  Blueprint,
+  ExecutionStepBlueprint,
+  Task,
+  WhimbrelContext,
+  WhimbrelError,
+} from '@whimbrel/core-api'
 import {
   inferPreparationSteps,
   makeRunner,
@@ -58,11 +65,19 @@ export const addExecuteTaskCommand = (program: Command, preParser: Command) => {
       const task = facets.lookupTask(taskId)
 
       for (const [param, spec] of Object.entries(task.parameters)) {
+        const kebabParam = kebabCase(param)
+
         if (spec.type === 'string') {
           if (spec.required) {
-            executeTaskCommand.requiredOption(`--${param} <${param}>`)
+            executeTaskCommand.requiredOption(`--${kebabParam} <${param}>`)
           } else {
-            executeTaskCommand.option(`--${param} <${param}>`)
+            executeTaskCommand.option(`--${kebabParam} <${param}>`)
+          }
+        } else if (spec.type === 'boolean') {
+          if (spec.required) {
+            executeTaskCommand.requiredOption(`--${kebabParam}`)
+          } else {
+            executeTaskCommand.option(`--${kebabParam}`)
           }
         }
       }
@@ -74,9 +89,22 @@ const resolveCommandInputs = (ctx: WhimbrelContext, task: Task) => {
   const inputs: any = {}
 
   for (const [param, spec] of Object.entries(task.parameters)) {
-    if (spec.type !== 'string') continue
+    for (const incompatibleParam of spec.cli.excludes) {
+      if (Object.hasOwn(opts, incompatibleParam)) {
+        throw new WhimbrelError(
+          `Option --${kebabCase(param)} cannot be used in combination with --${kebabCase(incompatibleParam)}`
+        )
+      }
+    }
+  }
+
+  for (const [param, spec] of Object.entries(task.parameters)) {
+    if (!['string', 'boolean'].includes(spec.type)) continue
     if (Object.hasOwn(opts, param)) {
       inputs[param] = opts[param]
+      for (const [opt, val] of Object.entries(spec.cli.sets)) {
+        opts[opt] = val === '<<value>>' ? val : opts[param]
+      }
     }
   }
 
@@ -97,33 +125,37 @@ export const executeTask = async (
 ) => {
   const task = ctx.facets.lookupTask(taskId)
 
-  const submodules = (ctx.options as any).submodules
   const inputs = resolveCommandInputs(ctx, task)
+  const submodules = (ctx.options as any).submodules
+  const rootModule = (ctx.options as any).rootModule
 
   ctx.log.banner('Execute Task', taskId, targetDir)
 
+  const taskSteps: ExecutionStepBlueprint[] = []
+  if (rootModule) {
+    taskSteps.push({
+      type: taskId,
+      inputs,
+    })
+  }
+  if (submodules) {
+    taskSteps.push({
+      type: PROJECT__EACH_SUBMODULE,
+      inputs: {
+        ...inputs,
+        task: {
+          type: taskId,
+          inputs,
+        },
+      },
+      parameters: {
+        ...task.parameters,
+      },
+    })
+  }
+
   const blueprint: Blueprint = {
-    steps: [
-      ...inferPreparationSteps(ctx, task),
-      submodules
-        ? {
-            type: PROJECT__EACH_SUBMODULE,
-            inputs: {
-              ...inputs,
-              task: {
-                type: taskId,
-                inputs,
-              },
-            },
-            parameters: {
-              ...task.parameters,
-            },
-          }
-        : {
-            type: taskId,
-            inputs,
-          },
-    ],
+    steps: [...inferPreparationSteps(ctx, task), ...taskSteps],
   }
 
   const plan = await materializePlan(ctx, blueprint)

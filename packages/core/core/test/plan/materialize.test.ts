@@ -77,6 +77,11 @@ describe('materialize', () => {
           actor: {
             type: 'actor',
             required: true,
+            cli: {
+              positional: false,
+              excludes: [],
+              sets: {},
+            },
             defaults: [{ ref: 'source' }, { ref: 'target' }],
           },
         },
