@@ -157,12 +157,12 @@ export class ContextMutator {
    */
   addSource(source: Actor) {
     const validated = validateActorOperation(this.ctx, 'source', 'add', source)
-    this.ctx.sources[validated.name] = validated
+    this.ctx.sources[validated.id] = validated
     this.ctx.acceptMutation({
       mutationType: 'ctx',
       type: 'add',
       path: 'sources',
-      key: validated.name,
+      key: validated.id,
     })
   }
 
@@ -176,12 +176,12 @@ export class ContextMutator {
    */
   addTarget(target: Actor) {
     const validated = validateActorOperation(this.ctx, 'target', 'add', target)
-    this.ctx.targets[validated.name] = validated
+    this.ctx.targets[validated.id] = validated
     this.ctx.acceptMutation({
       mutationType: 'ctx',
       type: 'add',
       path: 'targets',
-      key: validated.name,
+      key: validated.id,
     })
   }
 
@@ -227,7 +227,7 @@ export class ContextMutator {
       mutationType: 'ctx',
       type: 'set',
       path: 'target',
-      key: validated.name,
+      key: validated.id,
     })
   }
 
@@ -248,7 +248,7 @@ export class ContextMutator {
       mutationType: 'ctx',
       type: 'set',
       path: 'rootTarget',
-      key: validated.name,
+      key: validated.id,
     })
   }
 }

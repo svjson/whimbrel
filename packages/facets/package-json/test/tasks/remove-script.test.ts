@@ -6,7 +6,7 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 
 import { makeFacetScope } from '@whimbrel/facet'
-import { Actor, makeActor, newStepResult } from '@whimbrel/core-api'
+import { makeActor, newStepResult } from '@whimbrel/core-api'
 import { RemoveScript, PACKAGE_JSON__REMOVE_SCRIPT } from '@src/tasks/remove-script'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })

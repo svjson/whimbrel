@@ -1,39 +1,40 @@
 {
   "name": "@whimbrel/turborepo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Turborepo Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.2",
-    "@whimbrel/facet": "^0.0.2",
-    "@whimbrel/package-json": "^0.0.2",
-    "@whimbrel/struct-file": "^0.0.1"
+    "@whimbrel/core-api": "^0.0.3",
+    "@whimbrel/facet": "^0.0.3",
+    "@whimbrel/package-json": "^0.0.3",
+    "@whimbrel/struct-file": "^0.0.3"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.0.2",
-    "@whimbrel/facet": "^0.0.2",
-    "@whimbrel/package-json": "^0.0.2",
-    "@whimbrel-test/tree-fixtures": "*",
-    "@whimbrel-test/context-fixtures": "*",
-    "@whimbrel/filesystem": "*",
+    "@whimbrel/core-api": "^0.0.3",
+    "@whimbrel/facet": "^0.0.3",
+    "@whimbrel/package-json": "^0.0.3",
+    "@whimbrel/struct-file": "^0.0.3",
+    "@whimbrel-test/tree-fixtures": "0.0.3",
+    "@whimbrel-test/context-fixtures": "0.0.3",
+    "@whimbrel/filesystem": "0.0.3",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",

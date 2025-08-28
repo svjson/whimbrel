@@ -1,26 +1,26 @@
 {
   "name": "@whimbrel-test/step-execution-fixtures",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "*",
-    "@whimbrel-test/step-fixtures": "*",
-    "@whimbrel-test/context-fixtures": "*"
+    "@whimbrel/core-api": "0.0.3",
+    "@whimbrel-test/step-fixtures": "0.0.3",
+    "@whimbrel-test/context-fixtures": "0.0.3"
   }
 }

@@ -161,4 +161,84 @@ describe('PackageJSON', () => {
       })
     })
   })
+
+  describe('updateDependency', () => {
+    it('should update dependency and keep semantics in `dependencies`', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        content: {
+          dependencies: {
+            'my-lib': '^5.8.3',
+          },
+        },
+      })
+
+      // When
+      const updatedp = pkgJson.updateDependency('my-lib', '6.0.0')
+
+      // Then
+      expect(updatedp).toBe(true)
+      expect(pkgJson.getContent()).toEqual({
+        dependencies: {
+          'my-lib': '^6.0.0',
+        },
+      })
+    })
+
+    it('should update dependency and keep semantics in both `peerDependencies` and `devDependencies`', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        content: {
+          devDependencies: {
+            'my-lib': '^5.8.3',
+          },
+          peerDependencies: {
+            'my-lib': '^5.8.3',
+          },
+        },
+      })
+
+      // When
+      const updatedp = pkgJson.updateDependency('my-lib', '6.0.0')
+
+      // Then
+      expect(updatedp).toBe(true)
+      expect(pkgJson.getContent()).toEqual({
+        devDependencies: {
+          'my-lib': '^6.0.0',
+        },
+        peerDependencies: {
+          'my-lib': '^6.0.0',
+        },
+      })
+    })
+
+    it('should do nothing if dependency is not present in package.json', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        content: {
+          devDependencies: {
+            'my-lib': '^5.8.3',
+          },
+          peerDependencies: {
+            'my-lib': '^5.8.3',
+          },
+        },
+      })
+
+      // When
+      const updatedp = pkgJson.updateDependency('other-lib', '6.0.0')
+
+      // Then
+      expect(updatedp).toBe(false)
+      expect(pkgJson.getContent()).toEqual({
+        devDependencies: {
+          'my-lib': '^5.8.3',
+        },
+        peerDependencies: {
+          'my-lib': '^5.8.3',
+        },
+      })
+    })
+  })
 })

@@ -3,6 +3,7 @@ import path from 'node:path'
 import { FileSystem, WhimbrelError } from '@whimbrel/core-api'
 import { ifFileExistsAt } from '@whimbrel/filesystem'
 import { ALPHA, COLLECT_UNKNOWN, JSONFile, KeyOrder } from '@whimbrel/struct-file'
+import { isVersion, updateVersionString } from '@src/lib'
 
 const PACKAGE_JSON_KEY_ORDER: KeyOrder = [
   'name',
@@ -50,6 +51,20 @@ export class PackageJSON extends JSONFile {
       Object.keys(this.get('devDependencies', {})).includes(dependency) ||
       Object.keys(this.get('peerDependencies', {})).includes(dependency)
     )
+  }
+
+  updateDependency(dependency: string, version: string): boolean {
+    let updated = false
+    ;['dependencies', 'devDependencies', 'peerDependencies'].forEach((depColl) => {
+      const currentVersion: string = this.get([depColl, dependency])
+      if (currentVersion && !isVersion(currentVersion, version)) {
+        const updatedVersion = updateVersionString(currentVersion, version)
+        this.set([depColl, dependency], updatedVersion)
+        updated = true
+      }
+    })
+
+    return updated
   }
 
   static async readIfExists(disk: FileSystem, filePath: string | string[]) {

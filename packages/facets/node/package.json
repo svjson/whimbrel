@@ -1,35 +1,35 @@
 {
   "name": "@whimbrel/node",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": ".gitignore Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.1",
-    "@whimbrel/facet": "^0.0.1",
-    "@whimbrel/flow": "^0.0.1"
+    "@whimbrel/core-api": "^0.0.3",
+    "@whimbrel/facet": "^0.0.3",
+    "@whimbrel/flow": "^0.0.3"
   },
   "dependencies": {
-    "@whimbrel/core-api": "*",
-    "@whimbrel/facet": "*",
-    "@whimbrel/flow": "*"
+    "@whimbrel/core-api": "0.0.3",
+    "@whimbrel/facet": "0.0.3",
+    "@whimbrel/flow": "0.0.3"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

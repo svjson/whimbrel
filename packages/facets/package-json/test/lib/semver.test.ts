@@ -5,6 +5,7 @@ import {
   versionString,
   updateVersion,
   updateVersionString,
+  isVersion,
 } from '@src/index'
 
 describe('SemVer', () => {
@@ -126,6 +127,15 @@ describe('SemVer', () => {
 
     it('should update a semver and keep suffix', () => {
       expect(updateVersionString('0.1.0-rc.1', '1.2.8')).toEqual('1.2.8-rc.1')
+    })
+  })
+
+  describe('isVersion', () => {
+    it('should return true for equal version numbers', () => {
+      expect(isVersion('0.0.1', '0.0.1')).toBe(true)
+      expect(isVersion('0.0.1', '^0.0.1')).toBe(true)
+      expect(isVersion('^0.0.1', '^0.0.1')).toBe(true)
+      expect(isVersion('^0.0.1', '0.0.1')).toBe(true)
     })
   })
 })
