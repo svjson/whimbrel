@@ -1,6 +1,6 @@
 import { makeFacetModule, moduleTasks } from '@whimbrel/core-api'
-import { detect } from './features'
-import { AddScript, RemoveScript, SetVersion } from './tasks'
+import { detect, applyLicenseAugmentation } from './features'
+import { AddScript, RemoveScript, SetProperty, SetVersion } from './tasks'
 import { queryIndex } from './query'
 
 export {
@@ -13,12 +13,17 @@ export {
 
 export { PackageJSON, WorkspaceAdapter } from './adapters'
 
-export { AddScript, RemoveScript, SetVersion }
+export { AddScript, RemoveScript, SetProperty, SetVersion }
 
 export default makeFacetModule({
   id: 'package.json',
   implicits: [{ facet: 'node', scope: { roles: ['engine'] } }, 'project'],
-  tasks: moduleTasks(AddScript, RemoveScript, SetVersion),
+  tasks: moduleTasks(AddScript, RemoveScript, SetProperty, SetVersion),
   detect,
+  taskAugmentations: {
+    'license:apply': {
+      steps: applyLicenseAugmentation,
+    },
+  },
   queryIndex,
 })

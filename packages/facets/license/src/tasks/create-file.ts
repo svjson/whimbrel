@@ -1,7 +1,7 @@
 import licenses from 'spdx-license-list/full.js'
 
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
-import { beginFlow } from '../../../../lib/flow/dist'
+import { beginFlow } from '@whimbrel/flow'
 import path from 'node:path'
 import {
   resolveAuthor,
