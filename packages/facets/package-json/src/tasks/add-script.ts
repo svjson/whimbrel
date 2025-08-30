@@ -24,7 +24,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const AddScript = makeTask({
   id: PACKAGE_JSON__ADD_SCRIPT,
   name: 'Add package.json Script',
-  execute: execute,
+  execute,
   parameters: {
     target: {
       type: 'actor',
