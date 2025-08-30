@@ -126,8 +126,8 @@ export const executeTask = async (
   const task = ctx.facets.lookupTask(taskId)
 
   const inputs = resolveCommandInputs(ctx, task)
-  const submodules = (ctx.options as any).submodules
-  const rootModule = (ctx.options as any).rootModule
+  const submodules: boolean = (ctx.options as any).submodules
+  const rootModule: boolean = (ctx.options as any).rootModule || !submodules
 
   ctx.log.banner('Execute Task', taskId, targetDir)
 
