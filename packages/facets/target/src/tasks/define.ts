@@ -14,6 +14,23 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 
 export const TARGET__DEFINE = 'target:define'
 
+const duplicateGuard = (ctx: WhimbrelContext, root: string, name: string) => {
+  const existing = ctx.getActor(name, 'target')
+  if (existing) {
+    // Same actor - let runner decide consequences
+    if (existing.root === root) return name
+
+    let indexed = 1
+    while (indexed < 10) {
+      const candidate = `${name}-${indexed}`
+      if (!ctx.getActor(`name-${indexed}`, 'target')) return candidate
+      indexed++
+    }
+  }
+
+  return name
+}
+
 const resolveTargetName = async (
   ctx: WhimbrelContext,
   targetDefinitions: any | any[]
@@ -26,7 +43,8 @@ const resolveTargetName = async (
 
     const sourcePath = await resolve('path', ctx, targetDefinition, 'path')
     if (sourcePath) {
-      return path.basename(sourcePath)
+      const candidate = path.basename(sourcePath)
+      return duplicateGuard(ctx, sourcePath, candidate)
     }
   }
 
