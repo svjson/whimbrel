@@ -104,13 +104,13 @@ export class DefaultFormatter implements Formatter {
 
     const fileChanges = {
       create: 0,
-      change: 0,
+      modify: 0,
       delete: 0,
     }
 
     const dirChanges = {
       create: 0,
-      change: 0,
+      modify: 0,
       delete: 0,
     }
 
