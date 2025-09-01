@@ -47,6 +47,9 @@ export class JSONFile extends StructuredFile<any, string> {
   }
 
   async write() {
+    if (!this.storage) {
+      throw new Error('No storage attached to this instance.')
+    }
     return this.storage.writeJson(this.path, this.content)
   }
 }
