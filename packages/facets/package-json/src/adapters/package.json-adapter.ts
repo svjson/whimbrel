@@ -40,6 +40,20 @@ export class PackageJSON extends JSONFile {
     super({ ...args[0], keyOrder: PACKAGE_JSON_KEY_ORDER })
   }
 
+  isDeclaredEngine(name: string) {
+    return Boolean(this.get(['engines', name]))
+  }
+
+  isDeclaredPackageManager(mgrName: string) {
+    const val = this.get<string>('packageManager')
+    if (val) {
+      const [name] = val.split('@')
+      if (name === mgrName) {
+        return true
+      }
+    }
+
+    return this.isDeclaredEngine(mgrName)
   }
 
   hasDependency(dependency: string) {

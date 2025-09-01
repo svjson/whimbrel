@@ -26,7 +26,7 @@ export const SetProperty = makeTask({
   name: 'Set package.json property',
   execute,
   parameters: {
-    actor: {
+    target: {
       type: 'actor',
       required: true,
       defaults: [{ ref: 'target' }],

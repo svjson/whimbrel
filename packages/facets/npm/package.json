@@ -24,13 +24,16 @@
   "peerDependencies": {
     "@whimbrel/core-api": "^0.0.3",
     "@whimbrel/facet": "^0.0.3",
-    "@whimbrel/flow": "^0.0.3"
+    "@whimbrel/flow": "^0.0.3",
+    "@whimbrel/package-json": "^0.0.3",
+    "@whimbrel/project": "^0.0.3"
   },
   "devDependencies": {
     "@whimbrel/core-api": "^0.0.3",
-    "@whimbrel/project": "^0.0.3",
     "@whimbrel/facet": "^0.0.3",
     "@whimbrel/flow": "^0.0.3",
+    "@whimbrel/package-json": "^0.0.3",
+    "@whimbrel/project": "^0.0.3",
     "@whimbrel-test/tree-fixtures": "0.0.3",
     "@whimbrel-test/context-fixtures": "0.0.3",
     "@types/node": "^24.3.0",

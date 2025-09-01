@@ -1,72 +1,14 @@
 import path from 'node:path'
 
-import { DetectedFacet, DetectFunction, WhimbrelContext } from '@whimbrel/core-api'
-import { readPath } from '@whimbrel/walk'
+import { DetectedFacet, DetectFunction } from '@whimbrel/core-api'
 import { ProjectConfig } from '@whimbrel/project'
-
-const isDeclared = (pkgJson: any) => {
-  const packageManager = pkgJson.packageManager
-  const asEngine = readPath(pkgJson, 'engines.npm')
-  if (packageManager) {
-    const [name] = packageManager.split('@')
-    if (name === 'npm') {
-      return true
-    }
-  } else if (asEngine) {
-    return true
-  }
-  return false
-}
-
-const evaluateGlob = async (
-  ctx: WhimbrelContext,
-  glob: string,
-  root: string
-): Promise<string[]> => {
-  let depth = 0
-  if (glob.endsWith('/*')) {
-    depth = 1
-  } else if (glob.endsWith('/**')) {
-    depth = undefined
-  }
-
-  const scanRoot =
-    typeof depth === 'number'
-      ? glob
-          .split('/')
-          .filter((p) => !p.includes('*'))
-          .join('/')
-      : glob
-
-  const pkgJsonPaths = await ctx.disk.scanDir(path.join(root, scanRoot), {
-    depth,
-    filter: (e) => path.basename(e.path) === 'package.json',
-    ignorePredicate: (e) => ['node_modules', '.git'].includes(path.basename(e.path)),
-  })
-
-  return pkgJsonPaths.map((e) => path.dirname(e.path))
-}
-
-const resolveWorkspaces = async (
-  ctx: WhimbrelContext,
-  workspaces: string[],
-  root: string
-) => {
-  const result: string[] = []
-  for (const workspaceEntry of workspaces) {
-    result.push(...(await evaluateGlob(ctx, workspaceEntry, root)))
-  }
-
-  return result
-}
+import { PackageJSON, resolveWorkspaces } from '@whimbrel/package-json'
 
 export const detect: DetectFunction = async (ctx, dir) => {
-  const packageJsonPath = path.join(dir, 'package.json')
+  const pkgJson = await PackageJSON.readIfExists(ctx.disk, dir)
 
-  if (await ctx.disk.exists(packageJsonPath)) {
-    const pkgJson = await ctx.disk.readJson(packageJsonPath)
-
-    let detected = isDeclared(pkgJson)
+  if (pkgJson) {
+    let detected = pkgJson.isDeclaredPackageManager('npm')
     const config: any = {}
     const detectResult: DetectedFacet = {
       detected: true,
@@ -77,12 +19,17 @@ export const detect: DetectFunction = async (ctx, dir) => {
         },
       },
     }
-    const workspaces = pkgJson.workspaces
-    if (workspaces && (Array.isArray(workspaces) || Array.isArray(workspaces.packages))) {
+    const workspaces = pkgJson.get('workspaces')
+    if (
+      workspaces &&
+      (Array.isArray(workspaces) || Array.isArray(pkgJson.get('workspaces.packages')))
+    ) {
       detected = true
       config.workspaceRoot = true
 
-      const globs = Array.isArray(workspaces) ? workspaces : workspaces.packages
+      const globs = Array.isArray(workspaces)
+        ? workspaces
+        : pkgJson.get<string[]>('workspaces.packages')
 
       const subModules = await resolveWorkspaces(ctx, globs, dir)
 
