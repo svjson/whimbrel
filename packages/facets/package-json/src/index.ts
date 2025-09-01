@@ -8,6 +8,7 @@ export {
   parseVersion,
   updateVersion,
   updateVersionString,
+  resolveWorkspaces,
   versionString,
 } from './lib'
 

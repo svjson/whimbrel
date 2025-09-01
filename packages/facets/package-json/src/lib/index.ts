@@ -8,3 +8,5 @@ export {
   updateVersionString,
   isVersion,
 } from './semver'
+
+export { resolveWorkspaces } from './glob'
