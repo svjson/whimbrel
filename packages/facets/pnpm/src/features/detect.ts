@@ -1,29 +1,15 @@
 import path from 'node:path'
 
 import { DetectedFacet, DetectFunction } from '@whimbrel/core-api'
-import { readPath } from '@whimbrel/walk'
-
-const isDeclared = (pkgJson: any) => {
-  const packageManager = pkgJson.packageManager
-  const asEngine = readPath(pkgJson, 'engines.pnpm')
-  if (packageManager) {
-    const [name] = packageManager.split('@')
-    if (name === 'pnpm') {
-      return true
-    }
-  } else if (asEngine) {
-    return true
-  }
-  return false
-}
+import { ProjectConfig } from '@whimbrel/project'
+import { PackageJSON, resolveWorkspaces } from '@whimbrel/package-json'
+import { PnpmWorkspacesYaml } from '@src/adapters/pnpm-workspaces.yaml-adapter'
 
 export const detect: DetectFunction = async (ctx, dir) => {
-  const packageJsonPath = path.join(dir, 'package.json')
+  const pkgJson = await PackageJSON.readIfExists(ctx.disk, dir)
 
-  if (await ctx.disk.exists(packageJsonPath)) {
-    const pkgJson = await ctx.disk.readJson(packageJsonPath)
-
-    let detected = isDeclared(pkgJson)
+  if (pkgJson) {
+    let detected = pkgJson.isDeclaredPackageManager('pnpm')
     const config: any = {}
     const detectResult: DetectedFacet = {
       detected: true,
@@ -33,6 +19,35 @@ export const detect: DetectFunction = async (ctx, dir) => {
           config,
         },
       },
+    }
+
+    const wsYaml = await PnpmWorkspacesYaml.readIfExists(ctx.disk, dir)
+    if (wsYaml) {
+      const wsPackages = wsYaml.get('packages')
+      if (Array.isArray(wsPackages) && wsPackages.length) {
+        detected = true
+        config.workspaceRoot = true
+
+        const subModules = await resolveWorkspaces(ctx, wsPackages, dir)
+
+        detectResult.advice = {
+          facets: [
+            {
+              facet: 'project',
+              scope: {
+                config: {
+                  type: 'monorepo',
+                  subModules: subModules.map((modulePath) => ({
+                    name: path.basename(modulePath),
+                    root: modulePath,
+                    relativeRoot: path.relative(dir, modulePath),
+                  })),
+                } as ProjectConfig,
+              },
+            },
+          ],
+        }
+      }
     }
 
     if (detected) {

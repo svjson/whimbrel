@@ -46,7 +46,11 @@ export const makePopulateFixtures = (ensureFs: (fs: FileSystem) => FileSystem) =
           await populateDirectory(path.join(dir, dirName), subDirSpec, fsImpl)
         } else if (typeof entry === 'object') {
           for (const [fileName, contentSpec] of Object.entries(entry)) {
-            if (typeof contentSpec === 'object') {
+            if (Array.isArray(contentSpec)) {
+              await fsImpl.write(path.join(dir, fileName), contentSpec.join('\n'), {
+                report: false,
+              })
+            } else if (typeof contentSpec === 'object') {
               await fsImpl.writeJson(path.join(dir, fileName), contentSpec, {
                 report: false,
               })
