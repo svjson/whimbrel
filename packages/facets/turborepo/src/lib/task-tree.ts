@@ -1,5 +1,4 @@
 import { TurboJSON } from '@src/adapters/turbo.json-adapter'
-import { WhimbrelContext } from '@whimbrel/core-api'
 
 export type TaskNode = {
   name: string
