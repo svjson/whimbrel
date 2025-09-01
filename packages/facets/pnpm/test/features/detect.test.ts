@@ -81,7 +81,7 @@ describe('detect', () => {
           },
         },
         {
-          'pnpm-workspaces.yaml': ['packages:', ' - packages/*'],
+          'pnpm-workspace.yaml': ['packages:', ' - packages/*'],
         },
         [
           'packages',

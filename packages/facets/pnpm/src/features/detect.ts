@@ -3,7 +3,7 @@ import path from 'node:path'
 import { DetectedFacet, DetectFunction } from '@whimbrel/core-api'
 import { ProjectConfig } from '@whimbrel/project'
 import { PackageJSON, resolveWorkspaces } from '@whimbrel/package-json'
-import { PnpmWorkspacesYaml } from '@src/adapters/pnpm-workspaces.yaml-adapter'
+import { PnpmWorkspaceYaml } from '@src/index'
 
 export const detect: DetectFunction = async (ctx, dir) => {
   const pkgJson = await PackageJSON.readIfExists(ctx.disk, dir)
@@ -21,7 +21,7 @@ export const detect: DetectFunction = async (ctx, dir) => {
       },
     }
 
-    const wsYaml = await PnpmWorkspacesYaml.readIfExists(ctx.disk, dir)
+    const wsYaml = await PnpmWorkspaceYaml.readIfExists(ctx.disk, dir)
     if (wsYaml) {
       const wsPackages = wsYaml.get('packages')
       if (Array.isArray(wsPackages) && wsPackages.length) {
