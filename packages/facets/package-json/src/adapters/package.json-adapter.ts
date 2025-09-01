@@ -1,8 +1,11 @@
-import path from 'node:path'
-
-import { FileSystem, WhimbrelError } from '@whimbrel/core-api'
-import { ifFileExistsAt } from '@whimbrel/filesystem'
-import { ALPHA, COLLECT_UNKNOWN, JSONFile, KeyOrder } from '@whimbrel/struct-file'
+import {
+  ALPHA,
+  COLLECT_UNKNOWN,
+  JSONFile,
+  KeyOrder,
+  makeReadIfExists,
+  makeRead,
+} from '@whimbrel/struct-file'
 import { isVersion, updateVersionString } from '@src/lib'
 
 const PACKAGE_JSON_KEY_ORDER: KeyOrder = [
@@ -33,16 +36,10 @@ const PACKAGE_JSON_KEY_ORDER: KeyOrder = [
 ] as const
 
 export class PackageJSON extends JSONFile {
-  constructor({
-    path,
-    content,
-    disk,
-  }: {
-    path?: string
-    content: string | any
-    disk?: FileSystem
-  }) {
-    super({ path, content, storage: disk, keyOrder: PACKAGE_JSON_KEY_ORDER })
+  constructor(...args: ConstructorParameters<typeof JSONFile>) {
+    super({ ...args[0], keyOrder: PACKAGE_JSON_KEY_ORDER })
+  }
+
   }
 
   hasDependency(dependency: string) {
@@ -67,21 +64,13 @@ export class PackageJSON extends JSONFile {
     return updated
   }
 
-  static async readIfExists(disk: FileSystem, filePath: string | string[]) {
-    return await ifFileExistsAt(disk, filePath, 'package.json', async (fPath) => {
-      return new PackageJSON({
-        path: fPath,
-        disk,
-        content: await disk.readJson(fPath),
-      })
-    })
-  }
+  static readIfExists = makeReadIfExists(
+    PackageJSON,
+    'package.json',
+    async (disk, fPath) => disk.read(fPath, 'utf8')
+  )
 
-  static async read(disk: FileSystem, filePath: string | string[]): Promise<PackageJSON> {
-    const pkgJson = await this.readIfExists(disk, filePath)
-    if (pkgJson) return pkgJson
-    throw new WhimbrelError(
-      `package.json file not found: ${Array.isArray(filePath) ? path.join(...filePath) : filePath}`
-    )
-  }
+  static read = makeRead(PackageJSON, 'package.json', async (disk, fPath) =>
+    disk.read(fPath, 'utf8')
+  )
 }

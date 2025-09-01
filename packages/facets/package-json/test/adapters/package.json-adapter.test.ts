@@ -9,6 +9,37 @@ import { FileSystem } from '@whimbrel/core-api'
 const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('PackageJSON', () => {
+  describe('read and write', () => {
+    it('should read file from storage and write changes', async () => {
+      // Given
+      const ctx = await memFsContext()
+      const dirRoot = await createDirectory(
+        [
+          {
+            'package.json': {
+              name: 'some-package',
+              version: '0.1.0',
+            },
+          },
+        ],
+        ctx.disk
+      )
+
+      const pkgJson = await PackageJSON.read(ctx.disk, dirRoot)
+
+      // When
+      pkgJson.set('type', 'module')
+      await pkgJson.write()
+
+      // Then
+      expect(await ctx.disk.readJson(path.join(dirRoot, 'package.json'))).toEqual({
+        name: 'some-package',
+        version: '0.1.0',
+        type: 'module',
+      })
+    })
+  })
+
   describe('hasDependency', () => {
     it('should find dependencies listed in dependencies and devDependencies', () => {
       // Given
