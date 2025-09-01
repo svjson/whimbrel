@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/facet",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Facet API for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,12 +22,12 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.3",
-    "@whimbrel/array": "^0.0.3"
+    "@whimbrel/core-api": "^0.0.4",
+    "@whimbrel/array": "^0.0.4"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.0.3",
-    "@whimbrel/array": "^0.0.3",
+    "@whimbrel/core-api": "^0.0.4",
+    "@whimbrel/array": "^0.0.4",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-tsconfig-paths": "^5.1.4",

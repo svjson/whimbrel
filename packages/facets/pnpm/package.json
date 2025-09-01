@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/pnpm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "pnpm Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,20 +22,20 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.3",
-    "@whimbrel/facet": "^0.0.3",
-    "@whimbrel/flow": "^0.0.3",
-    "@whimbrel/package-json": "^0.0.3",
-    "@whimbrel/project": "^0.0.3"
+    "@whimbrel/core-api": "^0.0.4",
+    "@whimbrel/facet": "^0.0.4",
+    "@whimbrel/flow": "^0.0.4",
+    "@whimbrel/package-json": "^0.0.4",
+    "@whimbrel/project": "^0.0.4"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.0.3",
-    "@whimbrel/facet": "^0.0.3",
-    "@whimbrel/flow": "^0.0.3",
-    "@whimbrel/package-json": "^0.0.3",
-    "@whimbrel/project": "^0.0.3",
-    "@whimbrel-test/tree-fixtures": "0.0.3",
-    "@whimbrel-test/context-fixtures": "0.0.3",
+    "@whimbrel/core-api": "^0.0.4",
+    "@whimbrel/facet": "^0.0.4",
+    "@whimbrel/flow": "^0.0.4",
+    "@whimbrel/package-json": "^0.0.4",
+    "@whimbrel/project": "^0.0.4",
+    "@whimbrel-test/tree-fixtures": "0.0.4",
+    "@whimbrel-test/context-fixtures": "0.0.4",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
