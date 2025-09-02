@@ -9,7 +9,7 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import { makeFacetScope } from '@whimbrel/facet'
 import NodeJSFacet from '@whimbrel/node'
 import PackageJsonFacet from '@whimbrel/package-json'
-import LicenseFacet from '@whimbrel/license'
+import LicenseFacet from '@src/index'
 import { makeActor, newStepResult } from '@whimbrel/core-api'
 
 const { stepExecutionTest } = stepExecutionFixture({ describe, expect, test })
