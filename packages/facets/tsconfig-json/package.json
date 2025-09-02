@@ -24,12 +24,14 @@
   "peerDependencies": {
     "@whimbrel/core-api": "^0.0.4",
     "@whimbrel/facet": "^0.0.4",
-    "@whimbrel/flow": "^0.0.4"
+    "@whimbrel/flow": "^0.0.4",
+    "@whimbrel/struct-file": "^0.0.4"
   },
   "devDependencies": {
     "@whimbrel/core-api": "0.0.4",
     "@whimbrel/facet": "0.0.4",
     "@whimbrel/flow": "0.0.4",
+    "@whimbrel/struct-file": "^0.0.4",
     "@whimbrel-test/tree-fixtures": "0.0.4",
     "@whimbrel-test/context-fixtures": "0.0.4",
     "@types/node": "^24.3.0",
