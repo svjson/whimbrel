@@ -21,6 +21,9 @@ export const addCommands = (program: Command) => {
       preParserCmd.allowExcessArguments()
       preParserCmd.allowUnknownOption()
     }
+    preParserCmd.helpOption(false)
+    preParserCmd.helpCommand(false)
+    preParserCmd.allowUnknownOption(true)
   }
 
   return preParserProgram
