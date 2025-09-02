@@ -27,6 +27,7 @@ export const withCommonOptions = (groups: OptionGroup[], cmdBuilder: Command) =>
   if (groups.includes('step-tree')) {
     cmdBuilder.option('--dry-run', 'Dry run only')
     cmdBuilder.option('-t, --show-step-ids', 'Output Step ID for each step')
+    cmdBuilder.option('-c, --cat <fileRef>', 'Output contents of a file, post execution')
     cmdBuilder.option(
       '-d, --show-facet-details [pattern]',
       'Output Facet details for one or all actors.'

@@ -123,7 +123,9 @@ export class DefaultRunner extends Runner {
       const execTree = buildExecTree(this.ctx, this.plan)
       return await this.executeTree(execTree)
     } finally {
-      context.restoreFileSystem()
+      if (this.ctx.materializationRun) {
+        context.restoreFileSystem()
+      }
       context.setDryRun(false)
     }
   }

@@ -50,6 +50,7 @@ export interface WhimbrelContextOptions {
  * @property {boolean} [silent] - If true, suppresses all output except errors.
  * @property {boolean} [verbose] - If true, enables verbose output.
  * @property {string} [haltAt] - If set, halts execution at the specified step ID.
+ * @property {string} [cat] - Outputs the contents of a file post execution
  * @property {boolean} [showStepIds] - If true, shows step IDs in output.
  * @property {Record<string, string>} [prop] - Additional properties to pass to the command.
  */
@@ -58,6 +59,7 @@ export interface WhimbrelCommandOptions {
   silent?: boolean
   verbose?: boolean
   haltAt?: string
+  cat?: string
   showStepIds?: boolean
   showFacetDetails?: string
   prop: Record<string, string>
