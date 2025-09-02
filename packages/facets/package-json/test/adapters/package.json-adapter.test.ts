@@ -45,7 +45,7 @@ describe('PackageJSON', () => {
       // Given
       const pkgJson = new PackageJSON({
         path: 'package.json',
-        disk: {} as FileSystem,
+        storage: {} as FileSystem,
         content: {
           dependencies: {
             'fast-deep-equal': '^3.1.3',
@@ -71,7 +71,7 @@ describe('PackageJSON', () => {
       // Given
       const pkgJson = new PackageJSON({
         path: 'package.json',
-        disk: {} as FileSystem,
+        storage: {} as FileSystem,
         content: {
           peerDependencies: {
             'fast-deep-equal': '^3.1.3',
