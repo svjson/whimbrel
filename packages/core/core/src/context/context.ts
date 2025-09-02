@@ -74,6 +74,7 @@ export const makeWhimbrelContext = async (
   const ctx: WhimbrelContext = {
     cwd: cwd ?? dir ?? '.',
     disk: contextOptions.disk ?? DiskFileSystem,
+    materializationRun: false,
     dryRun: false,
     facets: facets ?? new DefaultFacetRegistry(),
     formatter: null as Formatter,

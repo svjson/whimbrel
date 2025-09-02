@@ -20,6 +20,7 @@ export class ContextOperator {
 
   constructor(private ctx: WhimbrelContext) {
     this.originalAppender = ctx.log
+    this.originalDisk = ctx.disk
   }
 
   /**
@@ -27,7 +28,6 @@ export class ContextOperator {
    * subsequent disk operations there.
    */
   useNewInMemoryFileSystem() {
-    this.originalDisk = this.ctx.disk
     this.ctx.disk = new ContextFileSystem(
       new MemoryFileSystem(),
       new FileSystemMutationReporter(this.ctx)
@@ -63,5 +63,13 @@ export class ContextOperator {
    */
   setDryRun(dryRun: boolean) {
     this.ctx.dryRun = dryRun
+  }
+
+  /**
+   * Set the Materialization-Run Semaphore on the context, indicating
+   * whether the context is currently being used for a materialization run.
+   */
+  setMaterializationRun(materializationRun: boolean) {
+    this.ctx.materializationRun = materializationRun
   }
 }

@@ -26,6 +26,7 @@ export const makeTestContext = (
   const ctx: WhimbrelContext = {
     cwd: '',
     disk: {} as FileSystem,
+    materializationRun: false,
     dryRun: false,
     facets: {} as FacetRegistry,
     formatter: {} as Formatter,

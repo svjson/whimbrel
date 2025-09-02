@@ -17,6 +17,7 @@ export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelConte
 
   const ctx: WhimbrelContext = {
     cwd: '.',
+    materializationRun: false,
     dryRun: false,
     facets: facets ?? new DefaultFacetRegistry(),
     disk: undefined,

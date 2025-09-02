@@ -65,9 +65,14 @@ abstract class StepRunner {
 }
 
 /**
- * StepRunner-implementation for Dry-Run executions.
+ * StepRunner-implementation for Preparation Dry-Run executions, used
+ * during materialization of plans.
+ *
+ * This runner makes sure to restore any manipulations it does to a step
+ * so that the preparation of the step can run again in a subsequent run,
+ * potentially under new conditions.
  */
-class DryStepRunner extends StepRunner {
+class PreparationStepRunner extends StepRunner {
   constructor(ctx: WhimbrelContext, step: ExecutionStep) {
     super(ctx, step)
   }
@@ -103,6 +108,9 @@ class LiveStepRunner extends StepRunner {
    * associated with this step.
    */
   getTaskExecutable(): ExecuteTaskFunction {
+    if (this.ctx.dryRun) {
+      return this.step.task.dryExecute
+    }
     return this.step.task.execute
   }
 
@@ -113,8 +121,8 @@ class LiveStepRunner extends StepRunner {
  * Factory-function for creating a StepRunner instance.
  */
 const makeStepRunner = (ctx: WhimbrelContext, step: ExecutionStep): StepRunner => {
-  if (ctx.dryRun) {
-    return new DryStepRunner(ctx, step)
+  if (ctx.materializationRun) {
+    return new PreparationStepRunner(ctx, step)
   } else {
     return new LiveStepRunner(ctx, step)
   }

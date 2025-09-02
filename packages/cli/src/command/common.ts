@@ -25,6 +25,7 @@ export const withCommonOptions = (groups: OptionGroup[], cmdBuilder: Command) =>
   }
 
   if (groups.includes('step-tree')) {
+    cmdBuilder.option('--dry-run', 'Dry run only')
     cmdBuilder.option('-t, --show-step-ids', 'Output Step ID for each step')
     cmdBuilder.option(
       '-d, --show-facet-details [pattern]',

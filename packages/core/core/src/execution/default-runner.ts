@@ -4,10 +4,10 @@ import {
   ExecutionPlan,
   makeStepEvent,
   WhimbrelContext,
-  WhimbrelError,
 } from '@whimbrel/core-api'
 import { buildExecTree, ExecutionNode, TreeExecutionResult } from './execution-tree'
 import { matchesStepIdSelector } from './step'
+import { ContextOperator } from '@src/context'
 
 /**
  * Abstract base class for Whimbrel Plan Runners.
@@ -111,8 +111,20 @@ export class DefaultRunner extends Runner {
    * Run the wrapped Execution-plan.
    */
   async run(): Promise<TreeExecutionResult> {
-    this.ctx.resetActors()
-    const execTree = buildExecTree(this.ctx, this.plan)
-    return await this.executeTree(execTree)
+    const context = new ContextOperator(this.ctx)
+    try {
+      this.ctx.resetActors()
+
+      if (this.ctx.dryRun || this.ctx.options.dryRun) {
+        context.setDryRun(true)
+        context.useNewInMemoryFileSystem()
+      }
+
+      const execTree = buildExecTree(this.ctx, this.plan)
+      return await this.executeTree(execTree)
+    } finally {
+      context.restoreFileSystem()
+      context.setDryRun(false)
+    }
   }
 }

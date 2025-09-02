@@ -54,6 +54,7 @@ export interface WhimbrelContextOptions {
  * @property {Record<string, string>} [prop] - Additional properties to pass to the command.
  */
 export interface WhimbrelCommandOptions {
+  dryRun?: boolean
   silent?: boolean
   verbose?: boolean
   haltAt?: string
@@ -72,6 +73,7 @@ export interface WhimbrelCommandOptions {
  * @interface WhimbrelContext
  * @property {string} cwd - The current working directory.
  * @property {FileSystem} disk - The file system abstraction used for operations.
+ * @property {boolean} materializationRun - Indicates if the context is in materialize mode.
  * @property {boolean} dryRun - Indicates if the context is in dry-run mode.
  * @property {FacetRegistry} facets - The registry of facets available in the context.
  * @property {Formatter} formatter - The formatter used for output.
@@ -90,6 +92,7 @@ export interface WhimbrelCommandOptions {
 export interface WhimbrelContext {
   cwd: string
   disk: FileSystem
+  materializationRun: boolean
   dryRun: boolean
   facets: FacetRegistry
   formatter: Formatter

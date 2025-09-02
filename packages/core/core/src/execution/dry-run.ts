@@ -15,17 +15,16 @@ export const resetDryRun = async (ctx: WhimbrelContext, stepTree: ExecutionStep[
 export const performDryRun = async (ctx: WhimbrelContext, plan: ExecutionPlan) => {
   const context = new ContextOperator(ctx)
   try {
+    context.setMaterializationRun(true)
     context.setDryRun(true)
     context.useNullAppender()
-    context.useNewInMemoryFileSystem()
     resetDryRun(ctx, plan.steps)
 
     const runner = makeRunner(ctx, plan)
     await runner.run()
   } finally {
-    context.setDryRun(false)
+    context.setMaterializationRun(false)
     context.restoreAppender()
-    context.restoreFileSystem()
   }
 }
 
