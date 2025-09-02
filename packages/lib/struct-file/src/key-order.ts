@@ -1,4 +1,5 @@
 import equal from 'fast-deep-equal'
+import { StructuredFileSchema } from './schema'
 
 export type KeyOrderSpecifier = string | UnknownKeys | readonly [string, KeyOrder]
 
@@ -68,4 +69,16 @@ export const enforceKeyOrder = (
     ...unknown,
     ...afterUnknown,
   }
+}
+
+/**
+ * Derive KeyOrder from StructuredFileSchema
+ */
+export const deriveKeyOrder = (schema: StructuredFileSchema): KeyOrder => {
+  return schema.properties.map((p) => {
+    if (p.type === 'object') {
+      return [p.name, deriveKeyOrder(p.schema)]
+    }
+    return p.name
+  })
 }

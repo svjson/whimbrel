@@ -31,6 +31,8 @@
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@whimbrel/walk": "^0.0.4",
+    "@whimbrel-test/context-fixtures": "^0.0.4",
+    "@whimbrel-test/tree-fixtures": "^0.0.4",
     "vite": "^7.1.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"

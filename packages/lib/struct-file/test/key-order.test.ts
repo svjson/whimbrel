@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { ALPHA, COLLECT_UNKNOWN, enforceKeyOrder } from '@src/index'
+import {
+  ALPHA,
+  COLLECT_UNKNOWN,
+  deriveKeyOrder,
+  enforceKeyOrder,
+  StructuredFileSchema,
+} from '@src/index'
 
 describe('enforceKeyOrder', () => {
   it('should return the same object if keyOrder is undefined', () => {
@@ -99,6 +105,94 @@ describe('enforceKeyOrder', () => {
       'korv',
       'pelle',
       'dependencies',
+    ])
+  })
+})
+
+describe('deriveKeyOrder', () => {
+  it('should produce a simple KeyOrder from a schema of string properties', () => {
+    // Given
+    const schema = {
+      properties: [
+        {
+          name: 'name',
+          type: 'string',
+          inherit: true,
+        },
+        {
+          name: 'version',
+          type: 'string',
+          inherit: true,
+        },
+        {
+          name: 'author',
+          type: 'string',
+          inherit: true,
+        },
+      ],
+    } satisfies StructuredFileSchema
+
+    // When
+    const keyOrder = deriveKeyOrder(schema)
+
+    // Then
+    expect(keyOrder).toEqual(['name', 'version', 'author'])
+  })
+
+  it('should produce nested entries for object entries with schemas', () => {
+    const schema = {
+      properties: [
+        {
+          name: 'name',
+          type: 'string',
+          inherit: true,
+        },
+        {
+          name: 'version',
+          type: 'string',
+          inherit: true,
+        },
+        {
+          name: 'options',
+          type: 'object',
+          inherit: true,
+          merge: 'deep',
+          schema: {
+            properties: [
+              {
+                name: 'module',
+                type: 'object',
+                inherit: true,
+                merge: 'deep',
+                schema: {
+                  properties: [
+                    {
+                      name: 'resolution',
+                      type: 'string',
+                      inherit: true,
+                    },
+                    {
+                      name: 'detection',
+                      type: 'string',
+                      inherit: true,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    } satisfies StructuredFileSchema
+
+    // When
+    const keyOrder = deriveKeyOrder(schema)
+
+    // Then
+    expect(keyOrder).toEqual([
+      'name',
+      'version',
+      ['options', [['module', ['resolution', 'detection']]]],
     ])
   })
 })

@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { mergeLeft, PropertyPath } from '@whimbrel/walk'
 import { KeyOrder } from './key-order'
+import { SchemaProperty, StructuredFileSchema, schemaPropertyAtPath } from './schema'
 
 /**
  * Constructor parameter object for StructuredFile and any subclass expecting
@@ -15,6 +16,14 @@ export interface StructuredFileCtorParams<ModelFormat, SerializedFormat> {
    * Storage/file system adapter, used to write the file contents back to disk.
    */
   storage?: StorageAdapter
+  /**
+   * Optionally defines a schema for the structured file, describing valid values
+   * and types.
+   *
+   * If a schema is provided and `keyOrder` is omitted, the keyOrder may be
+   * derived from the schema, unless instructed otherwise.
+   */
+  schema?: StructuredFileSchema
   /**
    * The, optional, internal structure of the file. Any changes or additions to
    * a structured file will be ordered and formatted according to this ruleset,
@@ -96,6 +105,17 @@ export interface StorageAdapter {
    * @return True if the path exists, false otherwise
    */
   exists(path: string, opts?: any): Promise<boolean>
+  /**
+   * Check if a path names an existing directory.
+   *
+   * Implementations must return `true` only if the path exists and is
+   * a directory or directory symlink, and otherwise `false` regardless of
+   * if the path exists or not.
+   *
+   * @param dirPath The path to check
+   * @return True if the path exists and is a directory, false otherwise
+   */
+  isDirectory(dirPath: string): Promise<boolean>
 }
 
 /**
@@ -127,8 +147,11 @@ export const ifFileExistsAt = async <T>(
   fn: (fPath: string) => Promise<T>
 ) => {
   let actualPath = Array.isArray(filePath) ? path.join(...filePath) : filePath
-  if (path.basename(actualPath) !== fileName) {
-    actualPath = path.join(actualPath, fileName)
+
+  if (await disk.isDirectory(actualPath)) {
+    if (path.basename(actualPath) !== fileName) {
+      actualPath = path.join(actualPath, fileName)
+    }
   }
 
   if (await disk.exists(actualPath)) {
@@ -187,17 +210,20 @@ export interface StructOptions {
 export abstract class StructuredFile<ModelFormat = any, SerializedFormat = string> {
   protected path: string
   protected storage: StorageAdapter
+  protected schema: StructuredFileSchema
   protected keyOrder: KeyOrder
   protected content: ModelFormat
 
   constructor({
     path,
     storage,
+    schema,
     keyOrder,
     content,
   }: StructuredFileCtorParams<ModelFormat, SerializedFormat>) {
     this.path = path
     this.storage = storage
+    this.schema = schema
     this.keyOrder = keyOrder
     this.content = this.deserializeContent(content)
   }
@@ -208,6 +234,16 @@ export abstract class StructuredFile<ModelFormat = any, SerializedFormat = strin
 
   getPath(): string {
     return this.path
+  }
+
+  getSchema(): StructuredFileSchema | undefined {
+    return this.schema
+  }
+
+  getSchemaProperty(property: PropertyPath): SchemaProperty | undefined {
+    if (this.schema) {
+      return schemaPropertyAtPath(this.schema, property)
+    }
   }
 
   getContent(): ModelFormat {
