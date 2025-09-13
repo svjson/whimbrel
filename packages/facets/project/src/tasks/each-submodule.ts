@@ -24,6 +24,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const EachSubmodule = makeTask({
   id: PROJECT__EACH_SUBMODULE,
   name: 'Each Submodule',
+  fsMode: '-',
   execute,
 })
 

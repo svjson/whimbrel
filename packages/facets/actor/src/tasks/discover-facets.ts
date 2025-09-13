@@ -89,6 +89,7 @@ export const execute = async (ctx: WhimbrelContext) => {
 export const DiscoverFacets = makeTask({
   id: ACTOR__DISCOVER_FACETS,
   name: 'Discover Actor Facets',
+  fsMode: 'r',
   execute,
   parameters: {
     actor: {

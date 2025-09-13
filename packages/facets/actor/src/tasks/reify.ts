@@ -35,6 +35,7 @@ export const execute = async (ctx: WhimbrelContext) => {
 export const Reify = makeTask({
   id: ACTOR__REIFY,
   name: 'Reify Actor',
+  fsMode: '-',
   execute,
   parameters: {
     actor: {

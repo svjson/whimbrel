@@ -24,6 +24,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const RemoveScript = makeTask({
   id: PACKAGE_JSON__REMOVE_SCRIPT,
   name: 'Remove package.json Script',
+  fsMode: 'rw',
   execute: execute,
   parameters: {
     target: {

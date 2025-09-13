@@ -34,6 +34,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const SetVersion = makeTask({
   id: PACKAGE_JSON__SET_VERSION,
   name: 'Set package.json version',
+  fsMode: 'rw',
   execute: execute,
   parameters: {
     target: {

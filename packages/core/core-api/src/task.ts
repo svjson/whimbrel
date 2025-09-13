@@ -11,12 +11,15 @@ export type TaskId = string
  */
 export type ExecuteTaskFunction = (ctx: WhimbrelContext) => Promise<void>
 
+export type FileSystemAccessMode = 'r' | 'w' | 'rw' | '-' | '?'
+
 /**
  * Interface for valid and fully materialized tasks.
  */
 export interface Task {
   id: TaskId
   name: string
+  fsMode: FileSystemAccessMode
   bind: {
     inheritSource: boolean
     inheritTarget: boolean
@@ -85,6 +88,7 @@ export const NoOpExecution = (_ctx: WhimbrelContext) => null
 export interface TaskPrototype {
   id: TaskId
   name?: string
+  fsMode?: FileSystemAccessMode
   bind?: {
     inheritSource?: boolean
     inheritTarget?: boolean
@@ -131,6 +135,7 @@ export const makeTask = (proto: TaskPrototype): Task => {
   return {
     id: proto.id,
     name: proto.name,
+    fsMode: proto.fsMode ?? '?',
     bind: {
       inheritSource: proto.bind?.inheritSource !== false,
       inheritTarget: proto.bind?.inheritTarget !== false,

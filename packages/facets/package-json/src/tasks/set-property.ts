@@ -24,6 +24,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const SetProperty = makeTask({
   id: PACKAGE_JSON__SET_PROPERTY,
   name: 'Set package.json property',
+  fsMode: 'rw',
   execute,
   parameters: {
     target: {

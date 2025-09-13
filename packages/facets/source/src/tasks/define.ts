@@ -99,6 +99,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const Define = makeTask({
   id: SOURCE__DEFINE,
   name: 'Define Source',
+  fsMode: 'r',
   bind: {
     inheritSource: false,
   },

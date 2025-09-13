@@ -25,6 +25,7 @@ export const AddScript = makeTask({
   id: PACKAGE_JSON__ADD_SCRIPT,
   name: 'Add package.json Script',
   execute,
+  fsMode: 'rw',
   parameters: {
     target: {
       type: 'actor',
