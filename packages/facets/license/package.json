@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/license",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "LICENSE Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,20 +22,20 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.4",
-    "@whimbrel/facet": "^0.0.4",
-    "@whimbrel/filesystem": "^0.0.4",
-    "@whimbrel/flow": "^0.0.4"
+    "@whimbrel/core-api": "^0.0.5",
+    "@whimbrel/facet": "^0.0.5",
+    "@whimbrel/filesystem": "^0.0.5",
+    "@whimbrel/flow": "^0.0.5"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "@whimbrel-test/context-fixtures": "0.0.4",
-    "@whimbrel-test/tree-fixtures": "0.0.4",
-    "@whimbrel/core": "^0.0.4",
-    "@whimbrel/core-api": "^0.0.4",
-    "@whimbrel/facet": "^0.0.4",
-    "@whimbrel/filesystem": "^0.0.4",
-    "@whimbrel/flow": "^0.0.4",
+    "@whimbrel-test/context-fixtures": "0.0.5",
+    "@whimbrel-test/tree-fixtures": "0.0.5",
+    "@whimbrel/core": "^0.0.5",
+    "@whimbrel/core-api": "^0.0.5",
+    "@whimbrel/facet": "^0.0.5",
+    "@whimbrel/filesystem": "^0.0.5",
+    "@whimbrel/flow": "^0.0.5",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^5.1.4",

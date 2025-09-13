@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/project",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Core Project Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,13 +22,13 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.4",
-    "@whimbrel/facet": "^0.0.4"
+    "@whimbrel/core-api": "^0.0.5",
+    "@whimbrel/facet": "^0.0.5"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.0.4",
-    "@whimbrel/facet": "^0.0.4",
-    "@whimbrel-test/context-fixtures": "0.0.4",
+    "@whimbrel/core-api": "^0.0.5",
+    "@whimbrel/facet": "^0.0.5",
+    "@whimbrel-test/context-fixtures": "0.0.5",
     "@types/node": "^24.3.0",
     "rimraf": "^6.0.1",
     "vite": "^7.1.2",
