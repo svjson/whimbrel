@@ -1,4 +1,5 @@
 import { WhimbrelContext } from './context'
+import { FileSystemAccessMode } from './fs'
 
 /**
  * Marker-type for task IDs.
@@ -10,8 +11,6 @@ export type TaskId = string
  * in order to be considered executable.
  */
 export type ExecuteTaskFunction = (ctx: WhimbrelContext) => Promise<void>
-
-export type FileSystemAccessMode = 'r' | 'w' | 'rw' | '-' | '?'
 
 /**
  * Interface for valid and fully materialized tasks.

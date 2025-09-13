@@ -100,6 +100,7 @@ const execute = async (ctx: WhimbrelContext) => {
 export const Define = makeTask({
   id: TARGET__DEFINE,
   name: 'Define Target',
+  fsMode: 'r',
   bind: {
     inheritTarget: false,
   },

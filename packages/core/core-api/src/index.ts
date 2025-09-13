@@ -81,6 +81,7 @@ export type {
   FileSystem,
   FileSystemMutation,
   FileSystemCtxOptions,
+  FileSystemAccessMode,
   FileSystemReadOptions,
   FileSystemRecurseOptions,
   FileSystemScanOptions,

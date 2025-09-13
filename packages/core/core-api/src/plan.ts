@@ -1,7 +1,8 @@
 import { Actor } from './actor'
 import { WhimbrelContext } from './context'
 import { ExecutionStep, StepBinding } from './execution'
-import { TaskId, TaskParameters } from './task'
+import { Task, TaskId, TaskParameters } from './task'
+import { FileSystemAccessMode } from './fs'
 
 /**
  * Describes the minimal information that must be provided about a step
@@ -12,6 +13,7 @@ export interface ExecutionStepBlueprint {
   name?: string
   pinned?: boolean
   inputs?: any
+  task?: Task
   parameters?: TaskParameters
   meta?: any
   bind?: StepBinding
@@ -29,7 +31,16 @@ export interface Blueprint {
  * Describes a concrete Whimbrel plan.
  */
 export interface ExecutionPlan {
+  /**
+   * Contains a tree structure of ExecutionStep, where the ExecutionPlan
+   * itself serves as the "root node". Each ExecutionStep step may have
+   * recursively contain 0-* child ExecutionSteps.
+   */
   steps: ExecutionStep[]
+  /**
+   * Describes the effective FileSystemAccessMode of the plan as a whole.
+   */
+  fsMode: FileSystemAccessMode
 }
 
 /**

@@ -1,6 +1,22 @@
 import { MutationType } from './mutation'
 
 /**
+ * Describes the intended file system access mode or pattern of
+ * a component, such as Task or ExecutionPlan.
+ *
+ * 'r'  - Indicates that the filesystem will be used exclusively for
+ *        read access.
+ * 'w'  - Indicates that the filesystem will be used exclusively for
+ *        write access.
+ * 'rw' - Indicates that the filesystem will be used for both read and
+ *        write access.
+ * '-'  - Indicates that the filesystem will not be accessed at all.
+ * '?'  - Indicates that the filesystem access is undetermined, and may
+ *      - or may not require read and/or write access.
+ */
+export type FileSystemAccessMode = 'r' | 'w' | 'rw' | '-' | '?'
+
+/**
  * Enum-type for FileSystem objects. Files and directories...
  */
 export type FsObjectType = 'file' | 'directory'

@@ -1,6 +1,10 @@
 import equal from 'fast-deep-equal'
 
-import { StepBinding, StepExecutionResult } from '@whimbrel/core-api'
+import {
+  FileSystemAccessMode,
+  StepBinding,
+  StepExecutionResult,
+} from '@whimbrel/core-api'
 import { performDryRun } from '@src/execution'
 import { DryRunError, resetDryRun } from '@src/execution/dry-run'
 import { mergeLeft } from '@whimbrel/walk'
@@ -47,7 +51,7 @@ export const generateExecutionStep = (
   ctx: WhimbrelContext,
   bpStep: ExecutionStepBlueprint | StepAugmentation
 ): ExecutionStep => {
-  const task: Task = ctx.facets.lookupTask(bpStep.type)
+  const task: Task = bpStep.task ?? ctx.facets.lookupTask(bpStep.type)
 
   return {
     id: bpStep.type,
@@ -186,7 +190,7 @@ export const materializePlan = async (
     } while (iterCtx.newSteps > 0)
 
     try {
-      await performDryRun(ctx, { steps: stepTree })
+      await performDryRun(ctx, { steps: stepTree, fsMode: determinePlanFsMode(stepTree) })
     } catch (e) {
       ctx.log.hideStatus()
       if (e instanceof DryRunError) {
@@ -212,6 +216,7 @@ export const materializePlan = async (
 
   return {
     steps: stepTree,
+    fsMode: determinePlanFsMode(stepTree),
   }
 }
 
@@ -358,4 +363,26 @@ const attachStepAugmentations = async (
       step.steps.push(generateExecutionStep(ctx, augStep))
     }
   }
+}
+
+export const determinePlanFsMode = (stepTree: ExecutionStep[]): FileSystemAccessMode => {
+  const modes = []
+
+  const collectModes = (steps: ExecutionStep[]) => {
+    for (const child of steps) {
+      if (!modes.includes(child.task.fsMode)) {
+        modes.push(child.task.fsMode)
+      }
+      collectModes(child.steps)
+    }
+  }
+
+  collectModes(stepTree)
+
+  if (modes.includes('rw')) return 'rw'
+  if (modes.includes('r') && modes.includes('w')) return 'rw'
+  if (modes.includes('w')) return 'w'
+  if (modes.includes('?')) return '?'
+  if (modes.includes('r')) return 'r'
+  return '-'
 }
