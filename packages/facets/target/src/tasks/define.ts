@@ -56,26 +56,28 @@ const resolveTargetName = async (
 const dryExecute = async (ctx: WhimbrelContext) => {
   await execute(ctx)
 
-  const { target } = ctx
+  if (!ctx.disk.isPhysical()) {
+    const { target } = ctx
 
-  const importEntries = await DiskFileSystem.scanDir(target.root, {
-    sort: true,
-    ignorePredicate: (entry: FileEntry) => {
-      return path.basename(entry.path) === 'node_modules'
-    },
-  })
+    const importEntries = await DiskFileSystem.scanDir(target.root, {
+      sort: true,
+      ignorePredicate: (entry: FileEntry) => {
+        return path.basename(entry.path) === 'node_modules'
+      },
+    })
 
-  const opts = { silent: true, report: false }
-  for (const entry of importEntries) {
-    switch (entry.type) {
-      case 'file':
-        await ctx.disk.writeReference(entry.path, entry.path, opts)
-        break
-      case 'directory':
-        if (!(await ctx.disk.exists(entry.path))) {
-          await ctx.disk.mkdir(entry.path, opts)
-        }
-        break
+    const opts = { silent: true, report: false }
+    for (const entry of importEntries) {
+      switch (entry.type) {
+        case 'file':
+          await ctx.disk.writeReference(entry.path, entry.path, opts)
+          break
+        case 'directory':
+          if (!(await ctx.disk.exists(entry.path))) {
+            await ctx.disk.mkdir(entry.path, opts)
+          }
+          break
+      }
     }
   }
 }

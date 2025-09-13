@@ -117,7 +117,9 @@ export class DefaultRunner extends Runner {
 
       if (this.ctx.dryRun || this.ctx.options.dryRun) {
         context.setDryRun(true)
-        context.useNewInMemoryFileSystem()
+        if (this.plan.fsMode !== 'r') {
+          context.useNewInMemoryFileSystem()
+        }
       }
 
       const execTree = buildExecTree(this.ctx, this.plan)
