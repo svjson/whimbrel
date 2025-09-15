@@ -1,4 +1,5 @@
 import Actor from '@whimbrel/actor'
+import DockerCompose from '@whimbrel/docker-compose'
 import GitIgnore from '@whimbrel/gitignore'
 import License from '@whimbrel/license'
 import Node from '@whimbrel/node'
@@ -20,6 +21,7 @@ import { FacetRegistry } from '@whimbrel/core-api'
 export const makeFacetRegistry = (): FacetRegistry => {
   return new DefaultFacetRegistry([
     Actor,
+    DockerCompose,
     GitIgnore,
     License,
     Node,

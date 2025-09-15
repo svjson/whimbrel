@@ -167,21 +167,25 @@ export const ifFileExistsAt = async <T>(
  * adapter instance, or returns `undefined` if the file can not be
  * found.
  */
-export const makeReadIfExists =
-  <T extends StructuredFile<MF, SF>, MF, SF>(
-    impl: StructuredFileCtor<T, MF, SF>,
-    fileName: string,
-    reader: (storage: StorageAdapter, fPath: string) => Promise<SF | MF>
-  ) =>
-  async (storage: StorageAdapter, filePath: string | string[]) => {
-    return await ifFileExistsAt(storage, filePath, fileName, async (fPath) => {
-      return new impl({
-        path: fPath,
-        storage,
-        content: await reader(storage, fPath),
+export const makeReadIfExists = <T extends StructuredFile<MF, SF>, MF, SF>(
+  impl: StructuredFileCtor<T, MF, SF>,
+  fileName: string | string[],
+  reader: (storage: StorageAdapter, fPath: string) => Promise<SF | MF>
+) => {
+  if (typeof fileName === 'string') fileName = [fileName]
+  return async (storage: StorageAdapter, filePath: string | string[]) => {
+    for (const fn of fileName) {
+      const file = await ifFileExistsAt(storage, filePath, fn, async (fPath) => {
+        return new impl({
+          path: fPath,
+          storage,
+          content: await reader(storage, fPath),
+        })
       })
-    })
+      if (file) return file
+    }
   }
+}
 
 /**
  * Creates a static utility function for a specific file format and
@@ -191,7 +195,7 @@ export const makeReadIfExists =
 export const makeRead =
   <T extends StructuredFile<MF, SF>, MF, SF>(
     impl: StructuredFileCtor<T, MF, SF>,
-    fileName: string,
+    fileName: string | string[],
     reader: (storage: StorageAdapter, fPath: string) => Promise<SF | MF>
   ) =>
   async (storage: StorageAdapter, filePath: string | string[]) => {
