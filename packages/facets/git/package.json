@@ -1,0 +1,45 @@
+{
+  "name": "@whimbrel/git",
+  "version": "0.0.5",
+  "description": "docker-compose Facet for git",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf ./dist && rimraf ./node_modules",
+    "publish": "npm publish --access public"
+  },
+  "peerDependencies": {
+    "@whimbrel/core-api": "^0.0.5",
+    "@whimbrel/facet": "^0.0.5",
+    "@whimbrel/flow": "^0.0.5",
+    "@whimbrel/filesystem": "^0.0.5",
+    "@whimbrel/struct-file": "^0.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@whimbrel/core-api": "0.0.5",
+    "@whimbrel/facet": "0.0.5",
+    "@whimbrel/filesystem": "^0.0.5",
+    "@whimbrel/struct-file": "^0.0.5",
+    "vite": "^7.1.2",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "isomorphic-git": "^1.33.1"
+  }
+}
