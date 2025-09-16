@@ -82,6 +82,7 @@ describe('materialize', () => {
               excludes: [],
               sets: {},
             },
+            resolvers: [],
             defaults: [{ ref: 'source' }, { ref: 'target' }],
           },
         },

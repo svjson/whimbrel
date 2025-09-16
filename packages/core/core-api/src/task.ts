@@ -1,3 +1,4 @@
+import { ActorType } from './actor'
 import { WhimbrelContext } from './context'
 import { FileSystemAccessMode } from './fs'
 
@@ -56,7 +57,13 @@ export interface TaskParameter {
     excludes: string[]
     sets: Record<string, any>
   }
+  resolvers: TaskParameterResolver[]
   defaults: ValueProvider[]
+}
+
+export interface TaskParameterResolver {
+  path: string
+  type: ActorType
 }
 
 export interface TaskParameterDeclaration {
@@ -67,6 +74,7 @@ export interface TaskParameterDeclaration {
     excludes?: string[]
     sets?: Record<string, any>
   }
+  resolvers?: TaskParameterResolver[]
   defaults?: ValueProvider[]
 }
 
@@ -112,6 +120,7 @@ export const makeTaskParameter = (entry: TaskParameterDeclaration) => {
           excludes: [],
           sets: {},
         },
+    resolvers: entry.resolvers ?? [],
     defaults: entry.defaults ?? [],
   }
 }
