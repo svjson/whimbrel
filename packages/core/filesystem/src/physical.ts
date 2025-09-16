@@ -61,6 +61,10 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
     }
   }
 
+  async ls(dirPath: string) {
+    return await fs.readdir(dirPath)
+  }
+
   async mkdir(dirPath: string, opts: FileSystemMkDirOptions) {
     const { recursive = false } = opts
     return await fs.mkdir(dirPath, { recursive })

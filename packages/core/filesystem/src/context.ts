@@ -61,6 +61,10 @@ export class ContextFileSystem extends AbstractFileSystem implements FileSystem 
     return this.impl.isPhysical()
   }
 
+  async ls(dirPath: string) {
+    return this.impl.ls(dirPath)
+  }
+
   async mkdir(dirPath: string, opts: FileSystemMkDirOptions = {}) {
     if (await this.impl.exists(dirPath)) {
       throw new WhimbrelError(`Cannot create directory ${dirPath}. Already exists.`)

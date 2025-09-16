@@ -211,6 +211,8 @@ export interface FileSystem {
    */
   isPhysical(): boolean
 
+  ls(dirPath: string): Promise<string[]>
+
   /**
    * Create a directory at the specified path.
    *

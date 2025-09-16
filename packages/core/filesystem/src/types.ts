@@ -3,6 +3,7 @@ export type NodeFileSystem = {
   writeFile: Function
   unlink: Function
   readdir: Function
+  exists: Function
   mkdir: Function
   rmdir: Function
   stat: Function

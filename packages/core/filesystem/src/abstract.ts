@@ -26,6 +26,8 @@ export abstract class AbstractFileSystem implements FileSystem {
 
   abstract isPhysical(): boolean
 
+  abstract ls(dirPath: string): Promise<string[]>
+
   abstract mkdir(
     dirPath: string,
     opts: FileSystemCtxOptions & FileSystemRecurseOptions
