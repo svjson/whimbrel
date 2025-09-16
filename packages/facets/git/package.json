@@ -23,6 +23,7 @@
   },
   "peerDependencies": {
     "@whimbrel/core-api": "^0.0.5",
+    "@whimbrel/gitignore": "^0.0.5",
     "@whimbrel/facet": "^0.0.5",
     "@whimbrel/flow": "^0.0.5",
     "@whimbrel/filesystem": "^0.0.5",
@@ -33,6 +34,7 @@
     "@whimbrel/core-api": "0.0.5",
     "@whimbrel/facet": "0.0.5",
     "@whimbrel/filesystem": "^0.0.5",
+    "@whimbrel/gitignore": "^0.0.5",
     "@whimbrel/struct-file": "^0.0.5",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",

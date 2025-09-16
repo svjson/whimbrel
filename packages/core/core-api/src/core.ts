@@ -11,3 +11,13 @@ export class WhimbrelError extends Error {
     super(message)
   }
 }
+
+/**
+ * NoDryExecutionError is an error that indicates that a function has
+ * been called that is not allowed to execute in a dry run.
+ */
+export class NoDryExecutionError extends WhimbrelError {
+  constructor(fileName: string, funcName: string) {
+    super(`${fileName}::${funcName} is not allowed to execute in a dry run.`)
+  }
+}

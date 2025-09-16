@@ -1,4 +1,4 @@
-import { findRepositoryRoot } from '@src/adapters/git-adapter'
+import { findRepositoryRoot } from '@src/adapters'
 import { FacetDetectionResult, WhimbrelContext } from '@whimbrel/core-api'
 
 export const detect = async (

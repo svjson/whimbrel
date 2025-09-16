@@ -8,6 +8,7 @@ import {
 import { buildExecTree, ExecutionNode, TreeExecutionResult } from './execution-tree'
 import { matchesStepIdSelector } from './step'
 import { ContextOperator } from '@src/context'
+import { DryRunError } from './dry-run'
 
 /**
  * Abstract base class for Whimbrel Plan Runners.
@@ -92,6 +93,9 @@ export class DefaultRunner extends Runner {
       this.ctx.log.deindent()
 
       if (nodeResult.success === false) {
+        if (this.ctx.materializationRun) {
+          throw new DryRunError(nodeResult.error.message, node.step, nodeResult.error)
+        }
         throw nodeResult.error
       }
       this.ctx.log.indent()

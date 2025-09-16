@@ -1,8 +1,9 @@
-export { WhimbrelError } from './core'
+export { WhimbrelError, NoDryExecutionError } from './core'
 export { makeActor } from './actor'
 export { actorFacetConfig, actorFacetScope } from './actor'
 export {
   makeStepEvent,
+  makeVCSEvent,
   EVENT__STEP_EXECUTION_INITIATED,
   EVENT__STEP_EXECUTION_COMPLETED,
 } from './event'
@@ -36,7 +37,9 @@ export type {
   EventType,
   StepEvent,
   StepEventType,
+  VCSEvent,
   VCSEventType,
+  VCSEventDetails,
   WhimbrelEvent,
 } from './event'
 export type {

@@ -1,6 +1,6 @@
 import { MutationType } from './mutation'
 
-export type VCSMutationType = 'commit' | 'init'
+export type VCSMutationType = 'commit' | 'init' | 'de-init'
 
 export interface VCSFileEntry {
   mode: MutationType
@@ -12,6 +12,6 @@ export interface VCSMutation {
   vcs: string
   repository: string
   type: VCSMutationType
-  message: string
-  changeset: VCSFileEntry[]
+  message?: string
+  changeset?: VCSFileEntry[]
 }
