@@ -31,6 +31,7 @@ export type {
   ActorMetaData,
   GetActorFunction,
 } from './actor'
+export type { CommandRunner, CtxCommandRunner, CtxCommandOutput } from './command'
 export type {
   EventType,
   StepEvent,

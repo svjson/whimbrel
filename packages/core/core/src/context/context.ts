@@ -3,6 +3,7 @@ import {
   ActorFilter,
   ActorType,
   AcceptMutationHandler,
+  CtxCommandOutput,
   WhimbrelContext,
   WhimbrelCommandOptions,
   WhimbrelContextOptions,
@@ -22,6 +23,7 @@ import {
 } from '@whimbrel/filesystem'
 import { makeLogger } from '../log'
 import { DefaultFormatter } from '@src/log/formatter'
+import { runCommand } from '@src/cmd/command'
 
 const getActorByCriteria = (
   coll: Record<ActorId, Actor>,
@@ -106,6 +108,9 @@ export const makeWhimbrelContext = async (
             ? getActorByCriteria({ [ctx.rootTarget.id]: ctx.rootTarget }, identifier)
             : undefined
       }
+    },
+    async runCommand(cwd: string, command: string | string[]): Promise<CtxCommandOutput> {
+      return runCommand(this, cwd, command)
     },
     resetActors: () => {
       ctx.sources = {}

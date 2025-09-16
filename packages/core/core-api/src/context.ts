@@ -1,4 +1,5 @@
 import { Actor, ActorFilter, ActorId, ActorType, GetActorFunction } from './actor'
+import { CtxCommandRunner } from './command'
 import { WhimbrelEvent } from './event'
 import {
   AcceptJournalEntryHandler,
@@ -109,6 +110,7 @@ export interface WhimbrelContext {
   options: WhimbrelCommandOptions
   getActor: GetActorFunction
   emitEvent(event: WhimbrelEvent): void
+  runCommand: CtxCommandRunner
   acceptMutation: AcceptMutationHandler
   acceptJournalEntry: AcceptJournalEntryHandler
   resetActors(): void
