@@ -221,7 +221,7 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
       if (entry.content) {
         return entry.content.length
       } else {
-        return await DiskFileSystem.sizeOf(entry.ref)
+        return await DiskFileSystem.size(entry.ref)
       }
     }
   }

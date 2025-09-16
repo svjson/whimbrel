@@ -56,7 +56,6 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
     try {
       return await fs.readFile(filePath, opts as any)
     } catch (e) {
-      console.error(filePath)
       throw e
     }
   }
@@ -80,7 +79,7 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
     await fs.rename(fromPath, toPath)
   }
 
-  async sizeOf(filePath: string) {
+  async size(filePath: string) {
     return (await fs.stat(filePath)).size
   }
 

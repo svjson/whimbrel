@@ -61,6 +61,10 @@ export abstract class AbstractFileSystem implements FileSystem {
     opts?: {}
   ): Promise<void>
 
+  abstract size(filePath: string): Promise<number>
+
+  abstract timestamp(filePath: string): Promise<Date>
+
   async writeJson(filePath: string, content: any, opts: FileSystemWriteOptions = {}) {
     opts = toFileSystemWriteOptions(opts)
     await this.write(filePath, `${JSON.stringify(content, null, 2)}\n`, opts)

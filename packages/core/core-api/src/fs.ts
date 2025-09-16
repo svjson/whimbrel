@@ -291,6 +291,22 @@ export interface FileSystem {
   scanDir(dirPath: string, opts: FileSystemScanOptions): Promise<FileEntry[]>
 
   /**
+   * Return the file size of the file located at `filePath`
+   *
+   * @param filePath - The path of the file to get the size of.
+   * @return A promise that resolves to the size of the file in bytes.
+   */
+  size(filePath: string): Promise<number>
+
+  /**
+   * Return the file modification timestamp of the file located at `filePath`
+   *
+   * @param filePath - The path of the file to get the timestamp of.
+   * @return A promise that resolves to the modification timestamp of the file
+   */
+  timestamp(filePath: string): Promise<Date>
+
+  /**
    * Write content to a file at the specified path.
    *
    * This can handle both string and Buffer content.

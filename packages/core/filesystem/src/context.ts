@@ -96,6 +96,14 @@ export class ContextFileSystem extends AbstractFileSystem implements FileSystem 
     return []
   }
 
+  async size(filePath: string) {
+    return this.impl.size(filePath)
+  }
+
+  async timestamp(filePath: string) {
+    return this.impl.timestamp(filePath)
+  }
+
   async _write(
     filePath: string,
     writeOp: () => Promise<any>,
