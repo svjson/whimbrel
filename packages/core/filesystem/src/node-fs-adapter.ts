@@ -1,4 +1,5 @@
 import fs, {
+  PathLike,
   PathOrFileDescriptor,
   WriteFileOptions,
   NoParamCallback,
@@ -8,7 +9,7 @@ import fs, {
 import { FileSystem } from '@whimbrel/core-api'
 import { NodeFileSystem } from './types'
 import { Abortable } from 'node:events'
-import { toEncodingArgument } from './node-fs'
+import { makeEnoentError, toEncodingArgument } from './node-fs'
 import path from 'node:path'
 
 export const makeNodeFsAdapter = (disk: FileSystem): NodeFileSystem => {
@@ -25,13 +26,15 @@ export const makeNodeFsAdapter = (disk: FileSystem): NodeFileSystem => {
       callback: (err: NodeJS.ErrnoException | null, data: NonSharedBuffer) => void
     ): void {
       if (!path) throw new TypeError('Cannot read undefined')
-
       disk
         .read(path as string, {
           ...toEncodingArgument(options),
         })
         .then((data) => {
           callback(null, data as NonSharedBuffer)
+        })
+        .catch((err) => {
+          callback(err, null)
         })
     },
 
@@ -50,11 +53,15 @@ export const makeNodeFsAdapter = (disk: FileSystem): NodeFileSystem => {
         })
     },
 
+    exists(dPath: PathLike, callback: (exists: boolean) => void): void {
+      disk.exists(dPath as string).then(callback)
+    },
+
     unlink() {
       throw new Error('unlink not implemented')
     },
-    readdir() {
-      throw new Error('readdir not implemented')
+    readdir(dirPath: string, callback: (files: string[]) => void): void {
+      disk.ls(dirPath).then((files) => callback(files))
     },
     readlink() {
       throw new Error('readlink not implemented')
@@ -72,43 +79,54 @@ export const makeNodeFsAdapter = (disk: FileSystem): NodeFileSystem => {
       filePath: string,
       callback: (err: NodeJS.ErrnoException | null, stats: Stats) => void
     ) {
-      const stat = async (): Promise<Stats> => {
+      const stat = async (): Promise<
+        [err: NodeJS.ErrnoException | null, stats: Stats]
+      > => {
         filePath = path.resolve(filePath)
 
         if (!(await disk.exists(filePath))) {
-          return null
+          return [makeEnoentError(filePath, 'stat'), null]
         }
         if (await disk.isDirectory(filePath)) {
-          return {
-            isFile: () => false,
-            isDirectory: () => true,
-            isSymbolicLink: () => false,
-            size: 0,
-            mtimeMs: new Date().getTime(),
-            ctimeMs: new Date().getTime(),
-          } as Stats
+          return [
+            null,
+            {
+              isFile: () => false,
+              isDirectory: () => true,
+              isSymbolicLink: () => false,
+              size: 0,
+              mtimeMs: new Date().getTime(),
+              ctimeMs: new Date().getTime(),
+            } as Stats,
+          ]
         } else {
           const size = await disk.size(filePath)
           const timestamp = await disk.timestamp(filePath)
 
-          return {
-            isFile: () => true,
-            isDirectory: () => false,
-            isSymbolicLink: () => false,
-            size: size,
-            mtimeMs: timestamp.getTime(),
-            ctimeMs: timestamp.getTime(),
-          } as Stats
+          return [
+            null,
+            {
+              isFile: () => true,
+              isDirectory: () => false,
+              isSymbolicLink: () => false,
+              size: size,
+              mtimeMs: timestamp.getTime(),
+              ctimeMs: timestamp.getTime(),
+            } as Stats,
+          ]
         }
       }
 
-      stat().then((stats) => {
-        callback(null, stats)
+      stat().then((result) => {
+        callback(...result)
       })
     },
 
-    lstat() {
-      throw new Error('lstat not implemented')
+    lstat(
+      filePath: string,
+      callback: (err: NodeJS.ErrnoException | null, stats: Stats) => void
+    ) {
+      return this.stat(filePath, callback)
     },
   }
 }

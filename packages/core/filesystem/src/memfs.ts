@@ -218,53 +218,24 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
     if (await this.exists(filePath)) {
       const [dirName, fileName] = split(filePath)
       const entry = this.paths[dirName][fileName]
-      if (entry.content) {
+      if (entry?.content) {
         return entry.content.length
-      } else {
+      } else if (entry?.ref) {
         return await DiskFileSystem.size(entry.ref)
       }
     }
+
+    return 0
   }
 
   async timestamp(filePath: string) {
     if (await this.exists(filePath)) {
       const [dirName, fileName] = split(filePath)
       const entry = this.paths[dirName][fileName]
-      if (entry.content) {
+      if (entry?.content) {
         return entry.timestamp ?? new Date()
       } else {
-        return await DiskFileSystem.timestamp(entry.ref)
-      }
-    }
-  }
-
-  async stat(filePath: string) {
-    filePath = path.resolve(filePath)
-
-    if (!(await this.exists(filePath))) {
-      return null
-    }
-
-    if (await this.isDirectory(filePath)) {
-      return {
-        isFile: () => false,
-        isDirectory: () => true,
-        isSymbolicLink: () => false,
-        size: 0,
-        mtimeMs: new Date(),
-        ctimeMs: new Date(),
-      }
-    } else {
-      const size = await this.size(filePath)
-      const timestamp = await this.timestamp(filePath)
-
-      return {
-        isFile: () => true,
-        isDirectory: () => false,
-        isSymbolicLink: () => false,
-        size: () => size,
-        mtimeMs: timestamp.getTime(),
-        ctimeMs: timestamp.getTime(),
+        return await DiskFileSystem.timestamp(filePath)
       }
     }
   }
