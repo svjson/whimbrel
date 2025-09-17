@@ -1,16 +1,15 @@
 {
-  "name": "@whimbrel-test/tree-fixtures",
+  "name": "@whimbrel/asset-fixtures",
   "version": "0.0.5",
   "private": true,
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs"
     }
   },
   "scripts": {
@@ -18,10 +17,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
-  "dependencies": {
-    "@whimbrel/asset-fixtures": "^0.0.5"
-  },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.0.5"
+    "@whimbrel/core-api": "0.0.5"
   }
 }

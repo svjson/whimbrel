@@ -36,3 +36,5 @@ export const makeCreateFixtures = (
     createTree,
   }
 }
+
+export type CreateDirectoryFixture = ReturnType<typeof makeCreateFixtures>

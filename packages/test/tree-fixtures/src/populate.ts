@@ -1,6 +1,7 @@
 import path from 'node:path'
 
 import { FileSystem, WhimbrelError } from '@whimbrel/core-api'
+import { readAsset } from '@whimbrel/asset-fixtures'
 
 export type DirectorySpecification = [string, TreeSpecification]
 export interface DirectoryReferenceSpec {
@@ -23,10 +24,29 @@ export type TreeSpecification = (
 )[]
 
 export const makePopulateFixtures = (ensureFs: (fs: FileSystem) => FileSystem) => {
+  /**
+   *
+   */
+  const createFile = async (
+    fsImpl: FileSystem,
+    dir: string,
+    name: string,
+    content: string | any
+  ) => {
+    await fsImpl.write(
+      path.join(dir, name),
+      typeof content === 'string' ? content : JSON.stringify(content, null, 2),
+      {
+        encoding: 'utf8',
+        report: false,
+      }
+    )
+  }
+
   const populateDirectory = async (
     dir: string,
     dirSpec: TreeSpecification,
-    fsImpl: FileSystem
+    fsImpl?: FileSystem
   ) => {
     fsImpl = ensureFs(fsImpl)
 
@@ -37,10 +57,7 @@ export const makePopulateFixtures = (ensureFs: (fs: FileSystem) => FileSystem) =
     if (Array.isArray(dirSpec)) {
       for (const entry of dirSpec) {
         if (typeof entry === 'string') {
-          await fsImpl.write(path.join(dir, entry), 'dummy-file', {
-            encoding: 'utf8',
-            report: false,
-          })
+          await createFile(fsImpl, dir, entry, 'dummy-file')
         } else if (Array.isArray(entry)) {
           const [dirName, subDirSpec] = entry
           await populateDirectory(path.join(dir, dirName), subDirSpec, fsImpl)
@@ -54,6 +71,12 @@ export const makePopulateFixtures = (ensureFs: (fs: FileSystem) => FileSystem) =
               await fsImpl.writeJson(path.join(dir, fileName), contentSpec, {
                 report: false,
               })
+            } else if (typeof contentSpec === 'string') {
+              const content = contentSpec.startsWith('@')
+                ? await readAsset(contentSpec.slice(1))
+                : contentSpec
+
+              await createFile(fsImpl, dir, fileName, content)
             } else {
               throw new WhimbrelError(`Unsupported content: ${contentSpec}`)
             }
