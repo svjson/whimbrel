@@ -7,6 +7,7 @@ import {
 } from '@whimbrel/walk'
 import { enforceKeyOrder, StructuredFile } from '.'
 import { StructOptions, StructuredFileCtorParams } from './structured-file'
+import path from 'node:path'
 
 export class JSONFile extends StructuredFile<any, string> {
   constructor(params: StructuredFileCtorParams<any, string>) {
@@ -46,10 +47,13 @@ export class JSONFile extends StructuredFile<any, string> {
     this.content = enforceKeyOrder(this.content, this.keyOrder, opts?.stripUnknown)
   }
 
-  async write() {
+  async write(filePath?: string | string[]) {
     if (!this.storage) {
       throw new Error('No storage attached to this instance.')
     }
-    return this.storage.writeJson(this.path, this.content)
+    if (Array.isArray(filePath)) {
+      filePath = path.join(...filePath)
+    }
+    return this.storage.writeJson(filePath ?? this.path, this.content)
   }
 }

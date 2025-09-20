@@ -52,16 +52,16 @@ export class YamlFile extends StructuredFile<Document<Node>> {
     this.content.setIn(property, value)
   }
 
-  containsAll(property: PropertyPath, values: any[]): boolean {
+  containsAll(_property: PropertyPath, _values: any[]): boolean {
     throw new Error('Method not implemented.')
   }
-  delete(property: PropertyPath): void {
+  delete(_property: PropertyPath): void {
     throw new Error('Method not implemented.')
   }
-  enforceStructure(opts?: StructOptions): void {
+  enforceStructure(_opts?: StructOptions): void {
     throw new Error('Method not implemented.')
   }
-  write(): Promise<void> {
+  write(_filePath?: string | string[]): Promise<void> {
     throw new Error('Method not implemented.')
   }
 }

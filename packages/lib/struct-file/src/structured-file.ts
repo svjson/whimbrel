@@ -271,5 +271,14 @@ export abstract class StructuredFile<ModelFormat = any, SerializedFormat = strin
     this.enforceStructure({ stripUnknown: true })
   }
 
-  abstract write(): Promise<void>
+  /**
+   * Writes the file to disk
+   *
+   * Providing a path is optional - if omitted, it will be written back to
+   * the path it was read from.
+   *
+   * @param path Optional path to write the file to
+   * @throws If no path is provided and the file was not read from disk
+   */
+  abstract write(path?: string | string[]): Promise<void>
 }
