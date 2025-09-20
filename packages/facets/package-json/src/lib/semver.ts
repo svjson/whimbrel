@@ -71,6 +71,10 @@ export const versionString = (
   return `${v.range ? v.range : ''}${semVer}`
 }
 
+export const highestVersion = (...versions: (string | SemVer)[]) => {
+  return versions.sort(VERSION_COMPARATOR)[0]
+}
+
 export const VERSION_COMPARATOR = (a: SemVer | string, b: SemVer | string) => {
   a = typeof a === 'string' ? parseVersion(a) : a
   b = typeof b === 'string' ? parseVersion(b) : b

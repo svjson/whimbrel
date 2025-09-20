@@ -1,0 +1,25 @@
+{
+  "name": "simple-things",
+  "version": "2.3.8",
+  "author": "Benny Boxare",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon -e ts,js --exec ts-node -r dotenv/config src/index",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^12.0.1",
+    "koa": "^2.16.2",
+    "koa-bodyparser": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.15.0",
+    "@types/koa__cors": "^5.0.0",
+    "@types/koa__router": "12.0.4",
+    "@types/koa-bodyparser": "^4.3.12",
+    "@types/node": "^20.11.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
