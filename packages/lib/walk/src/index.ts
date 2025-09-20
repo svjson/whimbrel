@@ -1,10 +1,12 @@
 export { walkPath } from './walk-path'
 export { walk } from './walk'
 export { readPath, writePath, deletePath, readClosest } from './path'
+export { diff, diff3Way } from './diff'
 export { mergeLeft } from './merge'
 export { propertyPaths, containsAll } from './query'
 export { resolve, resolvePlaceholderValue } from './resolve'
 
 export type { OnNodeMissingMutator } from './walk-path'
 export type { OnEachMutator, OnEndMutator } from './walk'
+export type { DiffEntry, Diff3WayEntry } from './diff'
 export type { PropertyPath } from './types'
