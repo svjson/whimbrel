@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import { FileSystem } from '@whimbrel/core-api'
 import { CreateDirectoryFixture } from './create'
-import { unpackGitRepository } from '@whimbrel/asset-fixtures'
+import { unpackGitRepository } from '@whimbrel-test/asset-fixtures'
 
 export const makeGitRepoFixture = (
   ensureFs: (fs?: FileSystem) => FileSystem,

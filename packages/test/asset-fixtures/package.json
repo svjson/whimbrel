@@ -1,5 +1,5 @@
 {
-  "name": "@whimbrel/asset-fixtures",
+  "name": "@whimbrel-test/asset-fixtures",
   "version": "0.0.5",
   "private": true,
   "module": "./dist/index.mjs",

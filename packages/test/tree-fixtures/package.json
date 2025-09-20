@@ -19,7 +19,7 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "dependencies": {
-    "@whimbrel/asset-fixtures": "^0.0.5"
+    "@whimbrel-test/asset-fixtures": "^0.0.5"
   },
   "devDependencies": {
     "@whimbrel/core-api": "^0.0.5"

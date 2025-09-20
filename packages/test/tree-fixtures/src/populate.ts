@@ -1,7 +1,7 @@
 import path from 'node:path'
 
 import { FileSystem, WhimbrelError } from '@whimbrel/core-api'
-import { readAsset } from '@whimbrel/asset-fixtures'
+import { readAsset } from '@whimbrel-test/asset-fixtures'
 
 export type DirectorySpecification = [string, TreeSpecification]
 export interface DirectoryReferenceSpec {
