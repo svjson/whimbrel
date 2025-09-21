@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel-test/tree-fixtures",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": true,
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,9 +19,9 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "dependencies": {
-    "@whimbrel-test/asset-fixtures": "^0.0.5"
+    "@whimbrel-test/asset-fixtures": "^0.0.6"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.0.5"
+    "@whimbrel/core-api": "^0.0.6"
   }
 }

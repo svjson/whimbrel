@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/node",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": ".gitignore Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,14 +22,14 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.5",
-    "@whimbrel/facet": "^0.0.5",
-    "@whimbrel/flow": "^0.0.5"
+    "@whimbrel/core-api": "^0.0.6",
+    "@whimbrel/facet": "^0.0.6",
+    "@whimbrel/flow": "^0.0.6"
   },
   "dependencies": {
-    "@whimbrel/core-api": "0.0.5",
-    "@whimbrel/facet": "0.0.5",
-    "@whimbrel/flow": "0.0.5"
+    "@whimbrel/core-api": "0.0.6",
+    "@whimbrel/facet": "0.0.6",
+    "@whimbrel/flow": "0.0.6"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

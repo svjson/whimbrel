@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/git",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "docker-compose Facet for git",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,20 +22,20 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.5",
-    "@whimbrel/gitignore": "^0.0.5",
-    "@whimbrel/facet": "^0.0.5",
-    "@whimbrel/flow": "^0.0.5",
-    "@whimbrel/filesystem": "^0.0.5",
-    "@whimbrel/struct-file": "^0.0.5"
+    "@whimbrel/core-api": "^0.0.6",
+    "@whimbrel/gitignore": "^0.0.6",
+    "@whimbrel/facet": "^0.0.6",
+    "@whimbrel/flow": "^0.0.6",
+    "@whimbrel/filesystem": "^0.0.6",
+    "@whimbrel/struct-file": "^0.0.6"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "@whimbrel/core-api": "0.0.5",
-    "@whimbrel/facet": "0.0.5",
-    "@whimbrel/filesystem": "^0.0.5",
-    "@whimbrel/gitignore": "^0.0.5",
-    "@whimbrel/struct-file": "^0.0.5",
+    "@whimbrel/core-api": "0.0.6",
+    "@whimbrel/facet": "0.0.6",
+    "@whimbrel/filesystem": "^0.0.6",
+    "@whimbrel/gitignore": "^0.0.6",
+    "@whimbrel/struct-file": "^0.0.6",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^5.1.4",
