@@ -3,6 +3,7 @@ import {
   ActorFilter,
   ActorId,
   ActorType,
+  CtxCommandRunner,
   FacetRegistry,
   FileSystem,
   Formatter,
@@ -47,6 +48,7 @@ export const makeTestContext = (
       }
       return undefined
     },
+    runCommand: null as CtxCommandRunner,
     emitEvent: function (event: WhimbrelEvent): void {
       events.push(event)
     },

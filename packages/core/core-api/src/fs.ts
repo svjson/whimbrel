@@ -129,6 +129,13 @@ export type FileSystemScanOptions = {
 }
 
 /**
+ * Options for directory listing with `ls`
+ */
+export interface LsOptions {
+  withFileTypes?: boolean
+}
+
+/**
  * Options for creating directories.
  *
  * This combines the recursion options and context options to provide a unified
@@ -145,6 +152,7 @@ export type FileSystemMkDirOptions = FileSystemRecurseOptions & FileSystemCtxOpt
  */
 export interface FileEntry {
   type: FsObjectType
+  name: string
   path: string
 }
 
@@ -202,6 +210,15 @@ export interface FileSystem {
   isDirectory(dirPath: string): Promise<boolean>
 
   /**
+   * Check if the specified path is a file.
+   *
+   * @param filePath - The path to check.
+   *
+   * @return A promise that resolves to true if the path is a file, false otherwise.
+   */
+  isFile(filePath: string): Promise<boolean>
+
+  /**
    * Query if the underlying FileSystem is a physical disk.
    *
    * This is used to determine if the FileSystem is a real disk or an in-memory
@@ -212,6 +229,8 @@ export interface FileSystem {
   isPhysical(): boolean
 
   ls(dirPath: string): Promise<string[]>
+  ls(dirPath: string, opts: { withFileTypes: true }): Promise<FileEntry[]>
+  ls(dirPath: string, opts?: LsOptions): Promise<string[] | FileEntry[]>
 
   /**
    * Create a directory at the specified path.
@@ -272,6 +291,14 @@ export interface FileSystem {
    * @return A promise that resolves to the parsed JSON content as a JS/TS Object.
    */
   readJson<T = any>(filePath: string, opts?: FileSystemReadOptions): Promise<T>
+
+  /**
+   * Delete the directory at `dirPath`
+   *
+   * @param dirPath - The path of the directory to delete.
+   * @return A promise that resolves when the directory is deleted.
+   */
+  rmdir(dirPath: string): Promise<void>
 
   /**
    * Scan the contents of the directory at `dirPath`.

@@ -10,12 +10,13 @@ import {
   FileSystemReadOptions,
   FileSystemScanOptions,
   FileSystemWriteOptions,
+  LsOptions,
   WhimbrelError,
 } from '@whimbrel/core-api'
 import { DiskFileSystem } from './physical'
 import { AbstractFileSystem } from './abstract'
 
-interface FileDescriptor {
+export interface FileDescriptor {
   content?: string | Buffer
   ref?: string
   timestamp?: Date
@@ -47,11 +48,16 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
         'MemoryFileSystem.copy called with directory source. Use mkdir.'
       )
     }
-    const [fromDir, fromFile] = split(fromPath)
-    const [toDir, toFile] = split(toPath)
+    const file = structuredClone(await this.readFileDescriptor(fromPath))
+    await this.writeFileDescriptor(toPath, file)
+  }
 
-    const file = structuredClone(this.paths[fromDir][fromFile])
-    this.paths[toDir][toFile] = file
+  async delete(filePath: string) {
+    if (await this.exists(filePath)) {
+      this.removeFileDescriptor(filePath)
+      return
+    }
+    throw new WhimbrelError(`File not Found: (virtual) ${filePath}`)
   }
 
   async exists(filePath: string) {
@@ -59,13 +65,7 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
       return true
     }
 
-    const [dirName, fileName] = split(filePath)
-
-    if (this.paths[dirName]?.[fileName]) {
-      return true
-    }
-
-    return false
+    return Boolean(await this.readFileDescriptor(filePath))
   }
 
   async isDirectory(filePath: string) {
@@ -78,12 +78,19 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
     }
   }
 
+  async isFile(filePath: string) {
+    const fd = await this.readFileDescriptor(filePath)
+    return Boolean(fd)
+  }
+
   isPhysical() {
     return false
   }
 
-  async ls(dirPath: string, opts: { withFileTypes?: boolean } = {}) {
-    const { withFileTypes } = opts
+  async ls(dirPath: string): Promise<string[]>
+  async ls(dirPath: string, opts: { withFileTypes: true }): Promise<FileEntry[]>
+  async ls(dirPath: string, opts?: LsOptions): Promise<string[] | FileEntry[]> {
+    const { withFileTypes } = opts ?? {}
     if (dirPath.endsWith('/')) dirPath = dirPath.substring(0, dirPath.length - 1)
     //    dirPath = path.resolve(dirPath);
     const result = []
@@ -182,12 +189,12 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
   async scanDir(dirPath: string, opts: FileSystemScanOptions = {}): Promise<FileEntry[]> {
     const { ignorePredicate, filter, depth, sort } = opts
     const depthLimit = typeof depth === 'number'
-    const entries = await this.ls(dirPath, { withFileTypes: true })
+    const entries: FileEntry[] = await this.ls(dirPath, { withFileTypes: true })
     const files = []
 
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name)
-      const fileEntry = { path: fullPath, type: entry.type }
+      const fileEntry = { name: entry.name, path: fullPath, type: entry.type }
 
       if (ignorePredicate && ignorePredicate(fileEntry)) {
         continue
@@ -240,12 +247,6 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
     }
   }
 
-  async _write(filePath: string, entry: FileDescriptor) {
-    const [dirName, fileName] = split(filePath)
-    const dirMap = (this.paths[dirName] ??= {})
-    dirMap[fileName] = entry
-  }
-
   async write(
     filePath: string,
     content: string | Buffer,
@@ -255,7 +256,7 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
     content = Buffer.isBuffer(content)
       ? content
       : Buffer.from(content as string, (opts.encoding || 'utf8') as BufferEncoding)
-    await this._write(filePath, { content })
+    await this.writeFileDescriptor(filePath, { content })
   }
 
   async importReferences(dirPath: string, scanOpts: FileSystemScanOptions = {}) {
@@ -269,21 +270,58 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
     }
   }
 
+  /**
+   * Read the file descriptor for a given path from the virtual tree.
+   *
+   * @param filePath The path to the file
+   * @return The file descriptor, or undefined if the file does not exist
+   */
+  async readFileDescriptor(filePath: string): Promise<FileDescriptor | undefined> {
+    const [dirName, fileName] = split(filePath)
+    return this.paths[dirName]?.[fileName]
+  }
+
+  /**
+   * Remove a file descriptor from the virtual tree
+   *
+   * @param filePath The path to the file
+   * @returns void
+   */
+  async removeFileDescriptor(filePath: string): Promise<void> {
+    const [dirName, fileName] = split(filePath)
+    delete this.paths[dirName][fileName]
+  }
+
+  async rmdir(dirPath: string): Promise<void> {
+    if (await this.isDirectory(dirPath)) {
+      delete this.paths[dirPath]
+    } else {
+      throw new Error(`No such directory: ${dirPath}`)
+    }
+  }
+
+  /**
+   * Write a file descriptor to the virtual tree.
+   *
+   * This implicitly creates the target directory if it does not exist,
+   * which means that operations that requires the directory to exist needs
+   * to enforce this on their own.
+   *
+   * @param filePath The path to the file
+   * @param fd The file descriptor to write
+   */
+  async writeFileDescriptor(filePath: string, fd: FileDescriptor): Promise<void> {
+    const [dirName, fileName] = split(filePath)
+    const dirMap = (this.paths[dirName] ??= {})
+    dirMap[fileName] = fd
+  }
+
   async writeReference(filePath: string, absolutePath: string, _opts?: any) {
     const dirName = path.dirname(filePath)
     if (!(await this.exists(dirName))) {
       await this.mkdir(dirName, { recursive: true })
     }
-    await this._write(filePath, { ref: absolutePath })
-  }
-
-  async delete(filePath: string) {
-    if (await this.exists(filePath)) {
-      const [dirName, fileName] = split(filePath)
-      delete this.paths[dirName][fileName]
-      return
-    }
-    throw new WhimbrelError(`File not Found: (virtual) ${filePath}`)
+    await this.writeFileDescriptor(filePath, { ref: absolutePath })
   }
 }
 

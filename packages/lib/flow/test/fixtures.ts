@@ -1,5 +1,6 @@
 import {
   ApplicationLog,
+  CtxCommandRunner,
   FacetRegistry,
   FileSystem,
   Formatter,
@@ -33,6 +34,7 @@ export const makeWhimbrelContext = (
     acceptMutation: (mutation: Mutation) => {
       throw new Error(`Unexpected mutation: ${mutation}`)
     },
+    runCommand: null as CtxCommandRunner,
     getActor: () => null,
     resetActors: () => null,
     acceptJournalEntry:

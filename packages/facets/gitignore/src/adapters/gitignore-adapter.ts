@@ -39,6 +39,7 @@ export const matchRelative = (
 ) => {
   return match(
     {
+      name: fileEntry.name,
       path: path.relative(repoRoot, fileEntry.path),
       type: fileEntry.type,
     },

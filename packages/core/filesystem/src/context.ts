@@ -8,6 +8,8 @@ import {
   FileSystemReadOptions,
   WhimbrelError,
   FileSystemScanOptions,
+  LsOptions,
+  FileEntry,
 } from '@whimbrel/core-api'
 
 import { AbstractFileSystem } from './abstract'
@@ -61,8 +63,14 @@ export class ContextFileSystem extends AbstractFileSystem implements FileSystem 
     return this.impl.isPhysical()
   }
 
-  async ls(dirPath: string) {
-    return this.impl.ls(dirPath)
+  isFile(filePath: string) {
+    return this.impl.isFile(filePath)
+  }
+
+  ls(dirPath: string): Promise<string[]>
+  ls(dirPath: string, opts: { withFileTypes: true }): Promise<FileEntry[]>
+  async ls(dirPath: string, opts?: LsOptions): Promise<string[] | FileEntry[]> {
+    return this.impl.ls(dirPath, opts)
   }
 
   async mkdir(dirPath: string, opts: FileSystemMkDirOptions = {}) {
@@ -87,6 +95,10 @@ export class ContextFileSystem extends AbstractFileSystem implements FileSystem 
 
   async read(filePath: string, encoding: FileSystemReadOptions = 'utf-8') {
     return await this.impl.read(filePath, encoding)
+  }
+
+  async rmdir(dirPath: string) {
+    return await this.impl.rmdir(dirPath)
   }
 
   async scanDir(dirPath: string, opts: FileSystemScanOptions = {}) {

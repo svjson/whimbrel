@@ -101,22 +101,27 @@ describe('MemoryFileSystem', () => {
       // Then
       expect(scanResult).toEqual([
         {
+          name: 'a',
           path: '/a',
           type: 'directory',
         },
         {
+          name: 'drop',
           path: '/a/drop',
           type: 'directory',
         },
         {
+          name: 'in',
           path: '/a/drop/in',
           type: 'directory',
         },
         {
+          name: 'the',
           path: '/a/drop/in/the',
           type: 'directory',
         },
         {
+          name: 'ocean',
           path: '/a/drop/in/the/ocean',
           type: 'directory',
         },
@@ -137,22 +142,27 @@ describe('MemoryFileSystem', () => {
       // Then
       expect(scanResult).toEqual([
         {
+          name: 'src',
           path: `${dir}/src`,
           type: 'directory',
         },
         {
+          name: 'app.ts',
           path: `${dir}/src/app.ts`,
           type: 'file',
         },
         {
+          name: 'index.ts',
           path: `${dir}/src/index.ts`,
           type: 'file',
         },
         {
+          name: 'services',
           path: `${dir}/src/services`,
           type: 'directory',
         },
         {
+          name: 'todo-service.ts',
           path: `${dir}/src/services/todo-service.ts`,
           type: 'file',
         },
@@ -179,14 +189,17 @@ describe('MemoryFileSystem', () => {
       // Then
       expect(scanResult).toEqual([
         {
+          name: 'app.ts',
           path: `${dir}/src/app.ts`,
           type: 'file',
         },
         {
+          name: 'index.ts',
           path: `${dir}/src/index.ts`,
           type: 'file',
         },
         {
+          name: 'todo-service.ts',
           path: `${dir}/src/services/todo-service.ts`,
           type: 'file',
         },

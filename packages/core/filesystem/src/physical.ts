@@ -11,6 +11,7 @@ import {
   FileSystemScanOptions,
   FileSystemWriteOptions,
   FsObjectType,
+  LsOptions,
   WhimbrelError,
 } from '@whimbrel/core-api'
 import { trackTmpDir } from './tmpdir'
@@ -44,8 +45,16 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
   }
 
   async isDirectory(dirPath: string) {
+    if (!(await this.exists(dirPath))) {
+      return false
+    }
     const stat = await fs.stat(dirPath)
     return stat.isDirectory()
+  }
+
+  async isFile(filePath: string) {
+    const stat = await fs.stat(filePath)
+    return stat.isFile()
   }
 
   isPhysical() {
@@ -60,7 +69,16 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
     }
   }
 
-  async ls(dirPath: string) {
+  async ls(dirPath: string): Promise<string[]>
+  async ls(dirPath: string, opts: { withFileTypes: true }): Promise<FileEntry[]>
+  async ls(dirPath: string, opts?: LsOptions): Promise<string[] | FileEntry[]> {
+    if (opts?.withFileTypes) {
+      return (await fs.readdir(dirPath, { withFileTypes: true })).map((e) => ({
+        type: (e.isDirectory() ? 'directory' : 'file') as FsObjectType,
+        path: path.join(e.parentPath, e.name),
+        name: e.name,
+      }))
+    }
     return await fs.readdir(dirPath)
   }
 
@@ -77,6 +95,10 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
 
   async move(fromPath: string, toPath: string) {
     await fs.rename(fromPath, toPath)
+  }
+
+  async rmdir(dirPath: string) {
+    fs.rmdir(dirPath)
   }
 
   async size(filePath: string) {
@@ -107,7 +129,11 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
 
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name)
-      const fileEntry: FileEntry = { path: fullPath, type: toFSObjectType(entry) }
+      const fileEntry: FileEntry = {
+        name: entry.name,
+        path: fullPath,
+        type: toFSObjectType(entry),
+      }
 
       if (ignorePredicate && ignorePredicate(fileEntry)) {
         continue

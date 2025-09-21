@@ -2,6 +2,7 @@ import {
   ActorId,
   ActorType,
   ApplicationLog,
+  CtxCommandRunner,
   FileSystemMutation,
   Formatter,
   JournalEntry,
@@ -36,6 +37,7 @@ export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelConte
     sources: {},
     step: makeNullExecutionStep(),
     targets: {},
+    runCommand: null as CtxCommandRunner,
     resetActors: () => {
       ctx.sources = {}
       ctx.targets = {}

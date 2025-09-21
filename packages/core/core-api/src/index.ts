@@ -93,6 +93,7 @@ export type {
   FileSystemMkDirOptions,
   FileSystemWriteOptions,
   FsObjectType,
+  LsOptions,
 } from './fs'
 export type { ApplicationLog, FileListOptions } from './log'
 export type {

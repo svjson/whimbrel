@@ -1,6 +1,6 @@
 import { parse as parseJSON } from 'jsonc-parser'
 
-import { toFileSystemWriteOptions } from '@whimbrel/core-api'
+import { LsOptions, toFileSystemWriteOptions } from '@whimbrel/core-api'
 
 import {
   FileEntry,
@@ -24,9 +24,13 @@ export abstract class AbstractFileSystem implements FileSystem {
 
   abstract isDirectory(dirPath: string): Promise<boolean>
 
+  abstract isFile(filePath: string): Promise<boolean>
+
   abstract isPhysical(): boolean
 
   abstract ls(dirPath: string): Promise<string[]>
+  abstract ls(dirPath: string, opts: { withFileTypes: true }): Promise<FileEntry[]>
+  abstract ls(dirPath: string, opts: LsOptions): Promise<string[] | FileEntry[]>
 
   abstract mkdir(
     dirPath: string,
@@ -46,6 +50,8 @@ export abstract class AbstractFileSystem implements FileSystem {
   async readJson<T>(filePath: string, encoding = 'utf-8') {
     return parseJSON((await this.read(filePath, encoding)) as string) as T
   }
+
+  abstract rmdir(dirPath: string): Promise<void>
 
   abstract scanDir(filePath: string, opts: FileSystemScanOptions): Promise<FileEntry[]>
 
