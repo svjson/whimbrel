@@ -11,5 +11,11 @@ export default defineConfig({
   target: 'node20',
   shims: false,
   outExtension: ({ format }) => (format === 'cjs' ? { js: '.cjs' } : { js: '.js' }),
-  external: [...Object.keys(pkg.dependencies ?? {}), ...builtinModules],
+  external: [
+    ...Object.keys(pkg.dependencies ?? {}),
+    ...Object.keys(pkg.devDependencies ?? {}),
+    ...Object.keys(pkg.peerDependencies ?? {}),
+    ...builtinModules,
+    /^@whimbrel\//,
+  ],
 })
