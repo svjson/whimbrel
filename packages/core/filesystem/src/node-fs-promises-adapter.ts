@@ -55,7 +55,6 @@ export const makeNodeFsPromisesAdapter = (disk: FileSystem): NodePromisesFileSys
       },
 
       async stat(path: PathLike) {
-        // Return a Stats-like object
         if (!(await disk.exists(path.toString()))) {
           const e: NodeJS.ErrnoException = new Error(
             `ENOENT: no such file or directory, stat '${path}'`
@@ -70,14 +69,13 @@ export const makeNodeFsPromisesAdapter = (disk: FileSystem): NodePromisesFileSys
           isFile: () => isFile,
           isDirectory: () => isDir,
           size,
-          mode: 0o666, // placeholder, adapt if you track modes
+          mode: 0o666, // placeholder
           mtime: await disk.timestamp(path.toString()),
           ctime: await disk.timestamp(path.toString()),
         } as Stats
       },
 
       async lstat(path: PathLike) {
-        // For your purposes this can be the same as stat
         return this.stat(path)
       },
 

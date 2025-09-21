@@ -53,6 +53,7 @@ export class PhysicalFileSystem extends AbstractFileSystem implements FileSystem
   }
 
   async isFile(filePath: string) {
+    if (!(await this.exists(filePath))) return false
     const stat = await fs.stat(filePath)
     return stat.isFile()
   }

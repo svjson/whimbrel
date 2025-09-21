@@ -51,6 +51,14 @@ export class ReadThroughFileSystem extends MemoryFileSystem {
     this.raiseTombstone(filePath)
   }
 
+  override async exists(diskPath: string): Promise<boolean> {
+    const existsMem = await super.exists(diskPath)
+    if (existsMem) return true
+    if (this.isGraveyardPath(diskPath)) return existsMem
+
+    return DiskFileSystem.exists(diskPath)
+  }
+
   override async isDirectory(diskPath: string): Promise<boolean> {
     const existsMemFs = await super.isDirectory(diskPath)
     if (existsMemFs) return true
@@ -67,7 +75,7 @@ export class ReadThroughFileSystem extends MemoryFileSystem {
   async ls(dirPath: string, opts?: LsOptions): Promise<string[] | FileEntry[]> {
     const entries = await (super.ls as LsImpl)(dirPath, opts)
     if (this.isGraveyardPath(dirPath)) return entries
-    if (!DiskFileSystem.isDirectory(dirPath)) return entries
+    if (!(await DiskFileSystem.isDirectory(dirPath))) return entries
 
     const fsEntries = await (DiskFileSystem.ls as LsImpl)(dirPath, opts)
 

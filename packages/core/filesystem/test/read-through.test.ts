@@ -59,6 +59,14 @@ describe('ReadThroughFileSystem', () => {
       // Then
       expect(existsp).toBe(true)
     })
+
+    it('should return false for file that does not exist on physical file system', async () => {
+      // Given
+      const rtfs = new ReadThroughFileSystem()
+
+      // Then
+      expect(await rtfs.exists('/tmp/krakelibrankelfnatt/klopklop/guran.txt'))
+    })
   })
 
   describe('isDirectory', () => {
@@ -149,6 +157,19 @@ describe('ReadThroughFileSystem', () => {
 
       // Then
       expect(entries.sort()).toEqual(['a-dir', 'testfile'])
+    })
+  })
+
+  describe('read', () => {
+    it('should read file contents from physical file system', async () => {
+      // Given
+      const dir = await createDirectory([{ testfile: 'A silly little file' }])
+      const rtfs = new ReadThroughFileSystem()
+
+      // Then
+      expect(await rtfs.read(path.join(dir, 'testfile'), 'utf8')).toEqual(
+        'A silly little file'
+      )
     })
   })
 })

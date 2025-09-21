@@ -92,7 +92,6 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
   async ls(dirPath: string, opts?: LsOptions): Promise<string[] | FileEntry[]> {
     const { withFileTypes } = opts ?? {}
     if (dirPath.endsWith('/')) dirPath = dirPath.substring(0, dirPath.length - 1)
-    //    dirPath = path.resolve(dirPath);
     const result = []
 
     const dirEntry = this.paths[dirPath]
@@ -105,10 +104,10 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
       }
     }
 
-    const dirPathSlash = dirPath + '/'
+    const dirPathSlash = dirPath + path.sep
     const dirs = Object.keys(this.paths)
       .filter((d) => d.startsWith(dirPathSlash))
-      .map((d) => path.relative(dirPathSlash, d).split('/'))
+      .map((d) => path.relative(dirPathSlash, d).split(path.sep))
       .filter((d) => d.length === 1 && d[0] !== dirPath)
       .map((d) => d[0])
 
@@ -150,21 +149,18 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
   }
 
   async move(fromPath: string, toPath: string) {
-    const [sourceDir, sourceFile] = split(fromPath)
-    const [targetDir, targetFile] = split(toPath)
-    const file = this.paths[sourceDir][sourceFile]
+    const file = await this.readFileDescriptor(fromPath)
     if (!file) {
       throw new WhimbrelError(`File not Found: (virtual) ${fromPath}`)
     }
-    this.paths[targetDir][targetFile] = file
-    delete this.paths[sourceDir][sourceFile]
+    await this.writeFileDescriptor(toPath, file)
+    await this.removeFileDescriptor(fromPath)
   }
 
   async read(filePath: string, opts: FileSystemReadOptions) {
     opts = toFileOpts(opts)
     if (await this.exists(filePath)) {
-      const [dirName, fileName] = split(filePath)
-      const entry = this.paths[dirName][fileName]
+      const entry = await this.readFileDescriptor(filePath)
       if (entry.content) {
         return opts.encoding
           ? Buffer.from(entry.content).toString(
@@ -223,8 +219,7 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
 
   async size(filePath: string) {
     if (await this.exists(filePath)) {
-      const [dirName, fileName] = split(filePath)
-      const entry = this.paths[dirName][fileName]
+      const entry = await this.readFileDescriptor(filePath)
       if (entry?.content) {
         return entry.content.length
       } else if (entry?.ref) {
@@ -237,8 +232,7 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
 
   async timestamp(filePath: string) {
     if (await this.exists(filePath)) {
-      const [dirName, fileName] = split(filePath)
-      const entry = this.paths[dirName][fileName]
+      const entry = await this.readFileDescriptor(filePath)
       if (entry?.content) {
         return entry.timestamp ?? new Date()
       } else {
