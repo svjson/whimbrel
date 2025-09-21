@@ -59,7 +59,14 @@ const collectFacet = async (
 
   if (Object.hasOwn(result.detected, facet.id)) {
     concatDistinct(result.detected[facet.id].roles, scope.roles)
-    mergeLeft(result.detected[facet.id].config, scope.config ?? {})
+    if (facet.mergeConfig) {
+      result.detected[facet.id].config = facet.mergeConfig(
+        result.detected[facet.id].config,
+        scope.config ?? {}
+      )
+    } else {
+      mergeLeft(result.detected[facet.id].config, scope.config ?? {})
+    }
   } else {
     result.detected[facet.id] = { ...scope }
   }

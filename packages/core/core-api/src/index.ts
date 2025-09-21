@@ -79,6 +79,7 @@ export type {
   FacetQuery,
   FacetQueryFunction,
   FacetQueryResult,
+  MergeConfigFunction,
 } from './facet'
 export type {
   FileEntry,

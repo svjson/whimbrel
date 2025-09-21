@@ -60,6 +60,7 @@ export interface FacetModulePrototype {
   taskAugmentations?: TaskAugmentations
   implicits?: FacetDeclaration[]
   detect?: DetectFunction
+  mergeConfig?: MergeConfigFunction
 }
 
 /**
@@ -72,6 +73,7 @@ export interface FacetModule {
   taskAugmentations: TaskAugmentations
   implicits: FacetDeclaration[]
   detect?: DetectFunction
+  mergeConfig?: MergeConfigFunction
   getTask(taskName: string): Task
 }
 
@@ -82,7 +84,7 @@ export const NoDetectFunction = async (_ctx: WhimbrelContext, _dir: string) => (
 /**
  * Construct a FacetModule instance from a FacetModulePrototype.
  */
-export const makeFacetModule = (module: FacetModulePrototype) => {
+export const makeFacetModule = (module: FacetModulePrototype): FacetModule => {
   const facetModule = {
     id: module.id,
     tasks: module.tasks ?? {},
@@ -90,6 +92,7 @@ export const makeFacetModule = (module: FacetModulePrototype) => {
     taskAugmentations: module.taskAugmentations ?? {},
     implicits: module.implicits ?? [],
     detect: module.detect ?? NoDetectFunction,
+    mergeConfig: module.mergeConfig,
     getTask(taskName: string): Task {
       const nameParts = taskName.split(':')
       const taskId = nameParts.length == 2 ? taskName : `${facetModule.id}:${taskName}`
@@ -139,6 +142,8 @@ export type DetectFunction = (
   ctx: WhimbrelContext,
   dir: string
 ) => Promise<FacetDetectionResult>
+
+export type MergeConfigFunction<T = any> = (a: T, b: T) => T
 
 export type FacetRoles = string[]
 
