@@ -56,9 +56,9 @@ const resolveSourceName = async (
 const dryExecute = async (ctx: WhimbrelContext) => {
   await execute(ctx)
 
-  if (!ctx.disk.isPhysical()) {
-    const { source } = ctx
+  const { source } = ctx
 
+  if (!ctx.disk.isPhysical() && !(await ctx.disk.exists(source.root))) {
     const importEntries = await DiskFileSystem.scanDir(source.root, {
       sort: true,
       ignorePredicate: (entry: FileEntry) => {
