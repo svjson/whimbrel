@@ -163,6 +163,7 @@ export const materializePlan = async (
   ctx.log.showStatus(mCtx.statusText)
 
   while (!mCtx.complete) {
+    ctx.log.setIndentation(0)
     mCtx.iteration++
     if (mCtx.iteration > 20) {
       throw new WhimbrelError('Plan Materialization Failed: Too many iterations.')

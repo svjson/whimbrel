@@ -145,6 +145,10 @@ export interface ApplicationLog {
    * Decrease the indentation-level for subsequent output.
    */
   deindent: Function
+  /**
+   * Set indentation
+   */
+  setIndentation: Function
 }
 
 /**
@@ -162,4 +166,5 @@ export const NullAppender = {
   updateStatus: (_statusText: string) => null,
   indent: () => null,
   deindent: () => null,
+  setIndentation: () => null,
 }

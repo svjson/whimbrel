@@ -174,4 +174,11 @@ export class ConsoleAppender implements ApplicationLog {
   deindent() {
     this.indentation = Math.max(0, this.indentation - 1)
   }
+
+  /**
+   * Set the indentation level for subsequent output.
+   */
+  setIndentation(level: number) {
+    this.indentation = level
+  }
 }

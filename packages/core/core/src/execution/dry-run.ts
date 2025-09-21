@@ -42,3 +42,19 @@ export class DryRunError extends Error {
     super(message)
   }
 }
+
+const summarize = (ctx: WhimbrelContext, step: ExecutionStep) => {
+  if (typeof step.inputs?.target?.path === 'string') {
+    return step.inputs.target.path
+  }
+  return ''
+}
+
+const outputStepTree = (ctx: WhimbrelContext, steps: ExecutionStep[]) => {
+  for (const step of steps) {
+    ctx.log.info(` * ${step.id} - ${summarize(ctx, step)}`)
+    ctx.log.indent()
+    outputStepTree(ctx, step.steps)
+    ctx.log.deindent()
+  }
+}
