@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`whim z <todo-service.ts> > whim z --no-color 1`] = `
+"
+Analyze path: /tmp/whim-repo-XXXX
+-----------------------------------
+* Define Source
+  ⊕ source: whim-repo-XXXX
+  * Analyze Actor
+    * Discover Actor Facets
+      ⇒ vcs: git
+      ⇒ engine: node
+      ⇒ package-file: package.json
+      ⇒ facets: project
+  * Reify Actor
+    ⇒ name: todo-service
+
+"
+`;
+
+exports[`whim z <todo-service.ts> > whim z 1`] = `
+"
+Analyze path: [32m/tmp/whim-repo-XXXX[39m
+-----------------------------------
+* Define Source
+  [32m⊕[39m [35msource[39m: [36mwhim-repo-XXXX[39m
+  * Analyze Actor
+    * Discover Actor Facets
+      [36m⇒[39m [34mvcs[39m: [36mgit[39m
+      [36m⇒[39m [34mengine[39m: [36mnode[39m
+      [36m⇒[39m [34mpackage-file[39m: [36mpackage.json[39m
+      [36m⇒[39m [34mfacets[39m: [36mproject[39m
+  * Reify Actor
+    [36m⇒[39m [35mname[39m: [36mtodo-service[39m
+
+"
+`;

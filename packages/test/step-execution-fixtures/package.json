@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@whimbrel/core-api": "0.0.6",
-    "@whimbrel/facets": "0.0.6",
+    "@whimbrel/facet": "0.0.6",
     "@whimbrel/project": "0.0.6",
     "@whimbrel-test/step-fixtures": "0.0.6",
     "@whimbrel-test/context-fixtures": "0.0.6"

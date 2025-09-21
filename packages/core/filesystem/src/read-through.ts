@@ -101,3 +101,7 @@ export class ReadThroughFileSystem extends MemoryFileSystem {
     return Boolean(graveyardAncestor.length)
   }
 }
+
+export const makeReadThroughMemoryFileSystem = async () => {
+  return new ReadThroughFileSystem()
+}

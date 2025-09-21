@@ -1,0 +1,18 @@
+{
+  "name": "@whimbrel-test/cli-integration-tests",
+  "version": "0.0.6",
+  "type": "module",
+  "private": true,
+  "description": "Integration tests for Whimbrel CLI",
+  "scripts": {
+    "test:integration": "vitest run"
+  },
+  "devDependencies": {
+    "@whimbrel-test/asset-fixtures": "0.0.6",
+    "@whimbrel-test/tree-fixtures": "0.0.6",
+    "@whimbrel/package-json": "0.0.6",
+    "vitest": "^3.2.4",
+    "which": "^5.0.0",
+    "whimbrel-cli": "0.0.6"
+  }
+}

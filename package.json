@@ -15,7 +15,8 @@
     "packages/core/*",
     "packages/lib/*",
     "packages/facets/*",
-    "packages/test/*"
+    "packages/test/*",
+    "integration-tests/*"
   ],
   "scripts": {
     "build": "turbo run build",

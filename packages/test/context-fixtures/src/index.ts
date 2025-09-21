@@ -1,5 +1,5 @@
 import { WhimbrelCommandOptions, WhimbrelContextOptions } from '@whimbrel/core-api'
-import { MemoryFileSystem } from '@whimbrel/filesystem'
+import { MemoryFileSystem, ReadThroughFileSystem } from '@whimbrel/filesystem'
 import { makeWhimbrelContext } from '@whimbrel/core'
 
 export const makeWhimbrelTestContext = async (
@@ -19,6 +19,13 @@ export const makeWhimbrelTestContext = async (
 
 export const testIOContext = async () => {
   return makeWhimbrelTestContext({})
+}
+
+export const rtMemFsContext = async (opts: WhimbrelContextOptions = {}) => {
+  return makeWhimbrelTestContext({
+    ...opts,
+    disk: new ReadThroughFileSystem(),
+  })
 }
 
 export const memFsContext = async (opts: WhimbrelContextOptions = {}) => {
