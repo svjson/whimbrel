@@ -23,6 +23,7 @@
     "clean": "npm run --workspaces clean --if-present",
     "publish": "npm run --workspaces publish --if-present",
     "test": "npm run --workspaces test --if-present",
+    "test:integration": "npm run --workspaces test:integration --if-present",
     "typecheck": "npm run --workspaces typecheck --if-present"
   },
   "devDependencies": {
