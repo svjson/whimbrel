@@ -5,7 +5,8 @@ import { makeNodeFsPromisesAdapter } from '@whimbrel/filesystem'
 import { makeWhimbrelGitAdapter } from './whimbrel'
 
 export { parseGitMergeOutput } from './git-adapter'
-export { repositoryRoot, stage } from './isomorphic-git/impl'
+
+export { makeIsoMorphicGitAdapter } from './isomorphic-git'
 
 export function makeGitAdapter(ctx: WhimbrelContext): GitAdapter
 export function makeGitAdapter(ctx: WhimbrelContext, adapter: GitAdapter): GitAdapter

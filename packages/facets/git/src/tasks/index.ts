@@ -1,1 +1,1 @@
-export { Import } from './import'
+export { Import, GIT__IMPORT } from './import'

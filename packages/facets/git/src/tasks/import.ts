@@ -19,7 +19,6 @@ type ImportFunction = (params: GitImportParams) => Promise<void>
 
 const performImport = async (ctx: WhimbrelContext, importFn: ImportFunction) => {
   const { from, to, source, target } = ctx.step.inputs
-
   const git = makeGitAdapter(ctx)
 
   await beginFlow(ctx)

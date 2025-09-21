@@ -1,3 +1,12 @@
 export { makeIsoMorphicGitAdapter } from './adapter'
 
-export { commit, head, stage, readCommit, status } from './impl'
+import { repositoryRoot, commit, head, stage, readCommit, status } from './impl'
+
+export default {
+  commit,
+  head,
+  repositoryRoot,
+  stage,
+  readCommit,
+  status,
+}
