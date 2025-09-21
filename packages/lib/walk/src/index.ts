@@ -1,6 +1,6 @@
 export { walkPath } from './walk-path'
 export { walk } from './walk'
-export { readPath, writePath, deletePath, readClosest } from './path'
+export { closestAncestor, readPath, writePath, deletePath, readClosest } from './path'
 export { diff, diff3Way } from './diff'
 export { mergeLeft } from './merge'
 export { propertyPaths, containsAll } from './query'

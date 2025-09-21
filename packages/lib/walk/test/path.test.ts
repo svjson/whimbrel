@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { readClosest, readPath, writePath } from '@src/index'
+import { closestAncestor, readClosest, readPath, writePath } from '@src/index'
 
 describe('writePath', () => {
   it('should write to root level property', () => {
@@ -175,6 +175,47 @@ describe('readPath', () => {
     // Then
     expect(strPathResult).toEqual(47)
     expect(arrPathResult).toEqual(strPathResult)
+  })
+})
+
+describe('closestAncestor', () => {
+  it('should return the argument property path if it exists', () => {
+    // Given
+    const object = { nested: { things: { here: 'value' } } }
+
+    // When
+    const strPathResult = closestAncestor(object, 'nested.things.here')
+    const arrPathResult = closestAncestor(object, ['nested', 'things', 'here'])
+
+    // Then
+    expect(strPathResult).toEqual(['nested', 'things', 'here'])
+    expect(arrPathResult).toEqual(['nested', 'things', 'here'])
+  })
+
+  it('should return the argument property path with truncated end if full path does not exist', () => {
+    // Given
+    const object = { nested: { things: {} } }
+
+    // When
+    const strPathResult = closestAncestor(object, 'nested.things.here')
+    const arrPathResult = closestAncestor(object, ['nested', 'things', 'here'])
+
+    // Then
+    expect(strPathResult).toEqual(['nested', 'things'])
+    expect(arrPathResult).toEqual(['nested', 'things'])
+  })
+
+  it('should return empty array if no part of the path exists', () => {
+    // Given
+    const object = { __nested: { things: { here: true } } }
+
+    // When
+    const strPathResult = closestAncestor(object, 'nested.things.here')
+    const arrPathResult = closestAncestor(object, ['nested', 'things', 'here'])
+
+    // Then
+    expect(strPathResult).toEqual([])
+    expect(arrPathResult).toEqual([])
   })
 })
 

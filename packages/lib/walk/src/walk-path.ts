@@ -16,11 +16,15 @@ export type OnNodeMissingMutator = (
    * The parent object that is currently missing the `key` property, or has a
    * null/undefined value.
    */
-  object?: any,
+  object: any | undefined,
   /**
    * They key whose value is missing.
    */
-  key?: string
+  key: string | undefined,
+  /**
+   * The full path to `object`, excluding `key`
+   */
+  path: string[]
 ) => boolean | undefined | void
 
 /**
@@ -80,7 +84,8 @@ export const walkPath = (
   object: any,
   propertyPath: PropertyPath,
   onMissing?: OnNodeMissingMutator,
-  op?: NodeTargetMutator
+  op?: NodeTargetMutator,
+  traversed: string[] = []
 ): any => {
   const parts: string[] =
     typeof propertyPath === 'string' ? propertyPath.split('.') : [...propertyPath]
@@ -97,7 +102,7 @@ export const walkPath = (
   let nextObj = object[seg]
   if (!nextObj) {
     if (onMissing) {
-      const miss = onMissing(object, seg)
+      const miss = onMissing(object, seg, traversed)
       if (miss) {
         return miss
       }
@@ -108,6 +113,6 @@ export const walkPath = (
       return
     }
   }
-
-  return walkPath(nextObj, parts, onMissing, op)
+  traversed.push(seg)
+  return walkPath(nextObj, parts, onMissing, op, traversed)
 }

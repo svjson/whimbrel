@@ -75,6 +75,41 @@ export const readClosest = (object: any, propertyPath: PropertyPath) => {
 }
 
 /**
+ * Find the closest existing ancestor of a path in an object graph
+ *
+ * ```ts
+ * closestAncestor({ nested: { things: { here: 'value' } } }, 'nested.things.here')
+ * // => ['nested', 'things', 'here']
+ *
+ * closestAncestor({ nested: { things: {} } }, 'nested.things.here')
+ * // => ['nested', 'things']
+ * ```
+ *
+ * @param object - The object to read from.
+ * @param propertyPath - The path to read from, either as a string or an array of segments.
+ * @return The closest existing ancestor path as an array of strings.
+ */
+export const closestAncestor = (object: any, propertyPath: PropertyPath) => {
+  let result: string[] = Array.isArray(propertyPath)
+    ? propertyPath
+    : propertyPath.split('.')
+  walkPath(
+    object,
+    propertyPath,
+    (_obj, _key, path) => {
+      result = path
+    },
+    (obj, key) => {
+      if (!obj[key]) {
+        result.pop()
+      }
+    }
+  )
+
+  return result
+}
+
+/**
  * Utility function for deleting a property at a nested path on an object.
  * If the path does not exist, it will do nothing.
  *
