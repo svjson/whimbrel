@@ -41,10 +41,14 @@ export interface ValueReference {
   ref: string
 }
 
+export interface LiteralValue {
+  value: any
+}
+
 /**
  * Valid definitions of values for Task inputs.
  */
-export type ValueProvider = ValueReference | string
+export type ValueProvider = ValueReference | string | LiteralValue
 
 /**
  * Structure for declaration of a task parameter.

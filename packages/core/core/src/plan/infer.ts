@@ -11,7 +11,11 @@ const resolveFromDefaults = (ctx: WhimbrelContext, param: TaskParameter) => {
   let actorType = 'source'
 
   for (const alt of param.defaults) {
-    if (typeof alt === 'object' && alt.ref === 'target') {
+    if (
+      typeof alt === 'object' &&
+      Object.hasOwn(alt, 'ref') &&
+      (alt as any).ref === 'target'
+    ) {
       actorType = 'target'
       break
     }
