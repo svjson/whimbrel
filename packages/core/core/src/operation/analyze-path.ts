@@ -42,6 +42,7 @@ export const makeAnalyzeScaffold = (
             target: {
               path: targetDir,
             },
+            isRoot: true,
           },
         },
       ],

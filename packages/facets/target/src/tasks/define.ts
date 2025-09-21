@@ -98,6 +98,10 @@ const execute = async (ctx: WhimbrelContext) => {
   const mutator = new ContextMutator(ctx)
   mutator.addTarget(target)
   mutator.setTarget(target)
+
+  if (inputs.isRoot) {
+    mutator.setRootTarget(target)
+  }
 }
 
 export const Define = makeTask({
