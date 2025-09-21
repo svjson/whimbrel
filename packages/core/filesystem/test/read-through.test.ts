@@ -4,7 +4,7 @@ import path from 'node:path'
 
 import { makeTreeFixture } from '@whimbrel-test/tree-fixtures'
 
-const { createDirectory } = makeTreeFixture(DiskFileSystem)
+const { createDirectory, populateDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('ReadThroughFileSystem', () => {
   describe('copy', () => {
@@ -158,6 +158,108 @@ describe('ReadThroughFileSystem', () => {
       // Then
       expect(entries.sort()).toEqual(['a-dir', 'testfile'])
     })
+
+    it('should return combined entry name result of memory and physical when both exist', async () => {
+      const dir = await createDirectory(['package.json', 'tsup.config.ts'])
+      const rtfs = new ReadThroughFileSystem()
+      await populateDirectory(
+        dir,
+        ['package.json', 'vite.config.ts', 'tsconfig.json'],
+        rtfs
+      )
+
+      // When
+      const entries = await rtfs.ls(dir)
+
+      // Then
+      expect(entries.sort()).toEqual([
+        'package.json',
+        'tsconfig.json',
+        'tsup.config.ts',
+        'vite.config.ts',
+      ])
+    })
+
+    it('should return combined entry result of memory and physical when both exist', async () => {
+      const dir = await createDirectory(['package.json', 'tsup.config.ts'])
+      const rtfs = new ReadThroughFileSystem()
+      await populateDirectory(
+        dir,
+        ['package.json', 'vite.config.ts', 'tsconfig.json'],
+        rtfs
+      )
+
+      // When
+      const entries = await rtfs.ls(dir, { withFileTypes: true })
+
+      // Then
+      expect(entries.sort((a, b) => a.name.localeCompare(b.name))).toEqual([
+        {
+          name: 'package.json',
+          path: path.join(dir, 'package.json'),
+          type: 'file',
+        },
+        {
+          name: 'tsconfig.json',
+          path: path.join(dir, 'tsconfig.json'),
+          type: 'file',
+        },
+        {
+          name: 'tsup.config.ts',
+          path: path.join(dir, 'tsup.config.ts'),
+          type: 'file',
+        },
+        {
+          name: 'vite.config.ts',
+          path: path.join(dir, 'vite.config.ts'),
+          type: 'file',
+        },
+      ])
+    })
+
+    it('should return combined entry result of memory and physical when both exist and filter out duplicate references', async () => {
+      const dir = await createDirectory([
+        'package.json',
+        'tsup.config.ts',
+        'vite.config.ts',
+      ])
+      const rtfs = new ReadThroughFileSystem()
+      await populateDirectory(dir, ['tsconfig.json'], rtfs)
+
+      const pkgJsonPath = path.join(dir, 'package.json')
+      const tsupConfigPath = path.join(dir, 'tsup.config.ts')
+      const viteConfigPath = path.join(dir, 'vite.config.ts')
+      await rtfs.writeReference(pkgJsonPath, pkgJsonPath)
+      await rtfs.writeReference(tsupConfigPath, tsupConfigPath)
+      await rtfs.writeReference(viteConfigPath, viteConfigPath)
+
+      // When
+      const entries = await rtfs.ls(dir, { withFileTypes: true })
+
+      // Then
+      expect(entries.sort((a, b) => a.name.localeCompare(b.name))).toEqual([
+        {
+          name: 'package.json',
+          path: path.join(dir, 'package.json'),
+          type: 'file',
+        },
+        {
+          name: 'tsconfig.json',
+          path: path.join(dir, 'tsconfig.json'),
+          type: 'file',
+        },
+        {
+          name: 'tsup.config.ts',
+          path: path.join(dir, 'tsup.config.ts'),
+          type: 'file',
+        },
+        {
+          name: 'vite.config.ts',
+          path: path.join(dir, 'vite.config.ts'),
+          type: 'file',
+        },
+      ])
+    })
   })
 
   describe('read', () => {
@@ -170,6 +272,67 @@ describe('ReadThroughFileSystem', () => {
       expect(await rtfs.read(path.join(dir, 'testfile'), 'utf8')).toEqual(
         'A silly little file'
       )
+    })
+  })
+
+  describe('scanDir', () => {
+    it('should scan physical file system when directory not in memory', async () => {
+      // Given
+      const dir = await createDirectory([
+        'package.json',
+        ['src', ['index.js', 'impl.js', 'stuff.js']],
+        ['dist', ['index.js', 'index.cjs']],
+        'package-lock.json',
+      ])
+      const rtfs = new ReadThroughFileSystem()
+
+      // When
+      const scanResult = await rtfs.scanDir(dir)
+
+      // Then
+      expect(scanResult).toEqual([
+        {
+          name: 'index.cjs',
+          path: `${dir}/dist/index.cjs`,
+          type: 'file',
+        },
+        {
+          name: 'index.js',
+          path: `${dir}/dist/index.js`,
+          type: 'file',
+        },
+        {
+          name: 'dist',
+          path: `${dir}/dist`,
+          type: 'directory',
+        },
+        {
+          name: 'package-lock.json',
+          path: `${dir}/package-lock.json`,
+          type: 'file',
+        },
+        {
+          name: 'package.json',
+          path: `${dir}/package.json`,
+          type: 'file',
+        },
+        {
+          name: 'impl.js',
+          path: `${dir}/src/impl.js`,
+          type: 'file',
+        },
+        {
+          name: 'index.js',
+          path: `${dir}/src/index.js`,
+          type: 'file',
+        },
+        {
+          name: 'stuff.js',
+          path: `${dir}/src/stuff.js`,
+          type: 'file',
+        },
+        { name: 'src', path: `${dir}/src`, type: 'directory' },
+      ])
     })
   })
 })

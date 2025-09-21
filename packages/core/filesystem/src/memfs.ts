@@ -98,7 +98,12 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
     if (dirEntry) {
       const files = Object.keys(dirEntry)
       if (withFileTypes) {
-        result.push(...files.map((f) => ({ name: f, type: 'file' })))
+        result.push(
+          ...files.map(
+            (f) =>
+              ({ name: f, path: path.join(dirPath, f), type: 'file' }) satisfies FileEntry
+          )
+        )
       } else {
         result.push(...files)
       }
@@ -112,7 +117,16 @@ export class MemoryFileSystem extends AbstractFileSystem implements FileSystem {
       .map((d) => d[0])
 
     if (withFileTypes) {
-      result.push(...dirs.map((d) => ({ name: d, type: 'directory' })))
+      result.push(
+        ...dirs.map(
+          (d) =>
+            ({
+              name: d,
+              path: path.join(dirPath, d),
+              type: 'directory',
+            }) satisfies FileEntry
+        )
+      )
     } else {
       result.push(...dirs)
     }
