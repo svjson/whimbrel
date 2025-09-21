@@ -78,6 +78,23 @@ export class PackageJSON extends JSONFile {
     return updated
   }
 
+  setDependencyVersion(
+    dependency: string,
+    version: string,
+    force: boolean = false
+  ): boolean {
+    let set = false
+    ;['dependencies', 'devDependencies', 'peerDependencies'].forEach((depColl) => {
+      const currentVersion: string = this.get([depColl, dependency])
+      if (currentVersion || force) {
+        this.set([depColl, dependency], version)
+        set = true
+      }
+    })
+
+    return set
+  }
+
   static readIfExists = makeReadIfExists(
     PackageJSON,
     'package.json',
