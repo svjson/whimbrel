@@ -1,6 +1,10 @@
 import { ExecuteTaskFunction, ExecutionStep, WhimbrelContext } from '@whimbrel/core-api'
 import { stepResultEqual } from '@whimbrel/core'
-import { memFsContext, testIOContext } from '@whimbrel-test/context-fixtures'
+import {
+  memFsContext,
+  rtMemFsContext,
+  testIOContext,
+} from '@whimbrel-test/context-fixtures'
 import { StepDefinition, makeConcreteStep } from '@whimbrel-test/step-fixtures'
 
 export type ContainsCtx = { ctx: WhimbrelContext }
@@ -127,7 +131,7 @@ export const stepExecutionFixture = ({ describe, expect, test }) => {
       if (!spec.dryRun) {
         spec.dryRun = {
           makeCtx: async ({}): Promise<CtxInitialized> => {
-            return { ctx: await memFsContext() } as CtxInitialized
+            return { ctx: await rtMemFsContext() } as CtxInitialized
           },
         }
       }

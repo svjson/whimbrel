@@ -49,17 +49,35 @@ export const makeGitRepoFixture = (
     }
   }
 
-  const prepareGitRepository = async (disk: FileSystem, repoName: string) => {
+  const prepareGitRepository = async (
+    disk: FileSystem,
+    repoName: string,
+    opts: {
+      root?: string
+      repoDir?: string
+    } = {}
+  ) => {
     disk = ensureFs(disk)
 
-    const physicalRoot = await createFixture.createEmptyDir('whim-repo', ensureFs())
-    await unpackGitRepository(repoName, physicalRoot)
+    const physicalRoot = opts.root
+      ? opts.root
+      : await createFixture.createEmptyDir('whim-repo', ensureFs())
 
-    if (!disk.isPhysical()) {
-      await importToMemFs(disk, physicalRoot)
+    const targetRepoRoot = path.join(
+      ...[physicalRoot, ...(opts.repoDir ? [opts.repoDir] : [])]
+    )
+
+    if (!(await disk.exists(targetRepoRoot))) {
+      await disk.mkdir(targetRepoRoot, { recursive: true })
     }
 
-    return physicalRoot
+    await unpackGitRepository(repoName, targetRepoRoot)
+
+    if (!disk.isPhysical()) {
+      await importToMemFs(disk, targetRepoRoot)
+    }
+
+    return targetRepoRoot
   }
 
   return {
