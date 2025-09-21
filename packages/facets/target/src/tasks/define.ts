@@ -56,9 +56,9 @@ const resolveTargetName = async (
 const dryExecute = async (ctx: WhimbrelContext) => {
   await execute(ctx)
 
-  if (!ctx.disk.isPhysical()) {
-    const { target } = ctx
+  const { target } = ctx
 
+  if (!ctx.disk.isPhysical() && !(await ctx.disk.exists(target.root))) {
     if (await DiskFileSystem.exists(target.root)) {
       const importEntries = await DiskFileSystem.scanDir(target.root, {
         sort: true,
@@ -86,7 +86,6 @@ const dryExecute = async (ctx: WhimbrelContext) => {
 
 const execute = async (ctx: WhimbrelContext) => {
   const { inputs } = ctx.step
-
   const actorName = await resolveTargetName(ctx, inputs.target)
 
   const target: Actor = makeActor({
