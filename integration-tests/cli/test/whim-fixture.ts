@@ -20,7 +20,9 @@ const whimbrelIndex = path.join(whimbrelCliDist, 'index.cjs')
 const node = await which('node')
 
 export const normalizeOutput = (output: string) => {
-  return output.replace(/whim-repo-\w+/g, 'whim-repo-XXXX')
+  return output
+    .replace(/whim-repo-\w+/g, 'whim-repo-XXXX')
+    .replace(/whim-dir-\w+/g, 'whim-dir-XXXX')
 }
 
 export function whimCli(cwd: string) {

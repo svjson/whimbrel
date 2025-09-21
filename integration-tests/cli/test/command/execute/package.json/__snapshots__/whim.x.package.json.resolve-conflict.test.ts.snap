@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`whim x package.json:resolve-conflict > whim x package.json:resolve-conflict 1`] = `
+"
+Execute Task: [32mpackage.json:resolve-conflict[39m - [34m/tmp/whim-dir-XXXX[39m
+------------------------------------------------------------------
+* Resolve package.json merge conlict
+  🛢 [34mM[39m /tmp/whim-dir-XXXX/package.ours.json
+
+"
+`;

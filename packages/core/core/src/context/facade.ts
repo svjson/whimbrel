@@ -8,6 +8,7 @@ import {
   ContextFileSystem,
   FileSystemMutationReporter,
   MemoryFileSystem,
+  ReadThroughFileSystem,
 } from '@whimbrel/filesystem'
 
 /**
@@ -30,6 +31,17 @@ export class ContextOperator {
   useNewInMemoryFileSystem() {
     this.ctx.disk = new ContextFileSystem(
       new MemoryFileSystem(),
+      new FileSystemMutationReporter(this.ctx)
+    )
+  }
+
+  /**
+   * Create and install a new read-through in-memory file system,
+   * redirecting subsequent disk operations there.
+   */
+  useNewReadThroughInMemoryFileSystem() {
+    this.ctx.disk = new ContextFileSystem(
+      new ReadThroughFileSystem(),
       new FileSystemMutationReporter(this.ctx)
     )
   }

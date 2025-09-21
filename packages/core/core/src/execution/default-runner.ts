@@ -122,7 +122,7 @@ export class DefaultRunner extends Runner {
       if (this.ctx.dryRun || this.ctx.options.dryRun) {
         context.setDryRun(true)
         if (this.plan.fsMode !== 'r') {
-          context.useNewInMemoryFileSystem()
+          context.useNewReadThroughInMemoryFileSystem()
         }
       }
 
