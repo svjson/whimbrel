@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import path from 'node:path'
 
 import makeTreeFixture from '@whimbrel-test/tree-fixtures'
@@ -46,7 +46,7 @@ describe('whim x package.json:resolve-conflict', () => {
     ])
 
     expect(whim.stdout).toMatchSnapshot()
-    expect(await DiskFileSystem.readJson(basePath)).toEqual({
+    expect(await DiskFileSystem.readJson(oursPath)).toEqual({
       name: 'simple-things',
       version: '2.4.1',
       author: 'Benny Boxare',
