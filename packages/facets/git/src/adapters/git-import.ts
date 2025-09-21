@@ -71,7 +71,6 @@ export const importRepository = async (
   await ctx.runCommand(tempRepo, 'git fetch monorepo')
   await ctx.runCommand(tempRepo, `git checkout -b ${tmpBranch}`)
   await ctx.runCommand(
-    ctx,
     tempRepo,
     `git merge monorepo/${targetBranch} --allow-unrelated-histories`
   )
