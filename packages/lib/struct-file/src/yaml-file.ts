@@ -24,8 +24,11 @@ const walkYamlPath = (
 }
 
 export class YamlFile extends StructuredFile<Document<Node>> {
-  constructor(params: StructuredFileCtorParams<Document<Node>, string>) {
+  constructor(params: StructuredFileCtorParams<Document<Node>, string> = {}) {
     super(params)
+    if (this.content === undefined) {
+      this.content = new Document<Node>()
+    }
   }
 
   deserializeContent(content: any): Document<Node> {
@@ -38,11 +41,11 @@ export class YamlFile extends StructuredFile<Document<Node>> {
     }
   }
 
-  get<T>(property: PropertyPath): T {
+  get<T>(property: PropertyPath, defaultValue?: T): T {
     const value = walkYamlPath(this.content, asArrayPath(property))
     if (typeof value === 'string') return value as T
     if (typeof value?.toJS === 'function') return value.toJS(this.content)
-    if (value === null || value === undefined) return value
+    if (value === null || value === undefined) return defaultValue ?? value
 
     throw new Error(`Unsupported Yaml entry at ${property}: ${value}`)
   }
@@ -61,7 +64,11 @@ export class YamlFile extends StructuredFile<Document<Node>> {
   enforceStructure(_opts?: StructOptions): void {
     throw new Error('Method not implemented.')
   }
-  write(_filePath?: string | string[]): Promise<void> {
-    throw new Error('Method not implemented.')
+  async write(_filePath?: string | string[]): Promise<void> {
+    await this.storage.write(this.path, this.content.toString(), 'utf8')
+  }
+
+  toString() {
+    return this.content.toString()
   }
 }

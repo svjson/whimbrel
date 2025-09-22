@@ -36,7 +36,7 @@ export interface StructuredFileCtorParams<ModelFormat, SerializedFormat> {
    * instantiated with either the serialized file format and the internal
    * programmatic model.
    */
-  content: ModelFormat | SerializedFormat
+  content?: ModelFormat | SerializedFormat
 }
 
 /**
