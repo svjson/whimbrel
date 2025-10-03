@@ -13,7 +13,7 @@ export const applyLicenseAugmentation: StepAugmentationGenerator = async ({ step
         key: 'target',
       },
       inputs: {
-        property: 'version',
+        property: 'license',
         value: step.inputs.spdx,
       },
     },
