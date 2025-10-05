@@ -36,7 +36,8 @@ export function mergeLeft(target: any, ...rest: any[]) {
     if (obj === undefined) return
     walk(obj ?? {}, {
       onEnd: ({ path, value }) => {
-        if (!opts.ignoreUndefined || value !== undefined) writePath(target, path, value)
+        if (path.length && (!opts.ignoreUndefined || value !== undefined))
+          writePath(target, path, value)
       },
     })
   })

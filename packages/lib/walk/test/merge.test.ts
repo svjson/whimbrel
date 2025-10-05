@@ -112,6 +112,10 @@ describe('mergeLeft', () => {
     })
   })
 
+  it('should merge empty object onto empty object', () => {
+    expect(mergeLeft({}, {})).toEqual({})
+  })
+
   it('should ignore undefined inputs', () => {
     // Given
     const a = { a: 1, b: 2 }
