@@ -99,6 +99,19 @@ describe('mergeLeft', () => {
     })
   })
 
+  it('should retain empty object in first/target argument', () => {
+    expect(mergeLeft({ style: {} }, { propertyA: true })).toEqual({
+      style: {},
+      propertyA: true,
+    })
+  })
+
+  it('should retain empty object in second argument', () => {
+    expect(mergeLeft({}, { style: {} })).toEqual({
+      style: {},
+    })
+  })
+
   it('should ignore undefined inputs', () => {
     // Given
     const a = { a: 1, b: 2 }

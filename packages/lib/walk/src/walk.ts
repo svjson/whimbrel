@@ -77,7 +77,8 @@ export const walk = (
   if (
     object !== null &&
     typeof object === 'object' &&
-    Object.getPrototypeOf(object) === Object.prototype
+    Object.getPrototypeOf(object) === Object.prototype &&
+    Object.keys(object).length > 0
   ) {
     const objKeys = Object.keys(object)
     objKeys.forEach((k, i) => {

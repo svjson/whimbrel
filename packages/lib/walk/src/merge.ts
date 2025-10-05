@@ -33,6 +33,7 @@ export function mergeLeft(target: any, ...rest: any[]) {
     rest.length === 1 && Array.isArray(rest[0]?.sources) ? rest[0] : { sources: rest }
 
   opts.sources.forEach((obj: any) => {
+    if (obj === undefined) return
     walk(obj ?? {}, {
       onEnd: ({ path, value }) => {
         if (!opts.ignoreUndefined || value !== undefined) writePath(target, path, value)
