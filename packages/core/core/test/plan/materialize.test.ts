@@ -209,6 +209,7 @@ describe('materialize', () => {
               key: 'target',
             },
             inputs: {
+              isRoot: true,
               target: {
                 path: targetDir,
               },

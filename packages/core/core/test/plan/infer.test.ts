@@ -75,6 +75,7 @@ describe('inferPreparationSteps', () => {
         },
         pinned: true,
         inputs: {
+          isRoot: true,
           target: {
             path: '/cwd/path',
           },
