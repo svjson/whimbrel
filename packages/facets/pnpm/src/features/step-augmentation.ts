@@ -35,6 +35,9 @@ export const migrateProjectAugmentation: StepAugmentationGenerator = async ({
         target: target.name,
         key: 'target',
       },
+      inputs: {
+        allPackages: true,
+      },
     },
     // TODO: tree:delete-file
   ]
