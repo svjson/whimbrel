@@ -1,11 +1,13 @@
 import { makeFacetModule, moduleTasks } from '@whimbrel/core-api'
-import { detect } from './features'
+import { detect, migrateProjectAugmentation } from './features'
 import { queryIndex } from './query'
-import { MigrateWorkspaces, SetWorkspaceDependencies } from './tasks'
+import { MigrateProject, MigrateWorkspaces, SetWorkspaceDependencies } from './tasks'
 
 export {
+  MigrateProject,
   MigrateWorkspaces,
   SetWorkspaceDependencies,
+  PNPM__MIGRATE_PROJECT,
   PNPM__MIGRATE_WORKSPACES,
   PNPM__SET_WORKSPACE_DEPENDENCIES,
 } from './tasks'
@@ -15,5 +17,10 @@ export default makeFacetModule({
   id: 'pnpm',
   detect,
   queryIndex,
-  tasks: moduleTasks(MigrateWorkspaces, SetWorkspaceDependencies),
+  tasks: moduleTasks(MigrateProject, MigrateWorkspaces, SetWorkspaceDependencies),
+  taskAugmentations: {
+    'pnpm:migrate-project': {
+      steps: migrateProjectAugmentation,
+    },
+  },
 })
