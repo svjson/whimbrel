@@ -1,12 +1,5 @@
 import { WhimbrelContext, CtxCommandOutput } from '@whimbrel/core-api'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-export const cmdString = (cmd: string[] | string) => {
-  return Array.isArray(cmd) ? cmd.join(' ') : cmd
-}
+import { spawn } from 'child_process'
 
 /**
  * Runs a shell command in a specific working directory.
@@ -21,17 +14,40 @@ export const runCommand = async (
   cwd: string,
   cmd: string | string[]
 ): Promise<CtxCommandOutput> => {
-  cmd = cmdString(cmd)
+  const [program, ...args] = Array.isArray(cmd) ? cmd : cmd.split(' ')
 
-  //  if (!ctx.options.quiet) ctx.log.debug(`[${cwd}] $ ${cmd}`)
+  if (ctx.options.verbose) ctx.log.debug(`[${cwd}] $ ${cmd}`)
+  return new Promise((resolve, reject) => {
+    let stdout = ''
+    let stderr = ''
 
-  try {
-    const { stdout, stderr } = await execAsync(cmd, { cwd })
-    if (stderr && ctx.options.verbose) ctx.log.error(stderr)
-    ctx.log.debug(stdout.trim())
-    return [stdout, stderr]
-  } catch (err) {
-    console.error(`[${cwd}] Command failed: ${cmd}`)
-    throw err
-  }
+    const child = spawn(program, args, {
+      cwd,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      shell: true,
+    })
+
+    child.stdout.on('data', (data) => (stdout += data))
+    child.stderr.on('data', (data) => (stderr += data))
+
+    child.on('error', (err) => {
+      // happens if command not found
+      ctx.log.error(`Failed to execute command: ${program}`)
+      reject(err)
+    })
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        if (ctx.options.verbose) {
+          if (stdout.trim()) ctx.log.debug(stdout.trim())
+          if (stderr.trim() && ctx.options.verbose) ctx.log.error(stderr.trim())
+        }
+        resolve([stdout, stderr])
+      } else {
+        reject(
+          new Error(`[${cwd}] Command failed (${code}): ${program} ${args.join(' ')}`)
+        )
+      }
+    })
+  })
 }
