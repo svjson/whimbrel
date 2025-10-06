@@ -40,6 +40,34 @@ describe('PackageJSON', () => {
     })
   })
 
+  describe('getDependencyVersion', () => {
+    it('should return dependency version if listed as dependency', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        path: 'package.json',
+        storage: {} as FileSystem,
+        content: {
+          dependencies: {
+            'fast-deep-equal': '^3.1.3',
+          },
+          devDependencies: {
+            '@types/node': '^24.3.0',
+            vite: '^7.1.2',
+          },
+        },
+      })
+
+      // Then
+      expect(pkgJson.getDependencyVersion('fast-deep-equal')).toEqual('^3.1.3')
+      expect(pkgJson.getDependencyVersion('@types/node')).toEqual('^24.3.0')
+      expect(pkgJson.getDependencyVersion('vite')).toEqual('^7.1.2')
+
+      expect(pkgJson.getDependencyVersion('ts-node')).toBeUndefined()
+      expect(pkgJson.getDependencyVersion('@whimbrel/walk')).toBeUndefined()
+      expect(pkgJson.getDependencyVersion('express')).toBeUndefined()
+    })
+  })
+
   describe('hasDependency', () => {
     it('should find dependencies listed in dependencies and devDependencies', () => {
       // Given

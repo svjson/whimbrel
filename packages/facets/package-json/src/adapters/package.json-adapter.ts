@@ -44,16 +44,38 @@ export class PackageJSON extends JSONFile {
     return Boolean(this.get(['engines', name]))
   }
 
-  isDeclaredPackageManager(mgrName: string) {
+  getPackageManager() {
     const val = this.get<string>('packageManager')
     if (val) {
-      const [name] = val.split('@')
-      if (name === mgrName) {
-        return true
+      const [name, version] = val.split('@')
+      return { name, version }
+    }
+  }
+
+  isDeclaredPackageManager(mgrName: string) {
+    const pkgManager = this.getPackageManager()
+    if (pkgManager) {
+      return pkgManager?.name === mgrName
+    }
+    return this.isDeclaredEngine(mgrName)
+  }
+
+  getDependencyVersion(dependency: string, opts: { exact?: boolean } = {}) {
+    const version = [
+      this.get(['dependencies', dependency]),
+      this.get(['devDependencies', dependency]),
+      this.get(['peerDependencies', dependency]),
+    ]
+      .filter(Boolean)
+      .sort()[0]
+
+    if (typeof version === 'string' && opts.exact) {
+      if (version.startsWith('^')) {
+        return version.slice(1)
       }
     }
 
-    return this.isDeclaredEngine(mgrName)
+    return version
   }
 
   hasDependency(dependency: string) {
