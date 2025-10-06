@@ -1,3 +1,4 @@
+import { getPnpmVersion } from '@src/adapters/pnpm-adapter'
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { PackageJSON } from '@whimbrel/package-json'
 
@@ -6,8 +7,7 @@ export const PNPM__MIGRATE_PROJECT = 'pnpm:migrate-project'
 const execute = async (ctx: WhimbrelContext) => {
   const { target } = ctx.step.inputs
 
-  const [stdout] = await ctx.runCommand(target.root, ['pnpm', '--version'])
-  const [pnpmVersion] = stdout.split('\n')
+  const pnpmVersion = getPnpmVersion(ctx, target.root)
 
   const pkgJson = await PackageJSON.read(ctx.disk, target.root)
 
