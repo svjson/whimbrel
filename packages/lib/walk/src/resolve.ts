@@ -18,6 +18,36 @@ export type PropertyLookup = {
 
 export type PropertySource = Properties | PropertyOwner | PropertyLookup
 
+export interface BaseResolution {
+  value?: any
+}
+
+export interface ReferenceResolution extends BaseResolution {
+  method: 'reference'
+  reference: string
+}
+
+export interface LiteralResolution extends BaseResolution {
+  method: 'literal'
+}
+
+export interface PlaceholderResolution extends BaseResolution {
+  method: 'placeholder'
+  placeholder: string
+}
+
+export interface ConcatResolution extends BaseResolution {
+  method: 'path-concatenation'
+  parts: string[]
+  resolutions: Resolution[]
+}
+
+export type Resolution =
+  | LiteralResolution
+  | ReferenceResolution
+  | PlaceholderResolution
+  | ConcatResolution
+
 const toPropertyLookup = (source: PropertySource): PropertyLookup => {
   if (Object.hasOwn(source, 'lookup') && Object.hasOwn(source, 'source'))
     return source as PropertyLookup
@@ -70,6 +100,19 @@ export const resolve = (
   source: any,
   resolutionPaths?: string[] | string
 ) => {
+  return resolveWithMetadata(type, propertySource, source, resolutionPaths)?.value
+}
+
+/**
+ * Consistenly resolve values of different types from a property source,
+ * and return resolved value along with resolution metadata
+ */
+export const resolveWithMetadata = (
+  type: ParameterType,
+  propertySource: PropertySource,
+  source: any,
+  resolutionPaths?: string[] | string
+): Resolution => {
   const props = toPropertyLookup(propertySource)
 
   if (typeof resolutionPaths === 'string') {
@@ -118,7 +161,7 @@ const resolvePlaceholder = (props: PropertyLookup, string: string) => {
  * This function allows for nested property access and
  * returns the value at the specified path.
  *
- * FIXME: Should this be part of @whimbrel/walk
+ * FIXME: Should this perhaps use the regular walk/readPath ?
  */
 export const walkObj = (obj: any, path: string) => {
   const parts = path.split('.')
@@ -134,9 +177,22 @@ export const walkObj = (obj: any, path: string) => {
 /**
  * Verify that the value is a string and resolve any placeholders.
  */
-const verifyString = (props: PropertyLookup, value: string) => {
+const verifyString = (props: PropertyLookup, value: string): Resolution => {
   if (typeof value === 'string') {
-    return resolvePlaceholder(props, value)
+    const resolved = resolvePlaceholder(props, value)
+
+    if (resolved === value) {
+      return {
+        method: 'literal',
+        value: resolved,
+      }
+    } else {
+      return {
+        method: 'placeholder',
+        placeholder: value,
+        value: resolved,
+      }
+    }
   }
 
   throw new Error('Got non-string: ', value)
@@ -151,25 +207,45 @@ const verifyPath = (
   props: PropertyLookup,
   value: any,
   type?: 'path' | 'relative-path'
-) => {
+): Resolution => {
   if (Array.isArray(value)) {
     const parts = value.map((part) => verifyString(props, part))
-    const joined = path.join.apply(null, parts)
-    return type === 'relative-path' ? joined : path.resolve(joined)
+    const joined: string = path.join.apply(
+      null,
+      parts.map((p) => p.value)
+    )
+    return {
+      method: 'path-concatenation',
+      value: type === 'relative-path' ? joined : path.resolve(joined),
+      parts: value,
+      resolutions: parts,
+    }
   } else if (typeof value === 'string') {
     return verifyString(props, value)
   } else if (typeof value === 'object') {
     if (typeof value.ref === 'string') {
-      return props.lookup(value.ref)
+      return {
+        method: 'reference',
+        reference: value.ref,
+        value: props.lookup(value.ref),
+      }
     }
   }
 }
 
-const verifyObject = (_source: any, props: PropertyLookup, value: any) => {
+const verifyObject = (_source: any, props: PropertyLookup, value: any): Resolution => {
   if (typeof value === 'object') {
     if (typeof value.ref === 'string') {
-      return props.lookup(value.ref)
+      const result = props.lookup(value.ref)
+      return {
+        method: 'reference',
+        reference: value.ref,
+        value: result,
+      }
     }
-    return value
+    return {
+      method: 'literal',
+      value,
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { resolve } from '@src/index'
+import { resolve, resolveWithMetadata } from '@src/index'
 
 describe('value resolution', () => {
   describe('resolve', () => {
@@ -102,6 +102,157 @@ describe('value resolution', () => {
         expect(resolved).toEqual({
           name: 'Here lives dog',
           root: '/tmp/somewhere',
+        })
+      })
+    })
+  })
+
+  describe('resolveWithMetadata', () => {
+    describe('type: string', () => {
+      it('should resolve a nested string from a single-resolutionPath array', () => {
+        // Given
+        const target = {
+          name: 'test-project',
+          type: 'project',
+          path: '/tmp/does/not/need/to/exist/here',
+          details: { pkgType: 'project' },
+          meta: { name: 'Test Project A' },
+        }
+
+        // When
+        const packageType = resolveWithMetadata('string', {}, target, ['details.pkgType'])
+
+        // Then
+        expect(packageType).toEqual({ method: 'literal', value: 'project' })
+      })
+    })
+
+    describe('type: path', () => {
+      it('should resolve path from array construct at resolutionPath', () => {
+        // Given
+        const object = {
+          targetPath: ['/home', 'klasse', 'place'],
+        }
+
+        // When
+        const resolved = resolveWithMetadata('path', {}, object, 'targetPath')
+
+        // Then
+        expect(resolved).toEqual({
+          method: 'path-concatenation',
+          value: '/home/klasse/place',
+          parts: ['/home', 'klasse', 'place'],
+          resolutions: [
+            {
+              method: 'literal',
+              value: '/home',
+            },
+            {
+              method: 'literal',
+              value: 'klasse',
+            },
+            {
+              method: 'literal',
+              value: 'place',
+            },
+          ],
+        })
+      })
+
+      it('should resolve path from array directly from array', () => {
+        // Given
+        const pathArray = ['/home', 'klasse', 'place']
+
+        // When
+        const resolved = resolveWithMetadata('path', {}, pathArray)
+
+        // Then
+        expect(resolved).toEqual({
+          method: 'path-concatenation',
+          value: '/home/klasse/place',
+          parts: ['/home', 'klasse', 'place'],
+          resolutions: [
+            {
+              method: 'literal',
+              value: '/home',
+            },
+            {
+              method: 'literal',
+              value: 'klasse',
+            },
+            {
+              method: 'literal',
+              value: 'place',
+            },
+          ],
+        })
+      })
+
+      it('should resolve path from ref-object', () => {
+        // Given
+        const ctx: any = {
+          options: { prop: {} },
+          rootTarget: {
+            root: '/home/klasse/random-things',
+          },
+        }
+        const object = {
+          targetPath: { ref: 'rootTarget.root' },
+        }
+
+        // When
+        const resolved = resolveWithMetadata('path', ctx, object, 'targetPath')
+
+        // Then
+        expect(resolved).toEqual({
+          method: 'reference',
+          reference: 'rootTarget.root',
+          value: '/home/klasse/random-things',
+        })
+      })
+    })
+
+    describe('type: object', () => {
+      it('should resolve object from path', () => {
+        // Given
+        const object = {
+          container: { of: { great: 'things', other: 'stuff' } },
+        }
+
+        // When
+        const resolved = resolveWithMetadata('object', {}, object, 'container.of')
+
+        // Then
+        expect(resolved).toEqual({
+          method: 'literal',
+          value: {
+            great: 'things',
+            other: 'stuff',
+          },
+        })
+      })
+
+      it('should resolve object from nested ctx ref', () => {
+        // Given
+        const ctx = {
+          options: { prop: {} },
+          source: { name: 'Here lives dog', root: '/tmp/somewhere' },
+        }
+        const object = {
+          nested: { path: { object: { ref: 'source' } } },
+        }
+
+        // When
+        const resolved = resolveWithMetadata('object', ctx, object, 'nested.path.object')
+
+        // Then
+        expect(resolved).toEqual({
+          method: 'reference',
+          reference: 'source',
+          value: {
+            name: 'Here lives dog',
+            root: '/tmp/somewhere',
+          },
         })
       })
     })
