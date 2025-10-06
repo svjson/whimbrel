@@ -83,7 +83,14 @@ describe('step-parameters', () => {
           actor: ctx.source,
         },
         meta: {
-          resolvedParameters: ['actor'],
+          resolvedParameters: {
+            actor: {
+              type: 'actor',
+              method: 'reference',
+              reference: 'source',
+              actorId: 'MyApp',
+            },
+          },
         },
       })
     })
@@ -134,7 +141,14 @@ describe('step-parameters', () => {
           actor: ctx.source,
         },
         meta: {
-          resolvedParameters: ['actor'],
+          resolvedParameters: {
+            actor: {
+              type: 'actor',
+              method: 'reference',
+              reference: 'source',
+              actorId: 'MyApp',
+            },
+          },
           originalInputs: {
             actor: {
               ref: 'source',

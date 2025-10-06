@@ -4,6 +4,7 @@ import {
   FileSystemAccessMode,
   StepBinding,
   StepExecutionResult,
+  TaskAugmentation,
 } from '@whimbrel/core-api'
 import { performDryRun } from '@src/execution'
 import { DryRunError, resetDryRun } from '@src/execution/dry-run'
@@ -338,7 +339,7 @@ const attachStepAugmentations = async (
   if (!step.meta.appliedAugmentations) step.meta.appliedAugmentations = []
 
   for (const facet of ctx.facets.all()) {
-    const augmentationEntry = facet.taskAugmentations[step.task.id]
+    const augmentationEntry: TaskAugmentation = facet.taskAugmentations[step.task.id]
     if (!augmentationEntry) continue
 
     if (augmentationEntry.condition) {

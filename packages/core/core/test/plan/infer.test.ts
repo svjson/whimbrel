@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { makeWhimbrelContext } from '@src/index'
 import { SOURCE__DEFINE } from '@whimbrel/source'
 import { TARGET__DEFINE } from '@whimbrel/target'
-import { ACTOR__ANALYZE } from '@whimbrel/actor'
 import { makeTask } from '@whimbrel/core-api'
 import { inferPreparationSteps } from '@src/plan/infer'
 

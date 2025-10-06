@@ -53,6 +53,7 @@ export type {
 } from './execution'
 export type {
   ExecuteTaskFunction,
+  RequirementType,
   Task,
   TaskId,
   TaskParameter,
