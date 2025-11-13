@@ -7,7 +7,7 @@ export const PNPM__MIGRATE_PROJECT = 'pnpm:migrate-project'
 const execute = async (ctx: WhimbrelContext) => {
   const { target } = ctx.step.inputs
 
-  const pnpmVersion = getPnpmVersion(ctx, target.root)
+  const pnpmVersion = await getPnpmVersion(ctx, target.root)
 
   const pkgJson = await PackageJSON.read(ctx.disk, target.root)
 
