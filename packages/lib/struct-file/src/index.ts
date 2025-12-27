@@ -29,4 +29,6 @@ export type {
   ValueSchemaProperty,
 } from './schema'
 
-export type { StorageAdapter, StructuredFileCtorParams } from './structured-file'
+export type { StructuredFileCtorParams } from './structured-file'
+export type { FileBase } from './file-base'
+export type { StorageAdapter } from './storage'

@@ -2,6 +2,8 @@ import path from 'node:path'
 import { mergeLeft, PropertyPath } from '@whimbrel/walk'
 import { KeyOrder } from './key-order'
 import { SchemaProperty, StructuredFileSchema, schemaPropertyAtPath } from './schema'
+import { StorageAdapter } from './storage'
+import { FileBase } from './file-base'
 
 /**
  * Constructor parameter object for StructuredFile and any subclass expecting
@@ -46,77 +48,6 @@ export interface StructuredFileCtorParams<ModelFormat, SerializedFormat> {
 export type StructuredFileCtor<T extends StructuredFile<MF, SF>, MF, SF> = new (
   params: StructuredFileCtorParams<MF, SF>
 ) => T
-
-/**
- * Minimal interface for file storage, decoupling the interface from
- * @whimbrel/filesystem.
- *
- * The interface is a partial of Whimbrel's FileSystem, which means that
- * any implementation thereof will fulfill the FileSystem contract, and
- * creating an adapter for any other kind of storage or file system interface
- * can be done with small effort.
- */
-export interface StorageAdapter {
-  /**
-   * Read a raw file from storage.
-   *
-   * Implementations are expected to behave according to the contract of
-   * node:fs's readFile and/or * Whimbrel's FileSystem.read
-   *
-   * @param path The path to the file to read
-   * @param opts Optional read options
-   * @returns The file content as string or Buffer
-   * @throws If the file does not exist or cannot be read
-   */
-  read(path: string, opts?: any): Promise<string | Buffer<ArrayBufferLike>>
-  /**
-   * Write a file to storage.
-   *
-   * Implementations are expected to behave according to the contract of
-   * node:fs/promises's writeFile and/or
-   * Whimbrel's FileSystem.write
-   *
-   * @param path The path to the file to write
-   * @param content The content to write
-   * @param opts Optional write options
-   * @throws If the file cannot be written
-   */
-  write(path: string, content: any, opts?: any): Promise<void>
-  /**
-   * Write an object to disk as JSON.
-   *
-   * Implementatios are expected to behave according to the contract of
-   * Whimbrel's FileSystem.writeJson
-   *
-   * @param path The path to the file to write
-   * @param content The content to write
-   * @param opts Optional write options
-   * @throws If the file cannot be written
-   */
-  writeJson(path: string, content: any, opts?: any): Promise<void>
-  /**
-   * Check if a file/path exists.
-   *
-   * Implementations are expected to behave according to the contract of
-   * node:fs/promises's exists and/or Whimbrel's FileSystem.exists
-   *
-   * @param path The path to check for existence
-   * @param opts Optional exists options
-   * @return True if the path exists, false otherwise
-   */
-  exists(path: string, opts?: any): Promise<boolean>
-  /**
-   * Check if a path names an existing directory.
-   *
-   * Implementations must return `true` only if the path exists and is
-   * a directory or directory symlink, and otherwise `false` regardless of
-   * if the path exists or not.
-   *
-   * @param dirPath The path to check
-   * @return True if the path exists and is a directory, false otherwise
-   */
-  isDirectory(dirPath: string): Promise<boolean>
-}
 
 /**
  * Ensure that a PropertyPath is of the concrete type string[]
@@ -250,17 +181,18 @@ export interface StructOptions {
 /**
  * Abstract base for file adapters with structured content.
  *
+ * Structured content in this case refers to any file format that can be
+ * represented as a hierarchy of properties and values, such as JSON or YAML, where
+ * properties can be uniquely identified by their key or path.
+ *
  * @param ModelFormat - The in-memory representation of the file's content
  */
-export abstract class StructuredFile<ModelFormat = any, SerializedFormat = string> {
-  /**
-   * The path to the file on disk
-   */
-  protected path: string
-  protected storage: StorageAdapter
+export abstract class StructuredFile<
+  ModelFormat = any,
+  SerializedFormat = string,
+> extends FileBase<ModelFormat, SerializedFormat> {
   protected schema: StructuredFileSchema
   protected keyOrder: KeyOrder
-  protected content: ModelFormat
 
   constructor({
     path,
@@ -269,14 +201,10 @@ export abstract class StructuredFile<ModelFormat = any, SerializedFormat = strin
     keyOrder,
     content,
   }: StructuredFileCtorParams<ModelFormat, SerializedFormat>) {
-    this.path = path
-    this.storage = storage
+    super({ path, storage, content })
     this.schema = schema
     this.keyOrder = keyOrder
-    this.content = this.deserializeContent(content)
   }
-
-  abstract deserializeContent(content: ModelFormat | SerializedFormat): ModelFormat
 
   abstract containsAll(property: PropertyPath, values: any[]): boolean
 
@@ -333,15 +261,4 @@ export abstract class StructuredFile<ModelFormat = any, SerializedFormat = strin
   cleanAndReorder() {
     this.enforceStructure({ stripUnknown: true })
   }
-
-  /**
-   * Writes the file to disk
-   *
-   * Providing a path is optional - if omitted, it will be written back to
-   * the path it was read from.
-   *
-   * @param path Optional path to write the file to
-   * @throws If no path is provided and the file was not read from disk
-   */
-  abstract write(path?: string | string[]): Promise<void>
 }
