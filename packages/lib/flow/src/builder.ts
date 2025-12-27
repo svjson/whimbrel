@@ -5,6 +5,16 @@ import { defineLet } from './let'
 import { defineDo } from './do'
 import { makeFlowRunner } from './runner'
 
+/**
+ * Begins a new flow builder.
+ *
+ * The statement is expected to end with a call to `.run()` to execute
+ * the flow.
+ *
+ * @param ctx - The Whimbrel context.
+ * @returns A FlowBuilder instance that provides a chainable API for
+ *          defining a flow.
+ */
 export const beginFlow = (ctx: WhimbrelContext): FlowBuilder<{}> => {
   return makeFlowBuilder(ctx)
 }
@@ -24,7 +34,7 @@ const makeFlowBuilder = <NS = {}>(ctx: WhimbrelContext) => {
     let: <T, LN extends string>(
       name: LN,
       value: LetValue<T, NS>,
-      options?: LetOptions
+      options?: LetOptions<T>
     ) => {
       defineLet(flow, name, value, options)
       return builder as FlowBuilder<ExtendNS<NS, LN, Awaited<T>>>

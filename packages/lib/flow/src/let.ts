@@ -4,6 +4,7 @@ import {
   LetOptions,
   LetValue,
   LetValueProvider,
+  NameValuePair,
   pushScope,
 } from './dsl'
 
@@ -21,7 +22,19 @@ const resolveValue = async <T, NS>(
   return valueDefinition as T
 }
 
-const normalizeOptions = (options: LetOptions): LetOptionParams => {
+/**
+ * Normalizes the let option shorthands into a predicable LetOptionParams format.
+ *
+ * If options are provided as a function, it is treated as a journal formatter.
+ * If provided as a boolean, it is treated as a private flag.
+ * If provided as a string, it is treated as a journal name template.
+ * If the value for `journal` in a provided LetOptionParams is a string, it is converted
+ * into a journal formatter function.
+ *
+ * @param options - The let options to normalize.
+ * @returns The normalized let option parameters.
+ */
+const normalizeOptions = <V, J = V>(options: LetOptions<V>): LetOptionParams<V> => {
   if (typeof options === 'function') {
     return { journal: options }
   }
@@ -31,13 +44,15 @@ const normalizeOptions = (options: LetOptions): LetOptionParams => {
   }
 
   if (typeof options === 'string') {
-    return { journal: ({ value }) => ({ name: options, value }) }
+    return {
+      journal: ({ value }) => ({ name: options, value: value as unknown as J }),
+    }
   }
 
   if (typeof options.journal === 'string') {
     options.journal = ({ value }) => ({
       name: options.journal as string,
-      value,
+      value: value as unknown as J,
     })
   }
 
@@ -48,7 +63,7 @@ export const defineLet = <T, NS>(
   flow: Flow,
   name: string,
   value: LetValue<T, NS>,
-  options: LetOptions = {}
+  options: LetOptions<T> = {}
 ) => {
   flow.forms.push({
     type: 'let',
@@ -60,7 +75,7 @@ export const defineLet = <T, NS>(
 
       options = normalizeOptions(options)
 
-      let journalValue = { name, value: letValue }
+      let journalValue: NameValuePair<any> = { name, value: letValue }
       let privateEntry = false
 
       if (typeof options.journal === 'function') {
