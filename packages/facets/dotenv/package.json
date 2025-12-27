@@ -1,7 +1,7 @@
 {
-  "name": "@whimbrel/package-json",
+  "name": "@whimbrel/dotenv",
   "version": "0.0.6",
-  "description": "package.json Facet for Whimbrel",
+  "description": "dotenv Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
