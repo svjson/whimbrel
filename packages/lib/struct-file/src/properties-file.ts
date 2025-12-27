@@ -87,7 +87,7 @@ export class PropertiesFileModel {
    * @param key The property key
    * @returns The property value, or undefined if the key does not exist
    */
-  get(key: string) {
+  get(key: string): string | undefined {
     return this.props[key]?.value
   }
 
@@ -98,9 +98,18 @@ export class PropertiesFileModel {
    * @param key The property key
    * @param value The property value
    */
-  set(key: string, value: string) {
+  set(key: string, value: string): void {
     const entry = this.#getOrCreateEntry(key)
     entry.value = value
+  }
+
+  /**
+   * Get all property names present in the model
+   *
+   * @returns An array of property names
+   */
+  propertyNames(): string[] {
+    return Object.keys(this.props)
   }
 
   /**
@@ -276,6 +285,15 @@ export class PropertiesFile extends StructuredFile<PropertiesFileModel, string> 
   }
 
   /**
+   * Get all property names present in the files
+   *
+   * @returns An array of property names
+   */
+  propertyNames(): string[] {
+    return this.content.propertyNames()
+  }
+
+  /**
    * Deletes a property.
    *
    * @see StructuredFile.delete
@@ -294,7 +312,7 @@ export class PropertiesFile extends StructuredFile<PropertiesFileModel, string> 
   /**
    * Reads a PropertiesFile from disk if it exists.
    *
-   * @params storage The StorageAdapter to read fromg
+   * @params storage The StorageAdapter to read from
    * @param filePath The path to the file
    *
    * @returns An instance of PropertiesFile, or null if the file does not exist

@@ -253,6 +253,9 @@ export interface StructOptions {
  * @param ModelFormat - The in-memory representation of the file's content
  */
 export abstract class StructuredFile<ModelFormat = any, SerializedFormat = string> {
+  /**
+   * The path to the file on disk
+   */
   protected path: string
   protected storage: StorageAdapter
   protected schema: StructuredFileSchema
@@ -277,20 +280,39 @@ export abstract class StructuredFile<ModelFormat = any, SerializedFormat = strin
 
   abstract containsAll(property: PropertyPath, values: any[]): boolean
 
+  /**
+   * @return The base name of the file (the file name with extension, without path)
+   */
+  getFileName(): string {
+    return path.basename(this.path)
+  }
+
+  /**
+   * @return The full path to the file, including filename
+   */
   getPath(): string {
     return this.path
   }
 
+  /**
+   * @return The schema associated with the structured file, if any
+   */
   getSchema(): StructuredFileSchema | undefined {
     return this.schema
   }
 
+  /**
+   * Get the schema property at the specified property path, if any
+   */
   getSchemaProperty(property: PropertyPath): SchemaProperty | undefined {
     if (this.schema) {
       return schemaPropertyAtPath(this.schema, property)
     }
   }
 
+  /**
+   * @return the internal representation of the file content
+   */
   getContent(): ModelFormat {
     return this.content
   }

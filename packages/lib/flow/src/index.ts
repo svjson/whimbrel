@@ -1,2 +1,2 @@
 export { beginFlow } from './builder'
-export type { NameValuePair } from './dsl'
+export type { FlowBuilder as Flow, NameValuePair } from './dsl'

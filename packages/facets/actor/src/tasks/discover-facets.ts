@@ -1,6 +1,6 @@
 import { FacetId, FacetScopes, makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { detectFacets } from '@whimbrel/facet'
-import { beginFlow } from '@whimbrel/flow'
+import { beginFlow, NameValuePair } from '@whimbrel/flow'
 import { readPath } from '@whimbrel/walk'
 
 export const ACTOR__DISCOVER_FACETS = 'actor:discover-facets'
@@ -73,7 +73,8 @@ const ENUM_ROLES = [
  * @param value - The flow variable value
  * @returns True if the value is empty, false otherwise
  */
-const emptyResult = ({ value }) => !(typeof value === 'string' && value.length > 0)
+const emptyResult = ({ value }: NameValuePair<any>) =>
+  !(typeof value === 'string' && value.length > 0)
 
 /**
  * Execute the Discover Facets task.
