@@ -17,6 +17,8 @@ export type {
   AlphabeticalKeyOrder,
 } from './key-order'
 
+export type { PropertiesFileCtorParams, PropertiesFileModel } from './properties-file'
+
 export type {
   BaseSchemaProperty,
   ObjectSchemaProperty,
@@ -27,4 +29,4 @@ export type {
   ValueSchemaProperty,
 } from './schema'
 
-export type { StorageAdapter } from './structured-file'
+export type { StorageAdapter, StructuredFileCtorParams } from './structured-file'
