@@ -139,15 +139,26 @@ export const asArrayPath = (propertyPath: PropertyPath) => {
  * Utility function providing the feature of refering to a known
  * file type/structure with a known name by path only, e.g, package.json
  * or pnpm-workspaces.yaml
+ *
+ * If the file exists at the provided path (optionally appending
+ * `fileName` if the path is a directory), the provided function
+ * `fn` is called with the actual file path, and its result
+ *
+ * @param disk The storage adapter to use/read from
+ * @param filePath The path to the file, or directory containing the file
+ * @param fileName The name of the file to look for inside `filePath` if
+ *                 `filePath` is a directory
+ * @param fn The function to call if the file exists, receiving the
+ *
+ * @returns The result of `fn` if the file exists, or `undefined` otherwise
  */
 export const ifFileExistsAt = async <T>(
   disk: StorageAdapter,
   filePath: string | string[],
-  fileName: string,
+  fileName: string | null,
   fn: (fPath: string) => Promise<T>
 ) => {
   let actualPath = Array.isArray(filePath) ? path.join(...filePath) : filePath
-
   if (await disk.isDirectory(actualPath)) {
     if (path.basename(actualPath) !== fileName) {
       actualPath = path.join(actualPath, fileName)
@@ -166,16 +177,31 @@ export const ifFileExistsAt = async <T>(
  * default file name that reads the file from storage and creates an
  * adapter instance, or returns `undefined` if the file can not be
  * found.
+ *
+ * @param impl The StructuredFile subclass constructor
+ * @param defaultFileName The default file name(s) to look for inside
+ *                        the provided path. If `null`, the base name
+ *                        of the provided path is used and therefore
+ *                        must be provided by callers.
+ *
+ * @returns The StructuredFile instance if the file exists, or `undefined`
  */
 export const makeReadIfExists = <T extends StructuredFile<MF, SF>, MF, SF>(
   impl: StructuredFileCtor<T, MF, SF>,
-  fileName: string | string[],
+  defaultFileName: string | string[] | null,
   reader: (storage: StorageAdapter, fPath: string) => Promise<SF | MF>
 ) => {
-  if (typeof fileName === 'string') fileName = [fileName]
+  if (typeof defaultFileName === 'string') defaultFileName = [defaultFileName]
   return async (storage: StorageAdapter, filePath: string | string[]) => {
-    for (const fn of fileName) {
-      const file = await ifFileExistsAt(storage, filePath, fn, async (fPath) => {
+    let dirPath = filePath
+    filePath = Array.isArray(filePath) ? path.join(...filePath) : filePath
+    let fileNames = defaultFileName
+    if (defaultFileName === null) {
+      fileNames = [path.basename(filePath)]
+      dirPath = path.dirname(filePath)
+    }
+    for (const fn of fileNames) {
+      const file = await ifFileExistsAt(storage, dirPath, fn, async (fPath) => {
         return new impl({
           path: fPath,
           storage,
@@ -191,26 +217,41 @@ export const makeReadIfExists = <T extends StructuredFile<MF, SF>, MF, SF>(
  * Creates a static utility function for a specific file format and
  * default file name that reads the file from storage and creates an
  * adapter instance, or throws an Error if the file can not be found.
+ *
+ * @param impl The StructuredFile subclass constructor
+ * @param fileName The default file name(s) to look for inside
+ *                 the provided path. If `null`, the base name
+ *                 of the provided path is used and therefore
+ *                 must be provided by callers.
+ * @param reader Function that reads the file content from storage
+ *               and returns it in either ModelFormat or SerializedFormat
+ * @throws If the file can not be found
  */
-export const makeRead =
-  <T extends StructuredFile<MF, SF>, MF, SF>(
-    impl: StructuredFileCtor<T, MF, SF>,
-    fileName: string | string[],
-    reader: (storage: StorageAdapter, fPath: string) => Promise<SF | MF>
-  ) =>
-  async (storage: StorageAdapter, filePath: string | string[]) => {
-    const structFile = await makeReadIfExists(impl, fileName, reader)(storage, filePath)
+export const makeRead = <T extends StructuredFile<MF, SF>, MF, SF>(
+  impl: StructuredFileCtor<T, MF, SF>,
+  fileName: string | string[] | null,
+  reader: (storage: StorageAdapter, fPath: string) => Promise<SF | MF>
+) => {
+  const readifE = makeReadIfExists(impl, fileName, reader)
+  return async (storage: StorageAdapter, filePath: string | string[]) => {
+    const structFile = await readifE(storage, filePath)
     if (structFile) return structFile
 
     throw new Error(
-      `${fileName} file not found: ${Array.isArray(filePath) ? path.join(...filePath) : filePath}`
+      `${fileName} - file not found: ${Array.isArray(filePath) ? path.join(...filePath) : filePath}`
     )
   }
+}
 
 export interface StructOptions {
   stripUnknown?: boolean
 }
 
+/**
+ * Abstract base for file adapters with structured content.
+ *
+ * @param ModelFormat - The in-memory representation of the file's content
+ */
 export abstract class StructuredFile<ModelFormat = any, SerializedFormat = string> {
   protected path: string
   protected storage: StorageAdapter
