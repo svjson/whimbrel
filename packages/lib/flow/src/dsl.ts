@@ -1,7 +1,7 @@
 import { WhimbrelContext } from '@whimbrel/core-api'
 
 /**
- * Type-helper for dynamically constructing a type-safe flow context during
+ * Type-utility for dynamically constructing a type-safe flow context during
  * the FlowBuilder DSL chain.
  *
  * This utility type allows adding a new key-value pair to the context while
@@ -13,6 +13,15 @@ import { WhimbrelContext } from '@whimbrel/core-api'
  */
 export type ExtendNS<C, K extends string, V> = C &
   Record<K, V> & { [P in keyof C as P extends K ? never : P]: C[P] }
+
+/**
+ *
+ */
+type IterValue<T> = T extends readonly (infer E)[]
+  ? E
+  : T extends Record<infer K, infer V>
+    ? [K, V]
+    : never
 
 export type LetValueProvider<T, NS> = (ns: NS) => T | Promise<T>
 
@@ -97,6 +106,11 @@ export type LetForm<NS> = <T, LN extends string>(
 
 export type DoForm<NS> = <T>(fn: (ns: NS) => T | Promise<T>) => FlowBuilder<NS>
 
+export type DoEachForm<NS> = <T, K extends keyof NS>(
+  symbol: K,
+  fn: (value: IterValue<NS[K]>, ns: NS) => void | Promise<void | T | Promise<T>>
+) => FlowBuilder<NS>
+
 export interface FlowRunner {
   run(): Promise<any>
 }
@@ -118,11 +132,27 @@ export interface FlowBuilder<NS> {
    */
   let: LetForm<NS>
   do: DoForm<NS>
+  /**
+   * Define a loop over a collection in the flow context.
+   *
+   * Valid collections are `arrays` and `objects`. In the case of an array, iteration
+   * will - predictably - be done over each element of the array. In the case of object,
+   * iteration will be done over each `entry` - a tuple of key and value.
+   *
+   * @param symbol - The key in the flow context that holds the collection to iterate over.
+   * @param fn - A function that is called for each item in the collection.
+   */
+  doEach: DoEachForm<NS>
   run: () => Promise<void>
 }
 
+export type FlowOperationType = 'do' | 'doEach' | 'let'
+
+/**
+ * Common interface for runnable operations in a Flow.
+ */
 export interface FlowForm {
-  type: string
+  type: FlowOperationType
   run: () => Promise<any>
 }
 

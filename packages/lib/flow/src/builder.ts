@@ -2,7 +2,7 @@ import { WhimbrelContext } from '@whimbrel/core-api'
 
 import { FlowBuilder, LetValue, LetOptions, ExtendNS, Flow } from './dsl'
 import { defineLet } from './let'
-import { defineDo } from './do'
+import { defineDo, defineDoEach } from './do'
 import { makeFlowRunner } from './runner'
 
 /**
@@ -39,8 +39,12 @@ const makeFlowBuilder = <NS = {}>(ctx: WhimbrelContext) => {
       defineLet(flow, name, value, options)
       return builder as FlowBuilder<ExtendNS<NS, LN, Awaited<T>>>
     },
-    do: <T>(fn: (ns: NS) => T | Promise<T>) => {
+    do: (fn) => {
       defineDo(flow, fn)
+      return builder as FlowBuilder<NS>
+    },
+    doEach: (symbol, fn) => {
+      defineDoEach(flow, symbol, fn)
       return builder as FlowBuilder<NS>
     },
     run: async (): Promise<any> => {
