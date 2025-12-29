@@ -1,0 +1,1 @@
+export { groupByFileNameProfile } from './template'

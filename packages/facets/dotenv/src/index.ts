@@ -1,13 +1,18 @@
 import { makeFacetModule, moduleTasks } from '@whimbrel/core-api'
 import { detect } from './features'
-import { Compare, DOTENV__COMPARE } from './tasks'
+import {
+  Compare,
+  UpdateTemplates,
+  DOTENV__COMPARE,
+  DOTENV__UPDATE_TEMPLATES,
+} from './tasks'
 
 export { DotEnvFile } from './adapters'
 
-export { Compare, DOTENV__COMPARE } from './tasks'
+export { Compare, UpdateTemplates, DOTENV__COMPARE, DOTENV__UPDATE_TEMPLATES }
 
 export default makeFacetModule({
   id: 'dotenv',
-  tasks: moduleTasks(Compare),
+  tasks: moduleTasks(Compare, UpdateTemplates),
   detect,
 })
