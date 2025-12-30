@@ -57,6 +57,8 @@ const facetProperty = (facets: FacetScopes, facetId: FacetId, propertyPath: stri
 const ENUM_ROLES = [
   'language',
   'engine',
+  'http-adapter',
+  'license',
   'pkg-manager',
   'pkg-file',
   'version-control',
@@ -126,6 +128,9 @@ export const execute = async (ctx: WhimbrelContext) => {
     .let('package-file', facetsOfType(facets, 'pkg-file').join(', '), {
       private: emptyResult,
     })
+    .let('http-adapter', facetsOfType(facets, 'http-adapter').join(', '), {
+      private: emptyResult,
+    })
     .let('build-tool', facetsOfType(facets, 'build-tool').join(', '), {
       private: emptyResult,
     })
@@ -133,9 +138,13 @@ export const execute = async (ctx: WhimbrelContext) => {
       private: emptyResult,
     })
     .let('ci', facetsOfType(facets, 'ci').join(', '), { private: emptyResult })
-    .let('license', license, { private: emptyResult })
+    .let('license', facetsOfType(facets, 'license').join(', '), {
+      private: emptyResult,
+    })
     .let('readme', readme, { private: emptyResult })
-    .let('config', facetsOfType(facets, 'config').join(', '), { private: emptyResult })
+    .let('config', facetsOfType(facets, 'config-provider').join(', '), {
+      private: emptyResult,
+    })
     .let('facets', facetsNotOfTypes(facets, enumRoles, listed).join(', '), {
       private: emptyResult,
     })
