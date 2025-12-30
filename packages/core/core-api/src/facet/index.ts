@@ -11,7 +11,12 @@ export type {
   NoFacetDetected,
 } from './detect'
 export type { FacetModule } from './module'
-export type { FacetQuery, FacetQueryFunction, FacetQueryResult } from './query'
+export type {
+  FacetQuery,
+  FacetQueryFunction,
+  FacetQueryResult,
+  QueryIndex,
+} from './query'
 export type { FacetRegistry } from './registry'
 export type { FacetScope, FacetScopes, FacetScopePrototype } from './scope'
 
