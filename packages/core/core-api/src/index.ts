@@ -66,6 +66,17 @@ export type {
   WhimbrelContextOptions,
 } from './context'
 export type {
+  PackageFileRole,
+  PackageManagerRole,
+  BuildConfigRole,
+  ConfigProviderRole,
+  VersionControlRole,
+  EngineRole,
+  HttpAdapterRole,
+  IgnoreFileRole,
+  LicenseRole,
+  FacetRole,
+  FacetRoles,
   DeclaredFacet,
   DetectFunction,
   DetectedFacet,
