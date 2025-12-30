@@ -33,6 +33,7 @@
     "@whimbrel/core-api": "^0.0.6",
     "@whimbrel/docker-compose": "^0.0.6",
     "@whimbrel/dotenv": "^0.0.6",
+    "@whimbrel/fastify": "^0.0.6",
     "@whimbrel/git": "^0.0.6",
     "@whimbrel/gitignore": "^0.0.6",
     "@whimbrel/koa": "^0.0.6",
