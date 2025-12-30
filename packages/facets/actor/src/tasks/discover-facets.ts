@@ -58,6 +58,7 @@ const ENUM_ROLES = [
   'language',
   'engine',
   'http-adapter',
+  'language',
   'license',
   'pkg-manager',
   'pkg-file',
@@ -119,6 +120,9 @@ export const execute = async (ctx: WhimbrelContext) => {
       private: emptyResult,
     })
     .let('vcs', facetsOfType(facets, 'version-control').join(', '), {
+      private: emptyResult,
+    })
+    .let('language', facetsOfType(facets, 'language').join(', '), {
       private: emptyResult,
     })
     .let('engine', facetsOfType(facets, 'engine').join(', '), { private: emptyResult })

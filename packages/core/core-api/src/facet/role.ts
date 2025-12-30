@@ -42,6 +42,14 @@ export type HttpAdapterRole = 'http-adapter'
 export type IgnoreFileRole = 'ignore-file'
 
 /**
+ * Role identifier for implementation language facets.
+ *
+ * Used to identify facets that describe the implementation language
+ * of a project, such as TypeScript, JavaScript or Python.
+ */
+export type ImplementationLanguage = 'language'
+
+/**
  * Role identifier for license facets.
  *
  * Used to identify facets that provide license information, such
