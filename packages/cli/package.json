@@ -35,6 +35,7 @@
     "@whimbrel/dotenv": "^0.0.6",
     "@whimbrel/git": "^0.0.6",
     "@whimbrel/gitignore": "^0.0.6",
+    "@whimbrel/koa": "^0.0.6",
     "@whimbrel/license": "^0.0.6",
     "@whimbrel/node": "^0.0.6",
     "@whimbrel/npm": "^0.0.6",

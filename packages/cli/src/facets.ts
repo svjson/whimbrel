@@ -4,6 +4,7 @@ import DotEnv from '@whimbrel/dotenv'
 import Git from '@whimbrel/git'
 import GitIgnore from '@whimbrel/gitignore'
 import License from '@whimbrel/license'
+import Koa from '@whimbrel/koa'
 import Node from '@whimbrel/node'
 import Npm from '@whimbrel/npm'
 import PackageJson from '@whimbrel/package-json'
@@ -28,6 +29,7 @@ export const makeFacetRegistry = (): FacetRegistry => {
     Git,
     GitIgnore,
     License,
+    Koa,
     Node,
     Npm,
     PackageJson,
