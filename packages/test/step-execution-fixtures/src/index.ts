@@ -76,6 +76,9 @@ const deferred = (): DeferredPromise => {
   const promise = new Promise((res, rej) => {
     resolve = res
     reject = rej
+  }).catch((e) => {
+    console.error(e)
+    throw e
   })
 
   return { promise, resolve, reject }
@@ -212,7 +215,6 @@ export const stepExecutionFixture = ({ describe, expect, test }) => {
 
               const stepDefinition = spec.defineStep(initialCtx)
               const step = makeConcreteStep(stepDefinition)
-
               /**
                * Create the WhimbrelContext for the current runtype
                */
@@ -285,7 +287,10 @@ export const stepExecutionFixture = ({ describe, expect, test }) => {
           const [dryRunCtx, liveRunCtx] = await Promise.all([
             promises.dryRun.promise,
             promises.liveRun.promise,
-          ])
+          ]).catch((e) => {
+            console.error(e)
+            throw e
+          })
 
           expect(
             stepResultEqual(dryRunCtx, liveRunCtx.stepResult, dryRunCtx.stepResult)

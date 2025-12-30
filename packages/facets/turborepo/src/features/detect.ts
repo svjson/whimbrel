@@ -3,6 +3,15 @@ import path from 'node:path'
 import { FacetDetectionResult, DetectFunction, WhimbrelContext } from '@whimbrel/core-api'
 import { PackageJSON } from '@whimbrel/package-json'
 
+/**
+ * Detects if the project uses Turborepo by checking for 'turbo' in package.json
+ * dependencies.
+ *
+ * @param ctx - The Whimbrel context providing access to disk and other utilities.
+ * @param dir - The directory to scan for the package.json file.
+ *
+ * @returns A promise that resolves to the detection result indicating whether
+ */
 export const detect: DetectFunction = async (
   ctx: WhimbrelContext,
   dir: string

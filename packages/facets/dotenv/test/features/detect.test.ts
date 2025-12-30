@@ -45,7 +45,7 @@ describe('detect', () => {
       detected: true,
       facet: {
         scope: {
-          roles: ['config'],
+          roles: ['config-provider'],
           config: {
             rootDir: root,
             files: ['.env'],
@@ -72,7 +72,7 @@ describe('detect', () => {
       detected: true,
       facet: {
         scope: {
-          roles: ['config'],
+          roles: ['config-provider'],
           config: {
             rootDir: root,
             files: ['.env', '.env.template', '.env.local'],
@@ -99,7 +99,7 @@ describe('detect', () => {
       detected: true,
       facet: {
         scope: {
-          roles: ['config'],
+          roles: ['config-provider'],
           config: {
             rootDir: root,
             files: ['.env.template'],

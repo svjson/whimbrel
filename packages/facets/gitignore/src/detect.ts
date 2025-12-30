@@ -2,6 +2,12 @@ import path from 'node:path'
 
 import { FacetDetectionResult, DetectFunction, WhimbrelContext } from '@whimbrel/core-api'
 
+/**
+ * Detects if a .gitignore file exists in the given directory.
+ *
+ * @param ctx - The Whimbrel context.
+ * @param dir - The directory to scan.
+ */
 export const detect: DetectFunction = async (
   ctx: WhimbrelContext,
   dir: string
@@ -13,7 +19,7 @@ export const detect: DetectFunction = async (
       detected: true,
       facet: {
         scope: {
-          roles: ['version-control'],
+          roles: ['version-control', 'ignore-file'],
           config: {
             path: gitIgnorePath,
           },

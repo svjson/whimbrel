@@ -2,6 +2,12 @@ import path from 'node:path'
 
 import { FacetDetectionResult, DetectFunction, WhimbrelContext } from '@whimbrel/core-api'
 
+/**
+ * Detects if a directory contains a package.json file.
+ *
+ * @param ctx - The Whimbrel context
+ * @param dir - The directory to scan
+ */
 export const detect: DetectFunction = async (
   ctx: WhimbrelContext,
   dir: string

@@ -25,7 +25,7 @@ export const detect: DetectFunction = async (
       detected: true,
       facet: {
         scope: {
-          roles: ['config'],
+          roles: ['config-provider'],
           config: {
             rootDir: dir,
             files: files.map((f) => f.name),
