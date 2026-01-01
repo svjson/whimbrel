@@ -1,0 +1,322 @@
+import path from 'node:path'
+import type {
+  FunctionInvocationDescription,
+  ImportSourceDescription,
+  InstanceDescription,
+  InvocationExpression,
+  WhimbrelContext,
+} from '@whimbrel/core-api'
+import { listSourceFiles, matchesImportSource } from './source-tree'
+import { AST, filePathToAST, findRecursive, isLiteralNode } from './ast'
+import type { Node, VariableDeclaration } from '@babel/types'
+import {
+  InstanceDeclaration,
+  IdentifierImportReference,
+  LiteralReference,
+  TypeReference,
+  SourceReference,
+  ExpressionReference,
+  ArgumentReference,
+  InvocationExpressionReference,
+  IdentifierAssignment,
+} from './reference'
+import { makeLiteral } from './literal'
+
+/**
+ * Locate instance declarations in source files within specified source folders
+ *
+ * @param ctx - The Whimbrel context
+ * @param sourceFolders - Array of source folder paths to scan
+ * @param instance - The instance description to locate
+ *
+ * @return Array of located instance declarations
+ */
+export const locateInstance = async (
+  ctx: WhimbrelContext,
+  sourceFolders: string[],
+  instance: InstanceDescription
+): Promise<InstanceDeclaration[]> => {
+  const sourceFiles = await listSourceFiles(ctx, sourceFolders)
+  const found = []
+
+  for (const file of sourceFiles) {
+    found.push(...(await locateInstanceInSourceFile(ctx, file, instance)))
+  }
+
+  return found
+}
+
+/**
+ * Find any instances of `node` being exported from the current source file/AST.
+ *
+ * @param ast - The AST to search
+ * @param node - The variable declaration node to check for exports
+ * @param identifier - The identifier name of the variable declaration
+ *
+ * @return Array of export metadata for the variable declaration
+ */
+export const findExports = (ast: AST, node: VariableDeclaration, identifier: string) => {
+  const exportDeclarations = findRecursive(ast.nodes, 'ExportNamedDeclaration')
+
+  return exportDeclarations.reduce((exports, exp) => {
+    if (exp.type === 'ExportNamedDeclaration') {
+      if (exp.declaration === node) {
+        exports.push({
+          type: 'named',
+          name: identifier,
+        })
+      }
+    }
+    return exports
+  }, [])
+}
+
+/**
+ * Find import statements matching the provided ImportSourceDescription.
+ *
+ * @param ast - The AST to search
+ * @param source - The import source description to match
+ *
+ * @return Array of located import references
+ */
+export const findImport = (
+  ast: AST,
+  source: ImportSourceDescription
+): IdentifierImportReference[] => {
+  return ast.nodes.reduce((nodes, node) => {
+    if (
+      node.type === 'ImportDeclaration' &&
+      node.importKind === 'value' &&
+      matchesImportSource(source, node.source.value, path.dirname(ast.sourceFile ?? '/'))
+    ) {
+      if (source.importType === 'default') {
+        const defaultSpecifier = node.specifiers.find(
+          (s) => s.type === 'ImportDefaultSpecifier'
+        )
+        if (defaultSpecifier) {
+          nodes.push({
+            type: 'ImportDeclaration',
+            name: defaultSpecifier.local.name,
+            ast,
+            node,
+          })
+        }
+      }
+
+      if (source.importType === 'named') {
+        const importSpecifier = node.specifiers.find((s) => s.type === 'ImportSpecifier')
+
+        if (importSpecifier) {
+          nodes.push({
+            type: 'ImportDeclaration',
+            name: importSpecifier.local.name,
+            ast,
+            node,
+          })
+        }
+      }
+    }
+    return nodes
+  }, [])
+}
+
+/**
+ * Locate variable declarations matching the instance description in the AST
+ *
+ * @param ast - The AST to search
+ * @param type - The type reference of the instance
+ * @param instance - The instance description
+ */
+export const findVariableDeclarations = (
+  ast: AST,
+  type: TypeReference,
+  instance: InstanceDescription
+): InstanceDeclaration[] => {
+  return findRecursive(ast.nodes, 'VariableDeclaration').reduce((declarations, node) => {
+    if (instance.type === 'class' && node.type === 'VariableDeclaration') {
+      const newInstance = node.declarations.find(
+        (n) =>
+          n.id.type === 'Identifier' &&
+          n.init &&
+          n.init?.type === 'NewExpression' &&
+          n.init.callee.type === 'Identifier' &&
+          n.init.callee.name === type.name
+      )
+      if (newInstance) {
+        const identifier = newInstance.id.type === 'Identifier' ? newInstance.id.name : ''
+        declarations.push({
+          name: identifier,
+          exports: findExports(ast, node, identifier),
+          typeName: type.name,
+          node,
+          ast,
+        })
+      }
+    }
+    return declarations
+  }, [] as InstanceDeclaration[])
+}
+
+/**
+ * Describe the babel AST node as ArgumentReference
+ *
+ * @param ast - The AST containing the argument
+ * @param a - The argument node to describe
+ *
+ * @return The described ArgumentReference
+ */
+export const describeArgument = (ast: AST, a: Node): ArgumentReference => {
+  if (isLiteralNode(a)) {
+    return makeLiteral(ast, a) as LiteralReference
+  }
+
+  return {
+    type: a.type,
+    category: 'expression',
+    resolutions: [],
+    node: a,
+    ast,
+  } as ExpressionReference
+}
+
+/**
+ * Locate call expressions matching the invocation description in the AST
+ *
+ * @param instanceRef - The instance declaration reference
+ * @param invocation - The function invocation description
+ *
+ * @return Array of located call expressions
+ */
+export const findCallExpression = (
+  instanceRef: IdentifierAssignment,
+  invocation: FunctionInvocationDescription
+): InvocationExpression[] => {
+  return instanceRef.ast.nodes
+    .reduce((calls, n) => {
+      calls.push(...findRecursive(n, 'CallExpression'))
+      return calls
+    }, [])
+    .reduce((result, expr) => {
+      if (
+        expr.callee.type === 'MemberExpression' &&
+        expr.callee.object.type === 'Identifier' &&
+        expr.callee.object.name === instanceRef.name &&
+        expr.callee.property.type === 'Identifier' &&
+        expr.callee.property.name === invocation.name
+      ) {
+        result.push({
+          type: 'CallExpression',
+          name: invocation.name,
+          arguments: expr.arguments.map((a) => describeArgument(instanceRef.ast, a)),
+          node: expr,
+          ast: instanceRef.ast,
+        })
+      }
+      return result
+    }, [])
+}
+
+/**
+ * Locate instance declarations in the AST of a specific source file
+ * or snippet
+ *
+ * @param ctx - The Whimbrel context
+ * @param filePath - The path to the source file
+ * @param instance - The instance description to locate
+ *
+ * @return Array of located instance declarations
+ */
+export const locateInstanceInAST = (
+  ast: AST,
+  instance: InstanceDescription
+): IdentifierAssignment[] => {
+  const importStatements = findImport(ast, instance.from)
+
+  if (instance.type === 'class') {
+    return importStatements.reduce((instanceDeclarations, impStmt) => {
+      instanceDeclarations.push(...findVariableDeclarations(ast, impStmt, instance))
+      return instanceDeclarations
+    }, [])
+  } else if (instance.type === 'identifier') {
+    return importStatements.reduce((statements, impStmt) => {
+      if (impStmt.name === instance.name) {
+        statements.push(impStmt)
+      }
+      return statements
+    }, [])
+  }
+}
+
+/**
+ * Locate function invocations in source files within specified source folders
+ *
+ * @param ctx - The Whimbrel context
+ * @param sourceFolders - Array of source folder paths to scan
+ * @param invocation - The function invocation description to locate
+ *
+ * @return Array of located call expressions
+ */
+export const locateInstanceInSourceFile = async (
+  ctx: WhimbrelContext,
+  filePath: string,
+  instance: InstanceDescription
+): Promise<SourceReference[]> => {
+  const ast = await filePathToAST(ctx, filePath)
+
+  return locateInstanceInAST(ast, instance)
+}
+
+/**
+ * Locate function invocations in the AST given instance declarations
+ *
+ * @param objectRefs - Array of instance declaration references
+ * @param invocation - The function invocation description to locate
+ *
+ * @return Array of located call expressions
+ */
+export const locateInvocationsInAST = (
+  objectRefs: IdentifierAssignment[],
+  invocation: FunctionInvocationDescription
+): InvocationExpression[] => {
+  return objectRefs.reduce((invocations, objRef) => {
+    invocations.push(...findCallExpression(objRef, invocation))
+    return invocations
+  }, [])
+}
+
+/**
+ * Locate function invocations in source files within specified source folders
+ *
+ * @param ctx - The Whimbrel context
+ * @param sourceFolders - Array of source folder paths to scan
+ * @param invocation - The function invocation description to locate
+ */
+export const locateInvocations = async (
+  ctx: WhimbrelContext,
+  sourceFolders: string[],
+  invocation: FunctionInvocationDescription
+): Promise<InvocationExpressionReference[]> => {
+  const objectRefs = await locateInstance(ctx, sourceFolders, invocation.instance)
+
+  const localInvocations = locateInvocationsInAST(objectRefs, invocation)
+  const imported = []
+
+  for (const ref of objectRefs) {
+    imported.push(
+      ...(await locateInvocations(ctx, sourceFolders, {
+        ...invocation,
+        instance: {
+          type: 'identifier',
+          name: ref.name,
+          from: {
+            type: 'tree',
+            name: ref.ast.sourceFile,
+            importType: 'named',
+          },
+        },
+      }))
+    )
+  }
+
+  return [...localInvocations, ...imported]
+}

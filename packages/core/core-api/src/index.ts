@@ -111,6 +111,13 @@ export type {
   FsObjectType,
   LsOptions,
 } from './fs'
+export type {
+  ImportSourceDescription,
+  InstanceDescription,
+  FunctionInvocationDescription,
+  InvocationArgumentResolution,
+  InvocationExpression,
+} from './lang'
 export type { ApplicationLog, FileListOptions } from './log'
 export type {
   AcceptMutationHandler,
