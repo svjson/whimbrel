@@ -1,5 +1,5 @@
 import { TsConfigJSON } from '@src/adapters'
-import { FacetQuery, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 import { pushUnique } from '@whimbrel/array'
 
 const TEST_DIRS = ['test', 'spec', 'tests', 'specs']
@@ -16,7 +16,10 @@ const TEST_DIRS = ['test', 'spec', 'tests', 'specs']
  * @param query - The FacetQuery containing the actor whose tsconfig.json to
  *                inspect
  */
-export const querySourceFolders = async (ctx: WhimbrelContext, { actor }: FacetQuery) => {
+export const querySourceFolders: FacetQueryFunction<'project:source-folders'> = async (
+  ctx: WhimbrelContext,
+  { actor }
+) => {
   if (actor) {
     const tsConfigJSON = await TsConfigJSON.readIfExists(ctx.disk, actor.root)
 

@@ -1,4 +1,11 @@
-import { Actor, FacetQuery, FacetQueryResult, WhimbrelContext } from '@whimbrel/core-api'
+import {
+  Actor,
+  FacetQuery,
+  FacetQueryFunction,
+  FacetQueryResult,
+  InferQueryResultType,
+  WhimbrelContext,
+} from '@whimbrel/core-api'
 
 /**
  * Criteria to rank facets by role.
@@ -16,17 +23,20 @@ export interface FacetCriteria {
  *
  * @return An array of FacetQueryResults from the facets that responded to the query.
  */
-export const queryFacets = async (
+export const queryFacets = async <QT extends string, QRS = InferQueryResultType<QT>>(
   ctx: WhimbrelContext,
   actor: Actor,
-  query: FacetQuery
-): Promise<FacetQueryResult[]> => {
-  const queryResults: FacetQueryResult[] = []
+  query: FacetQuery<QT, QRS>
+): Promise<FacetQueryResult<QRS>[]> => {
+  const queryResults: FacetQueryResult<QRS>[] = []
 
   for (const facetId of Object.keys(actor.facets)) {
     const facetModule = ctx.facets.get(facetId)
     if (!facetModule) continue
-    const queryFunction = facetModule.queryIndex[query.type]
+    const queryFunction = facetModule.queryIndex[query.type] as FacetQueryFunction<
+      QT,
+      QRS
+    >
     if (queryFunction) {
       const result = await queryFunction(ctx, query)
       if (result) {
@@ -43,7 +53,7 @@ export const queryFacets = async (
 
       if (moduleActor) {
         queryResults.push(
-          ...(await queryFacets(ctx, moduleActor, {
+          ...(await queryFacets<QT, QRS>(ctx, moduleActor, {
             ...query,
             actor: query.actor ? moduleActor : undefined,
           }))

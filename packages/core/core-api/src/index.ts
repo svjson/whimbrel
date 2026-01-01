@@ -74,6 +74,8 @@ export type {
   EngineRole,
   HttpAdapterRole,
   IgnoreFileRole,
+  InferQueryResultType,
+  InferQueryCriteriaType,
   LicenseRole,
   FacetRole,
   FacetRoles,

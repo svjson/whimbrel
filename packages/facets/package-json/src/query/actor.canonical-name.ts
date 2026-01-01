@@ -1,10 +1,18 @@
 import { PackageJSON } from '@src/adapters'
-import { FacetQuery, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 import path from 'node:path'
 
-export const queryActorCanonicalName = async (
+/**
+ * Query implementation of `actor:canonical-name` that responds with
+ * the name defined by package.json, if present.
+ *
+ * @param ctx - The Whimbrel context.
+ * @param query - The FacetQuery containing the actor whose
+ *                package.json to inspect
+ */
+export const queryActorCanonicalName: FacetQueryFunction<'actor:canonical-name'> = async (
   ctx: WhimbrelContext,
-  { actor }: FacetQuery
+  { actor }
 ) => {
   const pkgJsonPath = path.join(actor.root, 'package.json')
 

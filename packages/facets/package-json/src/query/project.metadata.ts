@@ -1,9 +1,9 @@
 import { PackageJSON } from '@src/adapters'
-import { FacetQuery, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQuery, FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 
-export const queryProjectMetadata = async (
+export const queryProjectMetadata: FacetQueryFunction<'project:metadata'> = async (
   ctx: WhimbrelContext,
-  { actor }: FacetQuery
+  { actor }
 ) => {
   const pkgJson = await PackageJSON.readIfExists(ctx.disk, actor.root)
 

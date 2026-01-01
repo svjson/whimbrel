@@ -1,9 +1,17 @@
 import { PackageJSON } from '@src/adapters'
-import { FacetQuery, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQuery, FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 
-export const queryProjectLicense = async (
+/**
+ * Query implementation of `project:license` that responds with
+ * the license spdx defined by package.json, if present.
+ *
+ * @param ctx - The Whimbrel context.
+ * @param query - The FacetQuery containing the actor whose
+ *                package.json to inspect
+ */
+export const queryProjectLicense: FacetQueryFunction<'project:license'> = async (
   ctx: WhimbrelContext,
-  { actor }: FacetQuery
+  { actor }
 ) => {
   const pkgJson = await PackageJSON.readIfExists(ctx.disk, actor.root)
 

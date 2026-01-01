@@ -7,7 +7,7 @@ export const performQueries = async (
   ctx: WhimbrelContext,
   actor: Actor,
   extractValue: (result: any) => string | undefined,
-  queries: FacetQuery[],
+  queries: FacetQuery<string>[],
   defaultValue: string
 ): Promise<string> => {
   for (const query of queries) {

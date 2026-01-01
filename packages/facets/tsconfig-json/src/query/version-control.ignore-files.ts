@@ -1,11 +1,22 @@
 import path from 'node:path'
-import { FacetQuery, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 import { readPath } from '@whimbrel/walk'
 
-export const queryVersionControlIgnoreFiles = async (
-  ctx: WhimbrelContext,
-  { actor }: FacetQuery
-) => {
+/**
+ * Query implementation of `version-control:ignore-files`.
+ *
+ * This implementation inspects the actor's tsconfig.json
+ * to determine the output directory for compiled TypeScript files,
+ *
+ * @param ctx - The Whimbrel context.
+ * @param query - The FacetQuery containing the actor to inspect.
+ *
+ * @return An array of ignore file patterns based on the tsconfig.json outDir,
+           if defined.
+ */
+export const queryVersionControlIgnoreFiles: FacetQueryFunction<
+  'version-control:ignore-files'
+> = async (ctx: WhimbrelContext, { actor }) => {
   if (actor) {
     const tsConfigScope = actor.facets['tsconfig.json']
     const tsConfigPath =

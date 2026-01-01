@@ -15,6 +15,8 @@ export type {
   FacetQuery,
   FacetQueryFunction,
   FacetQueryResult,
+  InferQueryCriteriaType,
+  InferQueryResultType,
   QueryIndex,
 } from './query'
 export type { FacetRegistry } from './registry'
