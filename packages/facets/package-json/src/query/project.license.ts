@@ -1,5 +1,5 @@
 import { PackageJSON } from '@src/adapters'
-import { FacetQuery, FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 
 /**
  * Query implementation of `project:license` that responds with
