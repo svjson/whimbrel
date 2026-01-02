@@ -26,7 +26,7 @@ export const resolveExpression = async (
     return [makeLiteral(ast, node) as LiteralReference]
   }
   if (node.type === 'LogicalExpression') {
-    if (node.operator === '||') {
+    if (node.operator === '||' || node.operator === '??') {
       return [
         ...(await resolveExpression(ast, node.left)),
         ...(await resolveExpression(ast, node.right)),
