@@ -117,6 +117,7 @@ export type {
   FunctionInvocationDescription,
   InvocationArgumentResolution,
   InvocationExpression,
+  SourceFolder,
 } from './lang'
 export type { ApplicationLog, FileListOptions } from './log'
 export type {

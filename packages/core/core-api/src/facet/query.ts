@@ -1,7 +1,7 @@
 import { Actor } from '@src/actor'
 import { WhimbrelContext } from '@src/context'
 import { FacetId } from './declaration'
-import { FunctionInvocationDescription } from '@src/lang'
+import { FunctionInvocationDescription, SourceFolder } from '@src/lang'
 
 /**
  * Describes a query to be performed against the facets of an Actor.
@@ -145,7 +145,7 @@ export type FacetQueryTypes = {
     CriteriaType: never
   }
   'project:source-folders': {
-    QueryResultType: string[]
+    QueryResultType: SourceFolder[]
     CriteriaType: never
   }
   'version-control:ignore-files': {

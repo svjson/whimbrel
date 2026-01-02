@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { TsConfigJSON } from '@src/adapters'
 import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 import { pushUnique } from '@whimbrel/array'
@@ -33,7 +34,9 @@ export const querySourceFolders: FacetQueryFunction<'project:source-folders'> = 
       const addDir = (dir: string) => {
         pushUnique(sourceDirs, {
           type: TEST_DIRS.includes(dir) ? 'test' : 'source',
-          dir,
+          name: path.basename(dir),
+          relative: dir,
+          absolute: path.resolve(actor.root, dir),
         })
       }
 
