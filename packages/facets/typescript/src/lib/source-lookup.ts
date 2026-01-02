@@ -88,7 +88,7 @@ export const findExports = (ast: AST, node: VariableDeclaration, identifier: str
  *
  * @return Array of located import references
  */
-export const findImport = (
+export const findImportBySource = (
   ast: AST,
   source: ImportSourceDescription
 ): IdentifierImportReference[] => {
@@ -129,6 +129,46 @@ export const findImport = (
     }
     return nodes
   }, [])
+}
+
+/**
+ * Find origin of imported `identifier`, if any.
+ *
+ * @param ast - The AST to search
+ * @param identifier - The identifier name to locate
+ *
+ * @return The located import reference, if any
+ */
+export const findImportedIdentifier = (
+  ast: AST,
+  identifier: string
+): IdentifierImportReference | undefined => {
+  for (const node of findRecursive(ast.nodes, 'ImportDeclaration')) {
+    if (node.type === 'ImportDeclaration' && node.importKind === 'value') {
+      const importSpecifiers = findRecursive(node, [
+        'ImportSpecifier',
+        'ImportDefaultSpecifier',
+      ])
+      for (const impSpec of importSpecifiers) {
+        if (
+          impSpec.type === 'ImportSpecifier' ||
+          impSpec.type === 'ImportDefaultSpecifier'
+        ) {
+          if (impSpec.local.name === identifier) {
+            return {
+              type: 'ImportDeclaration',
+              name: identifier,
+              importType: impSpec.type === 'ImportSpecifier' ? 'named' : 'default',
+              ast,
+              node,
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return undefined
 }
 
 /**

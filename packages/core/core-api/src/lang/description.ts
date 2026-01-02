@@ -29,35 +29,6 @@ export type ImportSourceDescription = {
   importType: ImportType
 }
 
-// export interface LibraryImportDescription {
-//   /**
-//    * Type of source
-//    */
-//   type: 'library'
-
-//   /**
-//    * Name of the library
-//    */
-//   name: string
-
-//   /**
-//    * Identifier import type
-//    */
-//   importType: ImportType
-// }
-
-// export interface LocalTreeImportDescription {
-//   /**
-//    * Type of source
-//    */
-//   type: 'tree'
-
-//   /**
-//    * The path to the imported file
-//    */
-//   path: string
-// }
-
 /**
  * Describes the criterion for referencing an instance declaration
  * in an unknown location.
@@ -74,7 +45,7 @@ export type InstanceDescription = {
   /**
    * Source of the entity being referenced.
    */
-  from: ImportSourceDescription
+  from?: ImportSourceDescription
 }
 
 /**

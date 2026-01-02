@@ -5,10 +5,10 @@ import {
   SOURCE__SINGLE_FILE_VANILLA_KOA,
 } from '@test/source-fixtures'
 
-import { findImport, sourceToAST } from '@src/lib'
+import { findImportBySource, sourceToAST } from '@src/lib'
 import { ImportSourceDescription } from '@whimbrel/core-api'
 
-describe('findImport', () => {
+describe('findImportBySource', () => {
   it.each([
     [
       'default import from library',
@@ -60,7 +60,7 @@ describe('findImport', () => {
       const ast = sourceToAST(sourceCode, importerPath)
 
       // When
-      const result = findImport(ast, importDesc)
+      const result = findImportBySource(ast, importDesc)
 
       // Then
       expect(result).toEqual([
