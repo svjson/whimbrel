@@ -65,7 +65,7 @@ const ENUM_ROLES = [
   'version-control',
   'build-config',
   'build-tool',
-  'config',
+  'config-provider',
   'ci',
 ]
 
