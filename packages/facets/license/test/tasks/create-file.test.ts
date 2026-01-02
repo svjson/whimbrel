@@ -86,7 +86,7 @@ describe(LICENSE__CREATE_FILE, () => {
             type: 'let',
             payload: {
               name: 'year',
-              value: '2025',
+              value: String(new Date().getFullYear()),
             },
             private: false,
           },
