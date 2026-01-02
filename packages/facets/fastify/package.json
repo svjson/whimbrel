@@ -35,6 +35,7 @@
     "@whimbrel/filesystem": "^0.0.6",
     "@whimbrel/flow": "^0.0.6",
     "@whimbrel/struct-file": "^0.0.6",
+    "@whimbrel/typescript": "^0.0.6",
     "@whimbrel-test/asset-fixtures": "0.0.6",
     "@whimbrel-test/tree-fixtures": "0.0.6",
     "@whimbrel-test/context-fixtures": "0.0.6",

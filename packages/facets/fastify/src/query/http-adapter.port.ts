@@ -1,10 +1,10 @@
 import { pushDistinct } from '@whimbrel/array'
-import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQueryFunction } from '@whimbrel/core-api'
 import { queryFacets } from '@whimbrel/facet'
 
 /**
  * Query implementation of `http-adapter:port` that responds with
- * the port that the Koa HTTP adapter is configured to listen to,
+ * the port that the Fastify HTTP adapter is configured to listen to,
  * if it can be determined.
  *
  * @param ctx - The Whimbrel context.
@@ -13,7 +13,7 @@ import { queryFacets } from '@whimbrel/facet'
  * @return - An array of port resolution objects.
  */
 export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = async (
-  ctx: WhimbrelContext,
+  ctx,
   { actor }
 ) => {
   const sourceFolders = (
@@ -27,7 +27,7 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
   }, [])
 
   /**
-   * Find invocations of the 'listen'-function on a Koa-instance and
+   * Find invocations of the 'listen'-function on a FastifyInstance and
    * try to resolve the values passed to it.
    */
   const result = await queryFacets(ctx, actor, {
@@ -35,8 +35,9 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
     criteria: {
       functionInvocation: {
         /**
-         * The function that starts a Koa server is called 'listen' and
-         * sits on the class instance, described by 'instance'
+         * The function that starts a Fastify server is called 'listen'
+         * and sits on the FastifyInstance-object return by the Fastify
+         * factory-function. It is _not_ a class.
          */
         name: 'listen',
         /**
@@ -45,21 +46,21 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
         type: 'instance',
         instance: {
           /**
-           * The main Koa object is a class, e.g, instantiated with a
-           * new-expression
+           * The FastifyInstance object is _not_ a class instance, but
+           * the return value of the Fastify factory-function.
            */
-          type: 'class',
+          type: 'return-value',
           /**
-           * FIXME: This is arbitrary and unused in this case
+           * FIXME: This is arbitrary and unused in this case.
            */
-          name: 'Koa',
+          name: 'Fastify',
           /**
-           * The Koa class will be identified as being the default
-           * import from the 'koa' library package/import source.
+           * The Fastify factory-function will be identified as being the
+           * default import from the 'fastify' library package/import source.
            */
           from: {
             type: 'library',
-            name: 'koa',
+            name: 'fastify',
             importType: 'default',
           },
         },
@@ -102,9 +103,13 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
     return []
   }
 
-  const [primary, ...fallbacks] = result
-    .flatMap((fr) => fr.result.flatMap((ro) => ro.arguments[0]))
-    .flatMap(toPortResolution)
+  const portResults = result.flatMap((fr) =>
+    fr.result
+      .flatMap((ro) => ro.arguments[0]?.properties.find((e) => e.key === 'port'))
+      .map((e) => e.value)
+  )
+
+  const [primary, ...fallbacks] = portResults.flatMap(toPortResolution)
 
   if (!primary && !fallbacks.length) {
     return null

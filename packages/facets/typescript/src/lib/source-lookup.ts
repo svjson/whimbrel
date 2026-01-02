@@ -6,7 +6,7 @@ import type {
   WhimbrelContext,
 } from '@whimbrel/core-api'
 import { listSourceFiles, matchesImportSource } from './source-tree'
-import { AST, filePathToAST, findRecursive, getNodeLiteral, isLiteralNode } from './ast'
+import { AST, filePathToAST, findRecursive, isLiteralNode } from './ast'
 import type { Node, VariableDeclaration, VariableDeclarator } from '@babel/types'
 import {
   InstanceDeclaration,
@@ -445,7 +445,10 @@ export const locateInvocations = async (
   sourceFolders: string[],
   invocation: FunctionInvocationDescription
 ): Promise<InvocationExpressionReference[]> => {
+  ctx.log.info('locateInvocations')
+  ctx.log.indent()
   const objectRefs = await locateInstance(ctx, sourceFolders, invocation.instance)
+  ctx.log.info('objectRefs: ', objectRefs.length)
   const localInvocations = locateInvocationsInAST(objectRefs, invocation)
   const imported = []
 

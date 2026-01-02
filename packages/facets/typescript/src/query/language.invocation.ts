@@ -8,6 +8,7 @@ import type {
   IdentifierReference,
   ProcessArgumentReference,
 } from '@src/lib'
+import { ObjectReference } from '@src/lib/reference'
 
 const ARG_FORMAT: Record<string, (arg: ValueExpression) => any> = {
   literal: (arg) => ({
@@ -35,6 +36,14 @@ const ARG_FORMAT: Record<string, (arg: ValueExpression) => any> = {
     name: (arg as unknown as IdentifierReference).name,
     resolutions: (arg as ExpressionReference).resolutions.map(format),
   }),
+  ObjectExpression: (arg) => ({
+    type: 'object',
+    literal: getLiteral(arg),
+    properties: (arg as ObjectReference).entries.map((e) => ({
+      key: e.name,
+      value: format(e.value),
+    })),
+  }),
 }
 
 const format = (expr: ValueExpression) =>
@@ -54,6 +63,7 @@ export const queryLanguageInvocation: FacetQueryFunction<'language:invocation'> 
   ctx: WhimbrelContext,
   { actor, criteria }
 ) => {
+  ctx.log.info('Query runs')
   let { functionInvocation, sourceFolders } = criteria
 
   if (!sourceFolders || !sourceFolders.length) {
