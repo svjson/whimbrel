@@ -85,7 +85,7 @@ Whimbrel is shaped by a few guiding ideas:
 
 ## Facets
 
-Whimbrel groups related tasks into **facets**. Each facet focuses on a specific domain, and provide their own
+Whimbrel groups related tasks and functionality into **facets**. Each facet focuses on a specific domain, and provide their own
 features and tasks.
 
 While primarily designed to be used as part of Whimbrel Plans and task execution, they can also be useful libraries
@@ -95,8 +95,11 @@ on their own.
 |----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | [actor](./packages/facets/git)                     | Core Facet dealing with `actor`, which is Whimbrel-speak for "project" or a cohesive folder structure. Not intended for CLI usage. |
 | [docker-compose](./packages/facets/docker-compose) | Read/Write/Inspect docker-compose YAML files                                                                                       |
+| [dotenv](./packages/facets/dotenv)                 | Inspect, compare and update dotenv files                                                                                                                                   |
+| [fastify](./packagse/facets/fastify)               | Allows detection and querying configuration of Fastify usage as http-adapter                                                       |
 | [git](./packages/facets/git)                       | Interact with git repositories, backed by either [isomorphic-git](https://isomorphic-git.org/) or plain old git.                   |
 | [gitignore](./packages/facets/gitignore)           | Create, maintain, merge or clean up .gitignore files.                                                                              |
+| [koa](./packages/facets/koa)                       | Allows detection and querying configuration of Koa usage as http-adapter                                                           |
 | [license](./packages/facets/license)               | For dealing with project licenses and LICENSE files                                                                                |
 | [node](./packages/facets/node)                     | NodeJS                                                                                                                             |
 | [npm](./packages/facets/npm)                       | npm interaction and configuration                                                                                                  |
@@ -107,6 +110,8 @@ on their own.
 | [target](./packages/facets/target)                 | Core Facet for "Target Actors" - Actors that are the targets of an operation.                                                      |
 | [tsconfig.json](./packages/facets/tsconfig.json)   | Create, maintain, clean, extend and configure tsconfig.json files                                                                  |
 | [turborepo](./packages/facets/turborepo)           | Configure and analyze turborepo configurations                                                                                     |
+| [typescript](./packages/facets/typescript)         | Provides static code-analysis for TypeScript projects                                                                              |
+
 
 ## License
 
