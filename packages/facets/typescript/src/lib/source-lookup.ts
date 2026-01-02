@@ -179,7 +179,7 @@ export const findImportedIdentifier = (
 export const findVariableDeclarations = (
   ast: AST,
   lhs: { identifier?: string },
-  rhs: { newInstanceOf?: string }[]
+  rhs: { newInstanceOf?: string; returnValueOf?: string }[]
 ): InstanceDeclaration[] => {
   const matchesLHS = (node: VariableDeclarator) => {
     if (lhs.identifier) {
@@ -202,6 +202,15 @@ export const findVariableDeclarations = (
           )
         )
           return false
+      }
+
+      if (rhsCrit.returnValueOf) {
+        !(
+          node.init &&
+          node.init.type === 'CallExpression' &&
+          node.init.callee.type === 'Identifier' &&
+          node.init.callee.name === rhsCrit.returnValueOf
+        )
       }
     }
     return true
@@ -335,10 +344,14 @@ export const locateImportedInstanceInAST = (
     ? findImportBySource(ast, instance.from)
     : [findImportedIdentifier(ast, instance.name)].filter(Boolean)
 
-  if (instance.type === 'class') {
+  if (instance.type === 'class' || instance.type === 'return-value') {
     return importStatements.reduce((instanceDeclarations, impStmt) => {
       instanceDeclarations.push(
-        ...findVariableDeclarations(ast, {}, [{ newInstanceOf: impStmt.name }])
+        ...findVariableDeclarations(ast, {}, [
+          instance.type === 'class'
+            ? { newInstanceOf: impStmt.name }
+            : { returnValueOf: impStmt.name },
+        ])
       )
       return instanceDeclarations
     }, [])
@@ -350,6 +363,8 @@ export const locateImportedInstanceInAST = (
       return statements
     }, [])
   }
+
+  return []
 }
 
 /**

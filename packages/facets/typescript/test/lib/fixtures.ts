@@ -9,7 +9,7 @@ export const stripASTDetails = (refs: SourceReference | SourceReference[]) => {
   delete dupe.ast
   delete dupe.type
   delete dupe.node
-  ;['name', 'argIndex', 'resolutions'].forEach((key) => {
+  ;['name', 'arguments', 'argIndex', 'resolutions'].forEach((key) => {
     if (Array.isArray(dupe[key])) dupe[key] = stripASTDetails(dupe[key])
   })
   return dupe

@@ -11,6 +11,7 @@ import {
   SOURCE__SINGLE_FILE_START_ARROW_FUNCTION,
   SOURCE__SINGLE_FILE_START_FUNCTION,
   SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
+  SOURCE__FASTIFY__SINGLE_FILE__VANILLA,
 } from '@test/source-fixtures'
 import { stripASTDetails } from './fixtures'
 
@@ -26,7 +27,7 @@ describe('locateInvocationsInAST', () => {
           'in declare-and-start iife',
           SOURCE__SINGLE_FILE_IIFE_DECLARE_AND_START_FUNCTION,
         ],
-      ])('should locate object invocation %s', async (_, sourceCode) => {
+      ])('should locate listen invocation %s', async (_, sourceCode) => {
         // Given
         const ast = sourceToAST(sourceCode)
         const instanceDescription: InstanceDescription = {
@@ -86,6 +87,43 @@ describe('locateInvocationsInAST', () => {
           }),
         ])
       })
+    })
+  })
+
+  describe('Fastify.listen invocations', () => {
+    describe('Literal argument', () => {
+      it.each([['at file top level', SOURCE__FASTIFY__SINGLE_FILE__VANILLA]])(
+        'should locate listen invocation %s',
+        async (_, sourceCode) => {
+          // Given
+          const ast = sourceToAST(sourceCode)
+          const instanceDescription: InstanceDescription = {
+            type: 'return-value',
+            name: 'Fastify',
+            from: {
+              type: 'library',
+              name: 'fastify',
+              importType: 'default',
+            },
+          }
+          const objectRefs = locateInstanceInAST(ast, instanceDescription)
+
+          // When
+          const invocations = locateInvocationsInAST(objectRefs, {
+            name: 'listen',
+            type: 'instance',
+            instance: instanceDescription,
+          })
+
+          // Then
+          expect(invocations).toHaveLength(1)
+          expect(stripASTDetails(invocations)).toEqual([
+            expect.objectContaining({
+              name: 'listen',
+            }),
+          ])
+        }
+      )
     })
   })
 })

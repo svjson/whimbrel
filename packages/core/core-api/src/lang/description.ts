@@ -9,7 +9,7 @@ export type ImportSourceType = 'library' | 'tree'
 /**
  * Enum union type describing the value instance of variable declaration
  */
-export type InstanceType = 'class' | 'identifier'
+export type InstanceType = 'class' | 'identifier' | 'return-value'
 
 /**
  * Describes the source from which an entity/identifier is imported.
