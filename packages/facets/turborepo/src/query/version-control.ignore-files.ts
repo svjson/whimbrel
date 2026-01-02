@@ -1,4 +1,4 @@
-import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
+import type { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 
 /**
  * Query implementation of `version-control:ignore-files`.
