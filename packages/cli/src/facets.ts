@@ -15,6 +15,7 @@ import Source from '@whimbrel/source'
 import Target from '@whimbrel/target'
 import TsConfigJson from '@whimbrel/tsconfig-json'
 import Turbo from '@whimbrel/turborepo'
+import TypeScript from '@whimbrel/typescript'
 
 import { DefaultFacetRegistry } from '@whimbrel/facet'
 import { FacetRegistry } from '@whimbrel/core-api'
@@ -41,5 +42,6 @@ export const makeFacetRegistry = (): FacetRegistry => {
     Target,
     TsConfigJson,
     Turbo,
+    TypeScript,
   ])
 }
