@@ -17,6 +17,9 @@ import { makeFacetRegistry } from '@src/facets'
  *
  * This command analyzes the specified path or current directory
  * and outputs details about identified facets.
+ *
+ * @param program - The Commander program instance to which the command
+ *                  is added.
  */
 export const addAnalyzeCommand = (program: Command) => {
   withCommonOptions(
