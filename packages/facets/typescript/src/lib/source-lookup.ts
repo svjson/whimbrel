@@ -56,7 +56,10 @@ export const locateInstance = async (
  * @return Array of export metadata for the variable declaration
  */
 export const findExports = (ast: AST, node: VariableDeclaration, identifier: string) => {
-  const exportDeclarations = findRecursive(ast.nodes, 'ExportNamedDeclaration')
+  const exportDeclarations = findRecursive(ast.nodes, [
+    'ExportNamedDeclaration',
+    'ExportDefaultDeclaration',
+  ])
 
   return exportDeclarations.reduce((exports, exp) => {
     if (exp.type === 'ExportNamedDeclaration') {
@@ -64,6 +67,12 @@ export const findExports = (ast: AST, node: VariableDeclaration, identifier: str
         exports.push({
           type: 'named',
           name: identifier,
+        })
+      }
+    } else if (exp.type == 'ExportDefaultDeclaration') {
+      if (exp.declaration.type === 'Identifier' && exp.declaration.name === identifier) {
+        exports.push({
+          type: 'default',
         })
       }
     }
@@ -97,6 +106,7 @@ export const findImport = (
           nodes.push({
             type: 'ImportDeclaration',
             name: defaultSpecifier.local.name,
+            importType: 'default',
             ast,
             node,
           })
@@ -110,6 +120,7 @@ export const findImport = (
           nodes.push({
             type: 'ImportDeclaration',
             name: importSpecifier.local.name,
+            importType: 'named',
             ast,
             node,
           })
@@ -239,7 +250,7 @@ export const locateInstanceInAST = (
     }, [])
   } else if (instance.type === 'identifier') {
     return importStatements.reduce((statements, impStmt) => {
-      if (impStmt.name === instance.name) {
+      if (impStmt.name === instance.name || impStmt.importType === 'default') {
         statements.push(impStmt)
       }
       return statements
@@ -297,26 +308,30 @@ export const locateInvocations = async (
   invocation: FunctionInvocationDescription
 ): Promise<InvocationExpressionReference[]> => {
   const objectRefs = await locateInstance(ctx, sourceFolders, invocation.instance)
-
   const localInvocations = locateInvocationsInAST(objectRefs, invocation)
   const imported = []
 
   for (const ref of objectRefs) {
-    imported.push(
-      ...(await locateInvocations(ctx, sourceFolders, {
-        ...invocation,
-        instance: {
-          type: 'identifier',
-          name: ref.name,
-          from: {
-            type: 'tree',
-            name: ref.ast.sourceFile,
-            importType: 'named',
-          },
-        },
-      }))
-    )
+    if (Array.isArray(ref.exports)) {
+      for (const exportDef of ref.exports) {
+        imported.push(
+          ...(await locateInvocations(ctx, sourceFolders, {
+            ...invocation,
+            instance: {
+              type: 'identifier',
+              name: ref.name,
+              from: {
+                type: 'tree',
+                name: ref.ast.sourceFile,
+                importType: exportDef.type,
+              },
+            },
+          }))
+        )
+      }
+    }
   }
 
+  ctx.log.deindent()
   return [...localInvocations, ...imported]
 }

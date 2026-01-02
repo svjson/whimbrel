@@ -58,10 +58,14 @@ export const matchesImportSource = (
 
   if (source.type === 'tree') {
     if (!importLocation || !source.name) return false
-    return (
-      path.resolve(importLocation, nodeSource) ===
-      path.resolve(importLocation, source.name)
-    )
+
+    const resolveSource = (base: string, p: string) => path.resolve(base, p)
+    const withOptionalExt = (p: string) => (p.endsWith('.ts') ? [p, p.slice(0, -3)] : [p])
+
+    const absoluteNodeSource = resolveSource(importLocation, nodeSource)
+    const predicateSources = withOptionalExt(resolveSource(importLocation, source.name))
+
+    return predicateSources.includes(absoluteNodeSource)
   }
 
   return false

@@ -27,6 +27,7 @@ export interface SourceReference<NT extends Node = Node> {
  */
 export interface IdentifierImportReference extends SourceReference<ImportDeclaration> {
   type: 'ImportDeclaration'
+  importType: 'named' | 'default'
   name: string
 }
 

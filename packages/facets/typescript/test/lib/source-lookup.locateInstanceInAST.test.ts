@@ -5,6 +5,7 @@ import { sourceToAST } from '@src/lib/ast'
 
 import {
   SOURCE__KOA__IMPORT_RELATIVE_AND_LISTEN,
+  SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT,
   SOURCE__KOA__INSTANTIATE_AND_EXPORT,
   SOURCE__SINGLE_FILE_VANILLA_KOA,
 } from '@test/source-fixtures'
@@ -68,6 +69,7 @@ describe('locateInstanceInAST', () => {
     expect(result).toHaveLength(1)
     expect(result[0]).toEqual({
       name: 'app',
+      importType: 'named',
       type: 'ImportDeclaration',
       node: expect.objectContaining({
         type: 'ImportDeclaration',
@@ -76,9 +78,20 @@ describe('locateInstanceInAST', () => {
     })
   })
 
-  it.each([['at declaration at file top level', SOURCE__KOA__INSTANTIATE_AND_EXPORT]])(
+  it.each([
+    [
+      'at declaration at file top level',
+      SOURCE__KOA__INSTANTIATE_AND_EXPORT,
+      [{ type: 'named', name: 'app' }],
+    ],
+    [
+      'as default export',
+      SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT,
+      [{ type: 'default' }],
+    ],
+  ])(
     'should locate class instantiation exported %s',
-    (_, sourceCode) => {
+    (_, sourceCode, expectedExports) => {
       // Given
       const ast = sourceToAST(sourceCode)
 
@@ -98,12 +111,7 @@ describe('locateInstanceInAST', () => {
       expect(result[0]).toEqual({
         name: 'app',
         typeName: 'Koa',
-        exports: [
-          {
-            type: 'named',
-            name: 'app',
-          },
-        ],
+        exports: expectedExports,
         node: expect.objectContaining({
           type: 'VariableDeclaration',
         }),

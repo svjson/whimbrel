@@ -6,6 +6,8 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import { queryLanguageInvocation } from '@src/query/language.invocation'
 import { FunctionInvocationDescription } from '@whimbrel/core-api'
 import {
+  SOURCE__KOA__IMPORT_DEFAULT_RELATIVE_AND_LISTEN,
+  SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT,
   SOURCE__KOA__PROCESS_ARG_WITH_OR_FALLBACK,
   SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK,
   SOURCE__SINGLE_FILE_VANILLA_KOA,
@@ -77,6 +79,20 @@ describe('language:invocation', () => {
               value: 4433,
             },
           ],
+        },
+      ],
+    ],
+    [
+      'on hard-coded port on instance imported via default import',
+      [
+        { 'index.ts': SOURCE__KOA__IMPORT_DEFAULT_RELATIVE_AND_LISTEN },
+        { 'app.ts': SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT },
+      ],
+      [
+        {
+          type: 'literal',
+          literal: '4444',
+          value: 4444,
         },
       ],
     ],

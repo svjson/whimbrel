@@ -17,7 +17,35 @@ describe('matchesImportSource', () => {
     ).toBe(true)
   })
 
-  it('should relative import from same dir', () => {
+  it('should match relative default import from same dir', () => {
+    expect(
+      matchesImportSource(
+        {
+          type: 'tree',
+          name: '/project/src/app.ts',
+          importType: 'default',
+        },
+        './app.ts',
+        '/project/src'
+      )
+    ).toBe(true)
+  })
+
+  it('should match relative default import without .ts-extension from same dir', () => {
+    expect(
+      matchesImportSource(
+        {
+          type: 'tree',
+          name: '/project/src/app.ts',
+          importType: 'default',
+        },
+        './app',
+        '/project/src'
+      )
+    ).toBe(true)
+  })
+
+  it('should match relative import from same dir', () => {
     expect(
       matchesImportSource(
         {
@@ -31,7 +59,7 @@ describe('matchesImportSource', () => {
     ).toBe(true)
   })
 
-  it('should relative import from parent dir', () => {
+  it('should match relative import from parent dir', () => {
     expect(
       matchesImportSource(
         {
