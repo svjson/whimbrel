@@ -122,9 +122,6 @@ export const execute = async (ctx: WhimbrelContext) => {
     .let('vcs', facetsOfType(facets, 'version-control').join(', '), {
       private: emptyResult,
     })
-    .let('language', facetsOfType(facets, 'language').join(', '), {
-      private: emptyResult,
-    })
     .let('engine', facetsOfType(facets, 'engine').join(', '), { private: emptyResult })
     .let('package-manager', facetsOfType(facets, 'pkg-manager').join(', '), {
       private: emptyResult,
