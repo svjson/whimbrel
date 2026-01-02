@@ -16,7 +16,7 @@ export const queryProjectLicense: FacetQueryFunction<'project:license'> = async 
   const pkgJson = await PackageJSON.readIfExists(ctx.disk, actor.root)
 
   if (pkgJson) {
-    const license = pkgJson.get('license')
+    const license = pkgJson.get<string>('license')
     if (license) {
       return {
         spdx: license,

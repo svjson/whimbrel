@@ -19,7 +19,7 @@ export const queryActorCanonicalName: FacetQueryFunction<'actor:canonical-name'>
   if (await ctx.disk.exists(pkgJsonPath)) {
     const pkgJson = await PackageJSON.read(ctx.disk, pkgJsonPath)
 
-    const name = pkgJson.get('name')
+    const name = pkgJson.get<string>('name')
     if (name) {
       return name
     }
