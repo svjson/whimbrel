@@ -3,17 +3,15 @@ import type {
   FunctionInvocationDescription,
   ImportSourceDescription,
   InstanceDescription,
-  InvocationExpression,
   WhimbrelContext,
 } from '@whimbrel/core-api'
 import { listSourceFiles, matchesImportSource } from './source-tree'
-import { AST, filePathToAST, findRecursive, isLiteralNode } from './ast'
-import type { Node, VariableDeclaration } from '@babel/types'
+import { AST, filePathToAST, findRecursive, getNodeLiteral, isLiteralNode } from './ast'
+import type { Node, VariableDeclaration, VariableDeclarator } from '@babel/types'
 import {
   InstanceDeclaration,
   IdentifierImportReference,
   LiteralReference,
-  TypeReference,
   SourceReference,
   ExpressionReference,
   ArgumentReference,
@@ -180,29 +178,70 @@ export const findImportedIdentifier = (
  */
 export const findVariableDeclarations = (
   ast: AST,
-  type: TypeReference,
-  instance: InstanceDescription
+  lhs: { identifier?: string },
+  rhs: { newInstanceOf?: string }[]
 ): InstanceDeclaration[] => {
-  return findRecursive(ast.nodes, 'VariableDeclaration').reduce((declarations, node) => {
-    if (instance.type === 'class' && node.type === 'VariableDeclaration') {
-      const newInstance = node.declarations.find(
-        (n) =>
-          n.id.type === 'Identifier' &&
-          n.init &&
-          n.init?.type === 'NewExpression' &&
-          n.init.callee.type === 'Identifier' &&
-          n.init.callee.name === type.name
-      )
-      if (newInstance) {
-        const identifier = newInstance.id.type === 'Identifier' ? newInstance.id.name : ''
-        declarations.push({
-          name: identifier,
-          exports: findExports(ast, node, identifier),
-          typeName: type.name,
-          node,
-          ast,
-        })
+  const matchesLHS = (node: VariableDeclarator) => {
+    if (lhs.identifier) {
+      if (!(node.id.type === 'Identifier' && node.id.name === lhs.identifier)) {
+        return false
       }
+    }
+    return true
+  }
+
+  const matchesRHS = (node: VariableDeclarator) => {
+    for (const rhsCrit of rhs) {
+      if (rhsCrit.newInstanceOf) {
+        if (
+          !(
+            node.init &&
+            node.init.type === 'NewExpression' &&
+            node.init.callee.type === 'Identifier' &&
+            node.init.callee.name === rhsCrit.newInstanceOf
+          )
+        )
+          return false
+      }
+    }
+    return true
+  }
+
+  return findRecursive(ast.nodes, 'VariableDeclaration').reduce((declarations, node) => {
+    if (node.type == 'VariableDeclaration') {
+      declarations.push(
+        ...node.declarations
+          .filter(matchesLHS)
+          .filter(matchesRHS)
+          .map((n) => {
+            const identifier = n.id.type === 'Identifier' ? n.id.name : ''
+
+            const expression = n.init
+              ? {
+                  type: n.init.type,
+                  category: 'expression',
+                  resolutions: [],
+                  node: n.init,
+                  ast,
+                }
+              : {
+                  type: n.type,
+                  category: 'expression',
+                  resolutions: [],
+                  node: n,
+                  ast,
+                }
+
+            return {
+              type: 'VariableDeclaration',
+              name: identifier,
+              exports: findExports(ast, node, identifier),
+              expression: expression as unknown as ArgumentReference,
+              node,
+              ast,
+            } satisfies InstanceDeclaration
+          })
+      )
     }
     return declarations
   }, [] as InstanceDeclaration[])
@@ -219,6 +258,17 @@ export const findVariableDeclarations = (
 export const describeArgument = (ast: AST, a: Node): ArgumentReference => {
   if (isLiteralNode(a)) {
     return makeLiteral(ast, a) as LiteralReference
+  }
+
+  if (a.type === 'Identifier') {
+    return {
+      type: 'Identifier',
+      name: a.name,
+      category: 'expression',
+      resolutions: [],
+      node: a,
+      ast,
+    }
   }
 
   return {
@@ -241,7 +291,7 @@ export const describeArgument = (ast: AST, a: Node): ArgumentReference => {
 export const findCallExpression = (
   instanceRef: IdentifierAssignment,
   invocation: FunctionInvocationDescription
-): InvocationExpression[] => {
+): InvocationExpressionReference[] => {
   return instanceRef.ast.nodes
     .reduce((calls, n) => {
       calls.push(...findRecursive(n, 'CallExpression'))
@@ -277,15 +327,19 @@ export const findCallExpression = (
  *
  * @return Array of located instance declarations
  */
-export const locateInstanceInAST = (
+export const locateImportedInstanceInAST = (
   ast: AST,
   instance: InstanceDescription
 ): IdentifierAssignment[] => {
-  const importStatements = findImport(ast, instance.from)
+  const importStatements = instance.from
+    ? findImportBySource(ast, instance.from)
+    : [findImportedIdentifier(ast, instance.name)].filter(Boolean)
 
   if (instance.type === 'class') {
     return importStatements.reduce((instanceDeclarations, impStmt) => {
-      instanceDeclarations.push(...findVariableDeclarations(ast, impStmt, instance))
+      instanceDeclarations.push(
+        ...findVariableDeclarations(ast, {}, [{ newInstanceOf: impStmt.name }])
+      )
       return instanceDeclarations
     }, [])
   } else if (instance.type === 'identifier') {
@@ -296,6 +350,28 @@ export const locateInstanceInAST = (
       return statements
     }, [])
   }
+}
+
+/**
+ * Locate instance declarations in the AST of a specific source file
+ * or snippet
+ *
+ * @param ctx - The Whimbrel context
+ * @param filePath - The path to the source file
+ * @param instance - The instance description to locate
+ *
+ * @return Array of located instance declarations
+ */
+export const locateInstanceInAST = (
+  ast: AST,
+  instance: InstanceDescription
+): IdentifierAssignment[] => {
+  const imported = locateImportedInstanceInAST(ast, instance)
+  const declared = instance.from
+    ? []
+    : findVariableDeclarations(ast, { identifier: instance.name }, [])
+
+  return [...imported, ...declared]
 }
 
 /**
@@ -328,7 +404,7 @@ export const locateInstanceInSourceFile = async (
 export const locateInvocationsInAST = (
   objectRefs: IdentifierAssignment[],
   invocation: FunctionInvocationDescription
-): InvocationExpression[] => {
+): InvocationExpressionReference[] => {
   return objectRefs.reduce((invocations, objRef) => {
     invocations.push(...findCallExpression(objRef, invocation))
     return invocations

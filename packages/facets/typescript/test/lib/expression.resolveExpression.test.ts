@@ -119,4 +119,86 @@ describe('resolveExpression', () => {
       expect(stripASTDetails(resolutions)).toEqual(expectedResolutions)
     })
   })
+
+  describe('MemberExpression', () => {
+    it.each([
+      [
+        'process.env.HTTP_PORT',
+        [
+          {
+            category: 'process-env',
+            name: [
+              {
+                category: 'expression',
+                name: 'HTTP_PORT',
+                resolutions: [],
+              },
+            ],
+          },
+        ],
+      ],
+      [
+        'process.argv[2]',
+        [
+          {
+            category: 'process-arg',
+            argIndex: [
+              {
+                category: 'literal',
+                value: 2,
+              },
+            ],
+          },
+        ],
+      ],
+    ])('should resolve %s', async (source, expectedResolutions) => {
+      // Given
+      const ast = sourceToAST(source)
+      const node = findRecursive(ast.nodes[0], 'MemberExpression')[0]
+
+      // When
+      const resolutions = await resolveExpression(ast, node)
+
+      // Then
+      expect(stripASTDetails(resolutions)).toEqual(expectedResolutions)
+    })
+  })
+
+  describe('Identifier', () => {
+    it.each([
+      [
+        'myVariable',
+        [
+          {
+            category: 'expression',
+            name: 'myVariable',
+            resolutions: [],
+          },
+        ],
+        true,
+      ],
+      [
+        ['const myVar = 1234', 'myVar'].join('\n'),
+        [
+          {
+            category: 'literal',
+            value: 1234,
+          },
+        ],
+        false,
+      ],
+    ])('should resolve %s', async (source, expectedResolutions, acceptUnresolved) => {
+      // Given
+      const ast = sourceToAST(source)
+      const node = findRecursive(ast.nodes[0], 'Identifier')[0]
+
+      // When
+      const resolutions = await resolveExpression(ast, node, {
+        acceptIdentifier: acceptUnresolved,
+      })
+
+      // Then
+      expect(stripASTDetails(resolutions)).toEqual(expectedResolutions)
+    })
+  })
 })

@@ -31,8 +31,11 @@ describe('locateInstanceInAST', () => {
       // Then
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual({
+        type: 'VariableDeclaration',
         name: 'app',
-        typeName: 'Koa',
+        expression: expect.objectContaining({
+          type: 'NewExpression',
+        }),
         exports: [],
         node: expect.objectContaining({
           start: 23,
@@ -109,8 +112,11 @@ describe('locateInstanceInAST', () => {
       // Then
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual({
+        type: 'VariableDeclaration',
         name: 'app',
-        typeName: 'Koa',
+        expression: expect.objectContaining({
+          type: 'NewExpression',
+        }),
         exports: expectedExports,
         node: expect.objectContaining({
           type: 'VariableDeclaration',

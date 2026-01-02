@@ -10,6 +10,7 @@ import {
   SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT,
   SOURCE__KOA__PROCESS_ARG_WITH_OR_FALLBACK,
   SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK,
+  SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
   SOURCE__SINGLE_FILE_VANILLA_KOA,
 } from '@test/source-fixtures'
 const { createDirectory } = makeTreeFixture(DiskFileSystem)
@@ -70,6 +71,7 @@ describe('language:invocation', () => {
                 {
                   type: 'symbol',
                   name: 'PORT',
+                  resolutions: [],
                 },
               ],
             },
@@ -83,7 +85,7 @@ describe('language:invocation', () => {
       ],
     ],
     [
-      'on hard-coded port on instance imported via default import',
+      'with hard-coded port on instance imported via default import',
       [
         { 'index.ts': SOURCE__KOA__IMPORT_DEFAULT_RELATIVE_AND_LISTEN },
         { 'app.ts': SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT },
@@ -93,6 +95,34 @@ describe('language:invocation', () => {
           type: 'literal',
           literal: '4444',
           value: 4444,
+        },
+      ],
+    ],
+    [
+      'with port value from local variable',
+      [{ 'index.ts': SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR }],
+      [
+        {
+          type: 'symbol',
+          name: 'port',
+          resolutions: [
+            {
+              type: 'process-env',
+              literal: 'process.env.PORT',
+              name: [
+                {
+                  type: 'symbol',
+                  name: 'PORT',
+                  resolutions: [],
+                },
+              ],
+            },
+            {
+              type: 'literal',
+              literal: '4433',
+              value: 4433,
+            },
+          ],
         },
       ],
     ],

@@ -10,38 +10,82 @@ import {
   SOURCE__SINGLE_FILE_IIFE_DECLARE_AND_START_FUNCTION,
   SOURCE__SINGLE_FILE_START_ARROW_FUNCTION,
   SOURCE__SINGLE_FILE_START_FUNCTION,
+  SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
 } from '@test/source-fixtures'
+import { stripASTDetails } from './fixtures'
 
 describe('locateInvocationsInAST', () => {
-  it.each([
-    ['at file top level', SOURCE__SINGLE_FILE_VANILLA_KOA],
-    ['in start function', SOURCE__SINGLE_FILE_START_FUNCTION],
-    ['in start arrow function', SOURCE__SINGLE_FILE_START_ARROW_FUNCTION],
-    ['in declare-and-start function', SOURCE__SINGLE_FILE_DECLARE_AND_START_FUNCTION],
-    ['in declare-and-start iife', SOURCE__SINGLE_FILE_IIFE_DECLARE_AND_START_FUNCTION],
-  ])('should locate object invocation %s', async (_, sourceCode) => {
-    // Given
-    const ast = sourceToAST(sourceCode)
-    const instanceDescription: InstanceDescription = {
-      type: 'class',
-      name: 'Koa',
-      from: {
-        type: 'library',
-        name: 'koa',
-        importType: 'default',
-      },
-    }
-    const objectRefs = locateInstanceInAST(ast, instanceDescription)
+  describe('Koa.listen invocations', () => {
+    describe('Literal argument', () => {
+      it.each([
+        ['at file top level', SOURCE__SINGLE_FILE_VANILLA_KOA],
+        ['in start function', SOURCE__SINGLE_FILE_START_FUNCTION],
+        ['in start arrow function', SOURCE__SINGLE_FILE_START_ARROW_FUNCTION],
+        ['in declare-and-start function', SOURCE__SINGLE_FILE_DECLARE_AND_START_FUNCTION],
+        [
+          'in declare-and-start iife',
+          SOURCE__SINGLE_FILE_IIFE_DECLARE_AND_START_FUNCTION,
+        ],
+      ])('should locate object invocation %s', async (_, sourceCode) => {
+        // Given
+        const ast = sourceToAST(sourceCode)
+        const instanceDescription: InstanceDescription = {
+          type: 'class',
+          name: 'Koa',
+          from: {
+            type: 'library',
+            name: 'koa',
+            importType: 'default',
+          },
+        }
+        const objectRefs = locateInstanceInAST(ast, instanceDescription)
 
-    // When
-    const invocations = locateInvocationsInAST(objectRefs, {
-      name: 'listen',
-      type: 'instance',
-      instance: instanceDescription,
+        // When
+        const invocations = locateInvocationsInAST(objectRefs, {
+          name: 'listen',
+          type: 'instance',
+          instance: instanceDescription,
+        })
+
+        // Then
+        expect(invocations).toHaveLength(1)
+        expect(invocations[0].arguments.map((a: any) => a.value)).toEqual([4444])
+      })
     })
 
-    // Then
-    expect(invocations).toHaveLength(1)
-    expect(invocations[0].arguments.map((a: any) => a.value)).toEqual([4444])
+    describe('Variable argument', () => {
+      it('should resolve variable identifier to assignment expression', () => {
+        // Given
+        const ast = sourceToAST(SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR)
+        const instanceDescription: InstanceDescription = {
+          type: 'class',
+          name: 'Koa',
+          from: {
+            type: 'library',
+            name: 'koa',
+            importType: 'default',
+          },
+        }
+        const objectRefs = locateInstanceInAST(ast, instanceDescription)
+
+        // When
+        const invocations = locateInvocationsInAST(objectRefs, {
+          name: 'listen',
+          type: 'instance',
+          instance: instanceDescription,
+        })
+
+        // Then
+        expect(invocations).toHaveLength(1)
+        expect(invocations[0].arguments).toEqual([
+          expect.objectContaining({
+            category: 'expression',
+            type: 'Identifier',
+            name: 'port',
+            resolutions: [],
+          }),
+        ])
+      })
+    })
   })
 })

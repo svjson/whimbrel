@@ -33,6 +33,7 @@ const ARG_FORMAT: Record<string, (arg: ArgumentReference) => any> = {
   Identifier: (arg) => ({
     type: 'symbol',
     name: (arg as unknown as IdentifierReference).name,
+    resolutions: (arg as ExpressionReference).resolutions.map(format),
   }),
 }
 

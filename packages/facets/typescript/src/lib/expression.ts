@@ -6,6 +6,7 @@ import {
   LiteralReference,
 } from './reference'
 import { makeLiteral } from './literal'
+import { locateInstanceInAST } from './source-lookup'
 
 /**
  * Resolves an expression AST node into its possible literal references or
@@ -71,6 +72,22 @@ export const resolveExpression = async (
         },
       ]
     }
+
+    const decl = locateInstanceInAST(ast, {
+      type: 'identifier',
+      name: node.name,
+    })
+
+    return (
+      await Promise.all(
+        decl.map((ref) => {
+          if (ref.type === 'VariableDeclaration') {
+            return resolveExpression(ast, ref.expression.node)
+          }
+          return resolveExpression(ast, ref.node)
+        })
+      )
+    ).flatMap((r) => r)
   }
 
   return []

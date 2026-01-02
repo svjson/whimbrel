@@ -35,9 +35,10 @@ export interface IdentifierImportReference extends SourceReference<ImportDeclara
  * Source reference that describes a variable declaration of an instance
  */
 export interface InstanceDeclaration extends SourceReference<VariableDeclaration> {
+  type: 'VariableDeclaration'
   name: string
   exports: ExportMetadata[]
-  typeName: string
+  expression: ArgumentReference
 }
 
 /**
@@ -149,14 +150,6 @@ export type ExpressionResolution =
   | ExpressionReference
   | ProcessArgumentReference
   | EnvironmentVariableReference
-
-/**
- * Type reference for variable declarations.
- *
- * Currently limited to imported identifiers, but should become a union
- * as the library grows.
- */
-export type TypeReference = IdentifierImportReference
 
 /**
  * Extract the literal source being referenced by `sourceRef` as it appears

@@ -7,6 +7,9 @@ export const TYPESCRIPT__KOA__SINGLE_FILE__PROCESS_ARG_WITH_OR_FALLBACK =
 export const TYPESCRIPT__KOA__SINGLE_FILE__PROCESS_ENV_WITH_OR_FALLBACK =
   'facets/typescript/koa/single-file/index.process-env-with-or-fallback.ts'
 
+export const TYPESCRIPT__KOA__SINGLE_FILE__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR =
+  'facets/typescript/koa/single-file/index.process-env-with-or-fallback-from-local-var.ts'
+
 export const TYPESCRIPT__KOA__SINGLE_FILE__START_FUNCTION =
   'facets/typescript/koa/single-file/index.start-fn.ts'
 
