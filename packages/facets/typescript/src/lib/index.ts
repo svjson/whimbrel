@@ -12,7 +12,7 @@ export { findRecursive, sourceToAST } from './ast'
 
 export type {
   SourceReference,
-  ArgumentReference,
+  ValueExpression,
   EnvironmentVariableReference,
   ExpressionReference,
   ExpressionResolution,

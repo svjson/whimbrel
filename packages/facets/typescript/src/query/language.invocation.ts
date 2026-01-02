@@ -2,14 +2,14 @@ import path from 'node:path'
 import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
 import { getLiteral, locateInvocations, resolveInvocationArguments } from '@src/lib'
 import type {
-  ArgumentReference,
+  ValueExpression,
   EnvironmentVariableReference,
   ExpressionReference,
   IdentifierReference,
   ProcessArgumentReference,
 } from '@src/lib'
 
-const ARG_FORMAT: Record<string, (arg: ArgumentReference) => any> = {
+const ARG_FORMAT: Record<string, (arg: ValueExpression) => any> = {
   literal: (arg) => ({
     type: arg.category,
     literal: getLiteral(arg),
@@ -37,7 +37,7 @@ const ARG_FORMAT: Record<string, (arg: ArgumentReference) => any> = {
   }),
 }
 
-const format = (expr: ArgumentReference) =>
+const format = (expr: ValueExpression) =>
   ARG_FORMAT[expr.type]
     ? ARG_FORMAT[expr.type](expr)
     : ARG_FORMAT[expr.category]

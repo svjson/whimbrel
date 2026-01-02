@@ -4,6 +4,8 @@ import {
   ImportDeclaration,
   MemberExpression,
   Node,
+  ObjectExpression,
+  ObjectProperty,
   VariableDeclaration,
 } from '@babel/types'
 
@@ -38,7 +40,7 @@ export interface InstanceDeclaration extends SourceReference<VariableDeclaration
   type: 'VariableDeclaration'
   name: string
   exports: ExportMetadata[]
-  expression: ArgumentReference
+  expression: ValueExpression
 }
 
 /**
@@ -58,13 +60,29 @@ export type LiteralReference =
   | LiteralByType<'StringLiteral'>
   | LiteralByType<'BooleanLiteral'>
 
+export interface ObjectReference extends SourceReference<ObjectExpression> {
+  type: 'ObjectExpression'
+  category: 'expression'
+  entries: ObjectEntryReference[]
+  resolutions: ExpressionResolution[]
+}
+
+export interface PropertyReference extends SourceReference<ObjectProperty> {
+  type: 'ObjectProperty'
+  category: 'entry'
+  name: string
+  value: ValueExpression
+}
+
+export type ObjectEntryReference = PropertyReference
+
 /**
  * Source reference that describes a function invocation expression
  */
 export interface InvocationExpressionReference extends SourceReference<CallExpression> {
   type: 'CallExpression'
   category: 'expression'
-  arguments: ArgumentReference[]
+  arguments: ValueExpression[]
   resolutions: ExpressionResolution[]
 }
 
@@ -124,7 +142,7 @@ export type ExpressionReference =
 /**
  * Union type that describes an invocation argument expression
  */
-export type ArgumentReference = LiteralReference | ExpressionReference
+export type ValueExpression = LiteralReference | ExpressionReference
 
 /**
  * Metadata that can be attached to an expression that also exports itself.

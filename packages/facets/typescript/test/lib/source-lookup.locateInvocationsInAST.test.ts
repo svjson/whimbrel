@@ -117,9 +117,29 @@ describe('locateInvocationsInAST', () => {
 
           // Then
           expect(invocations).toHaveLength(1)
-          expect(stripASTDetails(invocations)).toEqual([
+          expect(stripASTDetails(invocations, ['type'])).toEqual([
             expect.objectContaining({
+              type: 'CallExpression',
               name: 'listen',
+              arguments: [
+                {
+                  type: 'ObjectExpression',
+                  category: 'expression',
+                  resolutions: [],
+                  entries: [
+                    {
+                      type: 'ObjectProperty',
+                      category: 'entry',
+                      name: 'port',
+                      value: {
+                        type: 'NumericLiteral',
+                        category: 'literal',
+                        value: 2288,
+                      },
+                    },
+                  ],
+                },
+              ],
             }),
           ])
         }

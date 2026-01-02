@@ -14,11 +14,12 @@ import {
   LiteralReference,
   SourceReference,
   ExpressionReference,
-  ArgumentReference,
+  ValueExpression,
   InvocationExpressionReference,
   IdentifierAssignment,
 } from './reference'
 import { makeLiteral } from './literal'
+import { makeObjectReference } from './object'
 
 /**
  * Locate instance declarations in source files within specified source folders
@@ -225,7 +226,7 @@ export const findVariableDeclarations = (
           .map((n) => {
             const identifier = n.id.type === 'Identifier' ? n.id.name : ''
 
-            const expression = n.init
+            const expression: ValueExpression = n.init
               ? {
                   type: n.init.type,
                   category: 'expression',
@@ -245,7 +246,7 @@ export const findVariableDeclarations = (
               type: 'VariableDeclaration',
               name: identifier,
               exports: findExports(ast, node, identifier),
-              expression: expression as unknown as ArgumentReference,
+              expression: expression,
               node,
               ast,
             } satisfies InstanceDeclaration
@@ -257,14 +258,14 @@ export const findVariableDeclarations = (
 }
 
 /**
- * Describe the babel AST node as ArgumentReference
+ * Describe the babel AST node as ValueExpression
  *
- * @param ast - The AST containing the argument
+ * @param ast - The AST containing the value expression
  * @param a - The argument node to describe
  *
- * @return The described ArgumentReference
+ * @return The described ValueEpression
  */
-export const describeArgument = (ast: AST, a: Node): ArgumentReference => {
+export const describeValueExpression = (ast: AST, a: Node): ValueExpression => {
   if (isLiteralNode(a)) {
     return makeLiteral(ast, a) as LiteralReference
   }
@@ -278,6 +279,10 @@ export const describeArgument = (ast: AST, a: Node): ArgumentReference => {
       node: a,
       ast,
     }
+  }
+
+  if (a.type === 'ObjectExpression') {
+    return makeObjectReference(ast, a)
   }
 
   return {
@@ -317,7 +322,9 @@ export const findCallExpression = (
         result.push({
           type: 'CallExpression',
           name: invocation.name,
-          arguments: expr.arguments.map((a) => describeArgument(instanceRef.ast, a)),
+          arguments: expr.arguments.map((a) =>
+            describeValueExpression(instanceRef.ast, a)
+          ),
           node: expr,
           ast: instanceRef.ast,
         })
