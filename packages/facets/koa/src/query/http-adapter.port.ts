@@ -46,7 +46,7 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
     },
   })
 
-  const toPortResolution = (argExpr) => {
+  const toPortResolution = (argExpr: any) => {
     if (argExpr.type === 'literal') {
       return { type: 'concrete', value: argExpr.value }
     }
@@ -60,6 +60,9 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
     }
 
     if (argExpr.type === 'symbol') {
+      if (Array.isArray(argExpr.resolutions) && argExpr.resolutions.length) {
+        return argExpr.resolutions.map(toPortResolution)
+      }
       return { type: 'concrete', name: argExpr.name }
     }
 
