@@ -81,5 +81,8 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
     .flatMap((fr) => fr.result.flatMap((ro) => ro.arguments[0]))
     .flatMap(toPortResolution)
 
+  if (!primary && !fallbacks.length) {
+    return null
+  }
   return { primary, fallbacks }
 }
