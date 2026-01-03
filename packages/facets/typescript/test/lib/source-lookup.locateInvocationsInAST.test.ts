@@ -12,6 +12,7 @@ import {
   SOURCE__SINGLE_FILE_START_FUNCTION,
   SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
   SOURCE__FASTIFY__SINGLE_FILE__VANILLA,
+  SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
 } from '@test/source-fixtures'
 import { stripASTDetails } from './fixtures'
 
@@ -144,6 +145,74 @@ describe('locateInvocationsInAST', () => {
           ])
         }
       )
+    })
+
+    describe('Function parameter argument', () => {
+      it.each([
+        [
+          'in startServer-function and resolve function argument',
+          SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
+        ],
+      ])('should locate listen invocation %s', async (_, sourceCode) => {
+        // Given
+        const ast = sourceToAST(sourceCode)
+        const instanceDescription: InstanceDescription = {
+          type: 'return-value',
+          name: 'Fastify',
+          from: {
+            type: 'library',
+            name: 'fastify',
+            importType: 'default',
+          },
+        }
+        const objectRefs = locateInstanceInAST(ast, instanceDescription)
+
+        // When
+        const invocations = locateInvocationsInAST(objectRefs, {
+          name: 'listen',
+          type: 'instance',
+          instance: instanceDescription,
+        })
+
+        // Then
+        expect(invocations).toHaveLength(1)
+        expect(stripASTDetails(invocations, ['type'])).toEqual([
+          expect.objectContaining({
+            type: 'CallExpression',
+            name: 'listen',
+            arguments: [
+              {
+                type: 'ObjectExpression',
+                category: 'expression',
+                resolutions: [],
+                entries: [
+                  {
+                    type: 'ObjectProperty',
+                    category: 'entry',
+                    name: 'port',
+                    value: {
+                      type: 'Identifier',
+                      name: 'port',
+                      category: 'expression',
+                      resolutions: [],
+                    },
+                  },
+                  {
+                    type: 'ObjectProperty',
+                    category: 'entry',
+                    name: 'host',
+                    value: {
+                      type: 'StringLiteral',
+                      category: 'literal',
+                      value: '0.0.0.0',
+                    },
+                  },
+                ],
+              },
+            ],
+          }),
+        ])
+      })
     })
   })
 })

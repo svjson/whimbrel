@@ -1,5 +1,6 @@
 import {
   CallExpression,
+  FunctionDeclaration,
   Identifier,
   ImportDeclaration,
   MemberExpression,
@@ -20,6 +21,7 @@ import { LiteralByType } from './literal'
  * full AST that is being referenced.
  */
 export interface SourceReference<NT extends Node = Node> {
+  type: string
   ast: AST
   node: NT
 }
@@ -43,11 +45,33 @@ export interface InstanceDeclaration extends SourceReference<VariableDeclaration
   expression: ValueExpression
 }
 
+export interface FunctionDeclarationReference
+  extends SourceReference<FunctionDeclaration> {
+  type: 'FunctionDeclaration'
+  name: string
+  exports: ExportMetadata[]
+}
+
+export interface FunctionArgumentDeclaration
+  extends SourceReference<FunctionDeclaration> {
+  type: 'FunctionArgumentDeclaration'
+  name: string
+  argument: {
+    type: 'positional' | 'unknown'
+    name?: string
+    index?: number
+    node: Identifier
+  }
+}
+
 /**
  * Source reference union for any expression that declares an identifier in
  * a namespace.
  */
-export type IdentifierAssignment = InstanceDeclaration | IdentifierImportReference
+export type IdentifierAssignment =
+  | InstanceDeclaration
+  | IdentifierImportReference
+  | FunctionArgumentDeclaration
 
 /**
  * Source reference that describes a literal value.

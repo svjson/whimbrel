@@ -1,4 +1,5 @@
 export {
+  findIdentifierDefinition,
   findImportBySource,
   findImportedIdentifier,
   locateInstance,
@@ -8,7 +9,7 @@ export {
 } from './source-lookup'
 export { getLiteral } from './reference'
 export { resolveExpression, resolveInvocationArguments } from './expression'
-export { findRecursive, sourceToAST } from './ast'
+export { findNode, findRecursive, sourceToAST } from './ast'
 
 export type {
   SourceReference,

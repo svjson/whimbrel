@@ -6,6 +6,7 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import { queryLanguageInvocation } from '@src/query/language.invocation'
 import { FunctionInvocationDescription } from '@whimbrel/core-api'
 import {
+  SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
   SOURCE__FASTIFY__SINGLE_FILE__VANILLA,
   SOURCE__KOA__IMPORT_DEFAULT_RELATIVE_AND_LISTEN,
   SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT,
@@ -33,6 +34,40 @@ describe('language:invocation', () => {
                   type: 'literal',
                   value: 2288,
                   literal: '2288',
+                },
+              },
+            ],
+          },
+        ],
+      ],
+      [
+        'in startup-function that takes port as arg',
+        [{ 'index.ts': SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG }],
+        [
+          {
+            type: 'object',
+            literal: "{ port, host: '0.0.0.0' }",
+            properties: [
+              {
+                key: 'port',
+                value: {
+                  type: 'symbol',
+                  name: 'port',
+                  resolutions: [
+                    {
+                      type: 'literal',
+                      value: 8888,
+                      literal: '8888',
+                    },
+                  ],
+                },
+              },
+              {
+                key: 'host',
+                value: {
+                  type: 'literal',
+                  value: '0.0.0.0',
+                  literal: "'0.0.0.0'",
                 },
               },
             ],

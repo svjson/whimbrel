@@ -63,7 +63,6 @@ export const queryLanguageInvocation: FacetQueryFunction<'language:invocation'> 
   ctx: WhimbrelContext,
   { actor, criteria }
 ) => {
-  ctx.log.info('Query runs')
   let { functionInvocation, sourceFolders } = criteria
 
   if (!sourceFolders || !sourceFolders.length) {

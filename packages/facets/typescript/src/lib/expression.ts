@@ -1,12 +1,21 @@
 import { Node } from '@babel/types'
-import { AST, getNodeLiteral, isLiteralNode } from './ast'
+import { AST, getNodeLiteral, isLiteralNode, isTraversalNode } from './ast'
 import {
   ExpressionResolution,
+  FunctionArgumentDeclaration,
   InvocationExpressionReference,
   LiteralReference,
+  ObjectReference,
+  SourceReference,
 } from './reference'
 import { makeLiteral } from './literal'
-import { locateInstanceInAST } from './source-lookup'
+import {
+  describeValueExpression,
+  findIdentifierDefinition,
+  locateInstanceInAST,
+} from './source-lookup'
+import { resolveObjectProperties } from './object'
+import traverse from '@babel/traverse'
 
 /**
  * Resolves an expression AST node into its possible literal references or
@@ -21,7 +30,7 @@ import { locateInstanceInAST } from './source-lookup'
 export const resolveExpression = async (
   ast: AST,
   node: Node,
-  opts?: { acceptIdentifier?: boolean }
+  opts?: { acceptIdentifier?: boolean; nodeRef?: SourceReference }
 ): Promise<ExpressionResolution[]> => {
   if (isLiteralNode(node)) {
     return [makeLiteral(ast, node) as LiteralReference]
@@ -73,10 +82,7 @@ export const resolveExpression = async (
       ]
     }
 
-    const decl = locateInstanceInAST(ast, {
-      type: 'identifier',
-      name: node.name,
-    })
+    const decl = findIdentifierDefinition(ast, node)
 
     return (
       await Promise.all(
@@ -84,10 +90,48 @@ export const resolveExpression = async (
           if (ref.type === 'VariableDeclaration') {
             return resolveExpression(ast, ref.expression.node)
           }
-          return resolveExpression(ast, ref.node)
+          return resolveExpression(ast, ref.node, { nodeRef: ref })
         })
       )
     ).flatMap((r) => r)
+  }
+
+  if (opts?.nodeRef?.type === 'FunctionArgumentDeclaration') {
+    const nodeRef = opts.nodeRef as FunctionArgumentDeclaration
+    const invocations = []
+
+    traverse(ast.parseResult, {
+      FunctionDeclaration(path) {
+        if (isTraversalNode(path.node, node)) {
+          const id = path.node.id
+          if (id) {
+            const binding = path.scope.getBinding(id.name)
+            invocations.push(
+              ...binding.referencePaths
+                .filter(
+                  (refPath) =>
+                    refPath.parentPath?.isCallExpression() &&
+                    refPath.parentKey === 'callee'
+                )
+                .map((refPath) => refPath.parent)
+            )
+          }
+          path.stop()
+        }
+      },
+    })
+
+    return (
+      await Promise.all(
+        invocations.map((inv) => {
+          if (nodeRef.argument.index) {
+            return resolveExpression(ast, inv.arguments[nodeRef.argument.index])
+          }
+        })
+      )
+    )
+      .flat()
+      .filter(Boolean)
   }
 
   return []
@@ -109,7 +153,11 @@ export const resolveInvocationArguments = async (
 ): Promise<InvocationExpressionReference> => {
   for (const arg of invocation.arguments) {
     if (arg.category === 'expression') {
-      arg.resolutions = await resolveExpression(arg.ast, arg.node)
+      if (arg.type === 'ObjectExpression') {
+        await resolveObjectProperties(arg as ObjectReference)
+      } else {
+        arg.resolutions = await resolveExpression(arg.ast, arg.node)
+      }
     }
   }
 

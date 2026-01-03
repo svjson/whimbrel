@@ -6,8 +6,15 @@ import type {
   WhimbrelContext,
 } from '@whimbrel/core-api'
 import { listSourceFiles, matchesImportSource } from './source-tree'
-import { AST, filePathToAST, findRecursive, isLiteralNode } from './ast'
-import type { Node, VariableDeclaration, VariableDeclarator } from '@babel/types'
+import { AST, filePathToAST, findRecursive, isLiteralNode, isTraversalNode } from './ast'
+import {
+  FunctionDeclaration,
+  type Identifier,
+  type Node,
+  type VariableDeclaration,
+  type VariableDeclarator,
+} from '@babel/types'
+import traverse, { Binding, NodePath } from '@babel/traverse'
 import {
   InstanceDeclaration,
   IdentifierImportReference,
@@ -168,6 +175,84 @@ export const findImportedIdentifier = (
   }
 
   return undefined
+}
+
+/**
+ * Describe the argument `arg` in the context of function declaration `funDecl`.
+ *
+ * @param funDecl - The function declaration node
+ * @param arg - The argument identifier node
+ *
+ * @return The described argument
+ */
+const describeArgument = (funDecl: FunctionDeclaration, arg: Identifier) => {
+  let index = -1
+  for (let i = 0; i < funDecl.params.length; i++) {
+    if (isTraversalNode(funDecl.params[i], arg)) {
+      index = i
+      break
+    }
+  }
+
+  if (index !== -1) {
+    return {
+      type: 'positional',
+      name: arg.name,
+      index,
+      node: arg,
+    }
+  }
+
+  return {
+    type: 'unknown',
+    node: arg,
+  }
+}
+
+/**
+ * Find the definition of identifier described by `node`.
+ *
+ * FIXME: Falls back to `locateInstanceInAST` in case of no match, which may
+ * give out-of-scope matches. This is also the reason that the return value is
+ * Array.
+ *
+ * @param ast - The AST to search
+ * @param node - The identifier node to locate the definition for
+ *
+ * @return Array of located identifier definitions
+ */
+export const findIdentifierDefinition = (ast: AST, node: Identifier) => {
+  let binding: Binding | undefined
+  traverse(ast.parseResult, {
+    Identifier(path) {
+      if (isTraversalNode(path.node, node)) {
+        binding = path.scope.getBinding(path.node.name)
+        path.stop()
+      }
+    },
+  })
+
+  if (binding) {
+    const parentExpr = binding.path.parent
+
+    if (parentExpr.type === 'FunctionDeclaration') {
+      return [
+        {
+          type: 'FunctionArgumentDeclaration',
+          name: parentExpr.id.name,
+          exports: [],
+          argument: describeArgument(parentExpr, binding.path.node as Identifier),
+          node: parentExpr,
+          ast,
+        },
+      ]
+    }
+  }
+
+  return locateInstanceInAST(ast, {
+    type: 'identifier',
+    name: node.name,
+  })
 }
 
 /**
@@ -445,10 +530,7 @@ export const locateInvocations = async (
   sourceFolders: string[],
   invocation: FunctionInvocationDescription
 ): Promise<InvocationExpressionReference[]> => {
-  ctx.log.info('locateInvocations')
-  ctx.log.indent()
   const objectRefs = await locateInstance(ctx, sourceFolders, invocation.instance)
-  ctx.log.info('objectRefs: ', objectRefs.length)
   const localInvocations = locateInvocationsInAST(objectRefs, invocation)
   const imported = []
 
@@ -473,6 +555,5 @@ export const locateInvocations = async (
     }
   }
 
-  ctx.log.deindent()
   return [...localInvocations, ...imported]
 }
