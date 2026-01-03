@@ -1,6 +1,13 @@
 import { WhimbrelContext } from '@whimbrel/core-api'
 import { parse, ParseResult } from '@babel/parser'
-import { BooleanLiteral, Node, NumericLiteral, StringLiteral } from '@babel/types'
+import {
+  BooleanLiteral,
+  Expression,
+  Node,
+  NumericLiteral,
+  PrivateName,
+  StringLiteral,
+} from '@babel/types'
 import traverse, { NodePath } from '@babel/traverse'
 
 export interface AST {
@@ -15,6 +22,12 @@ export interface AST {
  * context of this library.
  */
 export type LiteralNode = NumericLiteral | StringLiteral | BooleanLiteral
+
+/**
+ * Union type for Babel AST nodes that constitutes the property path
+ * of MemberExpression a k a object path.
+ */
+export type ObjectPathPart = Expression | PrivateName
 
 /**
  * Parse source code into a Babel AST.

@@ -6,6 +6,7 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import { queryLanguageInvocation } from '@src/query/language.invocation'
 import { FunctionInvocationDescription } from '@whimbrel/core-api'
 import {
+  SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_CONFIG_OBJ_DEREF,
   SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_PORT_ARG,
   SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
   SOURCE__FASTIFY__SINGLE_FILE__VANILLA,
@@ -108,6 +109,51 @@ describe('language:invocation', () => {
                   type: 'literal',
                   value: '0.0.0.0',
                   literal: "'0.0.0.0'",
+                },
+              },
+            ],
+          },
+        ],
+      ],
+      [
+        'in startup arrow-function that dereferences config object argument with member expressions',
+        [
+          {
+            'index.ts':
+              SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_CONFIG_OBJ_DEREF,
+          },
+        ],
+        [
+          {
+            type: 'object',
+            literal: '{ port: config.http.port, host: config.http.host }',
+            properties: [
+              {
+                key: 'port',
+                value: {
+                  type: 'expression',
+                  literal: 'config.http.port',
+                  resolutions: [
+                    {
+                      type: 'literal',
+                      value: 8484,
+                      literal: '8484',
+                    },
+                  ],
+                },
+              },
+              {
+                key: 'host',
+                value: {
+                  type: 'expression',
+                  literal: 'config.http.host',
+                  resolutions: [
+                    {
+                      type: 'literal',
+                      value: 'localhost',
+                      literal: "'localhost'",
+                    },
+                  ],
                 },
               },
             ],

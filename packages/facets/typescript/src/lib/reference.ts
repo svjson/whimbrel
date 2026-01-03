@@ -1,6 +1,7 @@
 import {
   ArrowFunctionExpression,
   CallExpression,
+  Expression,
   FunctionDeclaration,
   Identifier,
   ImportDeclaration,
@@ -8,10 +9,11 @@ import {
   Node,
   ObjectExpression,
   ObjectProperty,
+  PrivateName,
   VariableDeclaration,
 } from '@babel/types'
 
-import { AST } from './ast'
+import { AST, ObjectPathPart } from './ast'
 import { LiteralByType } from './literal'
 
 /**
@@ -157,6 +159,14 @@ export interface IdentifierReference extends SourceReference<Identifier> {
   resolutions: ExpressionResolution[]
 }
 
+export interface ObjectPathReference extends SourceReference<MemberExpression> {
+  type: 'ObjectPathReference'
+  category: 'expression'
+  root: Identifier
+  path: ObjectPathPart[]
+  resolutions: []
+}
+
 /**
  * Source reference that describes a process argument access expression.
  *
@@ -201,6 +211,7 @@ export interface AnyExpression extends SourceReference<Node> {
 export type ExpressionReference =
   | InvocationExpressionReference
   | IdentifierReference
+  | ObjectPathReference
   | AnyExpression
 
 /**

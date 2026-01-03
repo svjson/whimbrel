@@ -1,17 +1,30 @@
-import { Identifier, LogicalExpression, MemberExpression, Node } from '@babel/types'
-import { AST, getNodeLiteral, isLiteralNode, isTraversalNode } from './ast'
+import {
+  Identifier,
+  LogicalExpression,
+  MemberExpression,
+  Node,
+  ObjectExpression,
+} from '@babel/types'
+import { AST, getNodeLiteral } from './ast'
 import {
   ExpressionResolution,
   FunctionArgumentDeclaration,
   InvocationExpressionReference,
   LiteralReference,
+  ObjectPathReference,
   ObjectReference,
   SourceReference,
 } from './reference'
 import { makeLiteral } from './literal'
 import { findIdentifierDefinition } from './source-lookup'
-import { resolveObjectProperties } from './object'
+import {
+  extractObjectPath,
+  makeObjectPathReference,
+  makeObjectReference,
+  resolveObjectProperties,
+} from './object'
 import { findFunctionInvocations } from './function'
+import { makeProcessArgReference, makeProcessEnvReference } from './binding'
 
 export interface ExpressionResolutionOptions<
   R extends SourceReference = SourceReference,
@@ -64,31 +77,18 @@ const resolveMemberExpression = async (
   _opts: ExpressionResolutionOptions
 ): Promise<ExpressionResolution[]> => {
   const objLiteral = getNodeLiteral(ast, node.object)
+
+  // First check for special bindings
   switch (objLiteral) {
     case 'process.argv':
-      return [
-        {
-          type: node.type,
-          category: 'process-arg',
-          argIndex: await resolveExpression(ast, node.property),
-          node: node,
-          ast,
-        },
-      ]
+      return [await makeProcessArgReference(ast, node)]
     case 'process.env':
-      return [
-        {
-          type: node.type,
-          category: 'process-env',
-          name: await resolveExpression(ast, node.property, { acceptIdentifier: true }),
-          node: node,
-          ast,
-        },
-      ]
+      return [await makeProcessEnvReference(ast, node)]
   }
 
-  console.warn(`Unhandled member expression: "${getNodeLiteral(ast, node)}"`)
-  return []
+  // Handle regular/arbitrary member expression
+  const objPathRef = makeObjectPathReference(ast, node)
+  return resolveExpression(ast, node, { nodeRef: objPathRef })
 }
 
 /**
@@ -104,7 +104,7 @@ const resolveMemberExpression = async (
 const resolveIdentifierExpression = async (
   ast: AST,
   node: Identifier,
-  opts: ExpressionResolutionOptions
+  opts?: ExpressionResolutionOptions
 ): Promise<ExpressionResolution[]> => {
   if (opts?.acceptIdentifier) {
     return [
@@ -161,6 +161,53 @@ export const resolveFunctionArgumentExpression = async (
 }
 
 /**
+ * Attempts to fully resolve an object expression and all of its property values.
+ *
+ * @param ast - The AST containing the expression
+ * @param node - The object expression AST node
+ * @param _opts - Optional resolution options
+ *
+ * @return Array of resolved expression references
+ */
+export const resolveObjectExpression = async (
+  ast: AST,
+  node: ObjectExpression,
+  _opts: ExpressionResolutionOptions
+) => {
+  const objRef = makeObjectReference(ast, node)
+  await resolveObjectProperties(objRef)
+  return [objRef]
+}
+
+/**
+ * Resolves an object path reference into its possible literal references or
+ * external resources.
+ *
+ * @param ast - The AST containing the expression
+ * @param objPathRef - The object path reference to resolve
+ *
+ * @return Array of resolved expression references
+ */
+export const resolveObjectPathReference = async (
+  ast: AST,
+  objPathRef: ObjectPathReference
+) => {
+  const rootResolutions = await resolveIdentifierExpression(ast, objPathRef.root)
+
+  const resolutions = []
+  for (const res of rootResolutions) {
+    if (res.type === 'ObjectExpression') {
+      const path = extractObjectPath(res as ObjectReference, objPathRef.path)
+      if (path) {
+        resolutions.push(path)
+      }
+    }
+  }
+
+  return resolutions
+}
+
+/**
  * Resolves an expression AST node into its possible literal references or
  * external resources.
  *
@@ -183,6 +230,9 @@ export const resolveExpression = async (
     case 'LogicalExpression':
       return resolveLogicalExpression(ast, node, opts)
     case 'MemberExpression':
+      if (opts?.nodeRef?.type === 'ObjectPathReference') {
+        return resolveObjectPathReference(ast, opts.nodeRef as ObjectPathReference)
+      }
       return resolveMemberExpression(ast, node, opts)
     case 'Identifier':
       return resolveIdentifierExpression(ast, node, opts)
@@ -194,7 +244,12 @@ export const resolveExpression = async (
           opts.nodeRef as FunctionArgumentDeclaration
         )
       }
+      break
+    case 'ObjectExpression':
+      return resolveObjectExpression(ast, node, opts)
   }
+
+  // console.warn('Unable to resolve: ', node.type)
 
   return []
 }

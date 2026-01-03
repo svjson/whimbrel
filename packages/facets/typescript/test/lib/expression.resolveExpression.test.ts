@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { findRecursive, resolveExpression, sourceToAST } from '@src/lib'
+import { findNode, findRecursive, resolveExpression, sourceToAST } from '@src/lib'
 import { stripASTDetails } from './fixtures'
 
 describe('resolveExpression', () => {
@@ -123,7 +123,7 @@ describe('resolveExpression', () => {
   describe('MemberExpression', () => {
     it.each([
       [
-        'process.env.HTTP_PORT',
+        { source: 'process.env.HTTP_PORT' },
         [
           {
             category: 'process-env',
@@ -138,7 +138,7 @@ describe('resolveExpression', () => {
         ],
       ],
       [
-        'process.argv[2]',
+        { source: 'process.argv[2]' },
         [
           {
             category: 'process-arg',
@@ -151,17 +151,37 @@ describe('resolveExpression', () => {
           },
         ],
       ],
-    ])('should resolve %s', async (source, expectedResolutions) => {
-      // Given
-      const ast = sourceToAST(source)
-      const node = findRecursive(ast.nodes[0], 'MemberExpression')[0]
+      [
+        {
+          source: [
+            "const config = { auth: { psk: 'ABCDE' } }",
+            'const secret = config.auth.psk',
+          ].join('\n'),
+          expr: 'config.auth.psk',
+        },
+        [
+          {
+            category: 'literal',
+            value: 'ABCDE',
+          },
+        ],
+      ],
+    ] as [{ source: string; expr?: string }, any[]][])(
+      'should resolve %s',
+      async ({ source, expr }, expectedResolutions) => {
+        // Given
+        const ast = sourceToAST(source)
+        const node = expr
+          ? findNode(ast, { literal: expr })
+          : findRecursive(ast.nodes[0], 'MemberExpression')[0]
 
-      // When
-      const resolutions = await resolveExpression(ast, node)
+        // When
+        const resolutions = await resolveExpression(ast, node)
 
-      // Then
-      expect(stripASTDetails(resolutions)).toEqual(expectedResolutions)
-    })
+        // Then
+        expect(stripASTDetails(resolutions)).toEqual(expectedResolutions)
+      }
+    )
   })
 
   describe('Identifier', () => {
