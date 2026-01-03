@@ -1,16 +1,26 @@
 import { describe, expect, it } from 'vitest'
 import { Identifier } from '@babel/types'
 import { findIdentifierDefinition, findNode, sourceToAST } from '@src/lib'
-import { SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG } from '@test/source-fixtures'
+import {
+  SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_PORT_ARG,
+  SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
+} from '@test/source-fixtures'
 import { stripASTDetails } from './fixtures'
 
 describe('findIdentifierDefinition', () => {
   describe('function argument', () => {
-    it('should find argument in function declaration of enclosing function', () => {
+    it.each([
+      [
+        'enclosing function',
+        SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
+      ],
+      [
+        'enclosing arrow-function',
+        SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_PORT_ARG,
+      ],
+    ])('should find argument in function declaration of %s', (_, sourceCode) => {
       // Given
-      const ast = sourceToAST(
-        SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG
-      )
+      const ast = sourceToAST(sourceCode)
       const node = findNode<Identifier>(ast, {
         type: 'Identifier',
         name: 'port',

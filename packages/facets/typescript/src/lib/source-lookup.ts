@@ -8,6 +8,7 @@ import type {
 import { listSourceFiles, matchesImportSource } from './source-tree'
 import { AST, filePathToAST, findRecursive, isLiteralNode, isTraversalNode } from './ast'
 import {
+  ArrowFunctionExpression,
   FunctionDeclaration,
   type Identifier,
   type Node,
@@ -27,6 +28,7 @@ import {
 } from './reference'
 import { makeLiteral } from './literal'
 import { makeObjectReference } from './object'
+import { makeArgumentDeclaration } from './function'
 
 /**
  * Locate instance declarations in source files within specified source folders
@@ -178,38 +180,6 @@ export const findImportedIdentifier = (
 }
 
 /**
- * Describe the argument `arg` in the context of function declaration `funDecl`.
- *
- * @param funDecl - The function declaration node
- * @param arg - The argument identifier node
- *
- * @return The described argument
- */
-const describeArgument = (funDecl: FunctionDeclaration, arg: Identifier) => {
-  let index = -1
-  for (let i = 0; i < funDecl.params.length; i++) {
-    if (isTraversalNode(funDecl.params[i], arg)) {
-      index = i
-      break
-    }
-  }
-
-  if (index !== -1) {
-    return {
-      type: 'positional',
-      name: arg.name,
-      index,
-      node: arg,
-    }
-  }
-
-  return {
-    type: 'unknown',
-    node: arg,
-  }
-}
-
-/**
  * Find the definition of identifier described by `node`.
  *
  * FIXME: Falls back to `locateInstanceInAST` in case of no match, which may
@@ -233,19 +203,10 @@ export const findIdentifierDefinition = (ast: AST, node: Identifier) => {
   })
 
   if (binding) {
-    const parentExpr = binding.path.parent
+    const parentPath = binding.path.parentPath
 
-    if (parentExpr.type === 'FunctionDeclaration') {
-      return [
-        {
-          type: 'FunctionArgumentDeclaration',
-          name: parentExpr.id.name,
-          exports: [],
-          argument: describeArgument(parentExpr, binding.path.node as Identifier),
-          node: parentExpr,
-          ast,
-        },
-      ]
+    if (parentPath.isFunction()) {
+      return [makeArgumentDeclaration(ast, binding.path)]
     }
   }
 

@@ -1,4 +1,5 @@
 import {
+  ArrowFunctionExpression,
   CallExpression,
   FunctionDeclaration,
   Identifier,
@@ -45,23 +46,62 @@ export interface InstanceDeclaration extends SourceReference<VariableDeclaration
   expression: ValueExpression
 }
 
+/**
+ * Source reference that describes a function declaration
+ */
 export interface FunctionDeclarationReference
-  extends SourceReference<FunctionDeclaration> {
+  extends SourceReference<FunctionDeclaration | ArrowFunctionExpression> {
   type: 'FunctionDeclaration'
+  /**
+   * The Identifier-node that this function declaration is assigned to,
+   * if any.
+   *
+   * This can be used to look up references and invocations of this
+   * particular declaration.
+   */
+  id?: Identifier
+  /**
+   * The name of the function, if bound to and identifier.
+   * Equivalent to id.name
+   */
   name: string
+
   exports: ExportMetadata[]
 }
 
+/**
+ * Source reference that describes a function argument declaration
+ *
+ * Structurally extends FunctionDeclarationReference, with the exception of
+ * 'type'.
+ *
+ * Adds the `argument` property to signify which particular argument
+ * that is of interest.
+ */
 export interface FunctionArgumentDeclaration
-  extends SourceReference<FunctionDeclaration> {
+  extends SourceReference<FunctionDeclaration | ArrowFunctionExpression> {
   type: 'FunctionArgumentDeclaration'
+  exports: ExportMetadata[]
+  id?: Identifier
   name: string
-  argument: {
-    type: 'positional' | 'unknown'
-    name?: string
-    index?: number
-    node: Identifier
-  }
+  argument: ArgumentDescription
+}
+
+/**
+ * Union type that allows FunctionArgumentDeclaration references to be used
+ * as FunctionDeclarationReference instances.
+ */
+export type FunctionReference = FunctionDeclarationReference | FunctionArgumentDeclaration
+
+/**
+ * Auxiliary interface used by FunctionArgumentDeclaration that describes
+ * a particular function argument.
+ */
+export interface ArgumentDescription {
+  type: 'positional' | 'unknown'
+  name?: string
+  index?: number
+  node: Identifier
 }
 
 /**

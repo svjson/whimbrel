@@ -9,7 +9,7 @@ export const stripASTDetails = (
   }
 
   const dupe = { ...refs } as any
-  ;['type', 'ast', 'node'].forEach((key) => {
+  ;['id', 'type', 'ast', 'node'].forEach((key) => {
     if (!keep.includes(key)) delete dupe[key]
   })
   if (dupe.value && typeof dupe.value === 'object' && dupe.value.type) {

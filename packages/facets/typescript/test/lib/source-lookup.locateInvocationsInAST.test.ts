@@ -13,6 +13,7 @@ import {
   SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
   SOURCE__FASTIFY__SINGLE_FILE__VANILLA,
   SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
+  SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_PORT_ARG,
 } from '@test/source-fixtures'
 import { stripASTDetails } from './fixtures'
 
@@ -152,6 +153,10 @@ describe('locateInvocationsInAST', () => {
         [
           'in startServer-function and resolve function argument',
           SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
+        ],
+        [
+          'in startServer arrow-function and resolve function argument',
+          SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_PORT_ARG,
         ],
       ])('should locate listen invocation %s', async (_, sourceCode) => {
         // Given
