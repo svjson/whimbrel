@@ -30,5 +30,16 @@ export const MigrateProject = makeTask({
         },
       ],
     },
+    allPackages: {
+      type: 'boolean',
+      defaults: [{ value: true }],
+      cli: {
+        excludes: ['submodules', 'rootModule'],
+        sets: {
+          submodules: '<<value>>',
+          rootModule: true,
+        },
+      },
+    },
   },
 })
