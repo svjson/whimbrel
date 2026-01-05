@@ -1,101 +1,5 @@
 import { makeTokenizer, Token, Tokenizer } from './tokenize'
-
-type Emittable = 'command' | 'arg' | 'env'
-
-interface Transition {
-  token?: string
-  text?: string
-  ignore?: boolean
-  emit?: Emittable
-  wrap?: 'logical' | 'forward'
-  collect?: boolean
-  state: string | State
-}
-
-interface EndState {
-  emit?: Emittable
-}
-
-interface State {
-  end?: EndState
-  transitions: Transition[]
-}
-
-const states: Record<string, State> = {
-  initial: {
-    transitions: [
-      {
-        token: 'symbol',
-        text: '&&',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '|',
-        wrap: 'forward',
-        state: 'initial',
-      },
-      {
-        token: 'word',
-        state: {
-          end: {
-            emit: 'command',
-          },
-          transitions: [
-            {
-              token: 'whitespace',
-              ignore: true,
-              emit: 'command',
-              state: 'args',
-            },
-            {
-              token: 'symbol',
-              text: '=',
-              ignore: true,
-              state: {
-                transitions: [
-                  {
-                    token: 'word',
-                    emit: 'env',
-                    state: 'initial',
-                  },
-                  {
-                    token: 'whitespace',
-                    ignore: true,
-                    emit: 'env',
-                    state: 'initial',
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  },
-  args: {
-    transitions: [
-      {
-        token: 'symbol',
-        text: '&&',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '|',
-        wrap: 'forward',
-        state: 'initial',
-      },
-      {
-        token: 'word',
-        emit: 'arg',
-        state: 'args',
-      },
-    ],
-  },
-}
+import { states, type Emittable, type ParserStateMachine, type State } from './state'
 
 const OPERATORS = {
   '&&': 'and',
@@ -103,6 +7,11 @@ const OPERATORS = {
   '|': 'pipe',
 }
 
+/**
+ * Create a node output handler that collects script IR nodes.
+ *
+ * @return Node output handler
+ */
 const makeNodeOutput = () => {
   const nodes: ScriptNode[] = []
   let target: 'nodes' | 'right' = 'nodes'
@@ -148,7 +57,13 @@ const makeNodeOutput = () => {
   }
 }
 
-const makeTokenOutput = () => {
+/**
+ * Create a token output handler that converts tokens into script IR nodes.
+ *
+ * @param states - Parser state machine
+ * @return Token output handler
+ */
+const makeTokenOutput = (states: ParserStateMachine) => {
   let output = makeNodeOutput()
   let node: Record<string, any> | null = null
   let state: State = states.initial
@@ -233,9 +148,19 @@ const makeTokenOutput = () => {
   }
 }
 
-const parseScript = (tokenizer: Tokenizer, literal: string): ScriptNode[] => {
+/**
+ * Parse a script literal into a script IR, using the provided parser options.
+ *
+ * @param parseOpts - Parser options
+ * @param literal - The script literal to parse
+ *
+ * @return The parsed script IR
+ */
+const parseScript = (parseOpts: ParserOptions, literal: string): ScriptNode[] => {
+  const { tokenizer, grammar } = parseOpts
+
   const tokens = tokenizer.tokenize(literal)
-  const output = makeTokenOutput()
+  const output = makeTokenOutput(grammar)
 
   for (const token of tokens) {
     output.readToken(token)
@@ -244,11 +169,27 @@ const parseScript = (tokenizer: Tokenizer, literal: string): ScriptNode[] => {
   return output.flush()
 }
 
-export const makeParser = () => {
-  const tokenizer = makeTokenizer()
+export interface ParserOptions {
+  tokenizer: Tokenizer
+  grammar: ParserStateMachine
+}
+
+/**
+ * Create a parser that can convert a script literal into a script IR.
+ *
+ * @param opts - Parser options
+ *
+ * @return A parser instance
+ */
+export const makeParser = (opts: Partial<ParserOptions> = {}) => {
+  const parseOpts: ParserOptions = {
+    tokenizer: opts.tokenizer ?? makeTokenizer(),
+    grammar: opts.grammar ?? states,
+  }
+
   return {
     parse(literal: string) {
-      return parseScript(tokenizer, literal)
+      return parseScript(parseOpts, literal)
     },
   }
 }
