@@ -1,11 +1,12 @@
 export type Emittable = 'command' | 'arg' | 'env' | 'path' | 'keyword'
 
-interface Transition {
+export interface Transition {
   token?: string
   text?: string
   ignore?: boolean
   emit?: Emittable
   wrap?: 'logical' | 'forward'
+  context?: ['push', string] | ['pop']
   collect?: boolean
   state: string | State
 }
@@ -126,9 +127,33 @@ export const states: ParserStateMachine = {
         },
       },
       {
+        token: 'string',
+        state: 'in-arg',
+      },
+      {
         token: 'word',
+        state: 'in-arg',
+      },
+    ],
+  },
+  'in-arg': {
+    end: {
+      emit: 'arg',
+    },
+    transitions: [
+      {
+        token: 'whitespace',
+        ignore: true,
         emit: 'arg',
         state: 'args',
+      },
+      {
+        token: 'string',
+        state: 'in-arg',
+      },
+      {
+        token: 'word',
+        state: 'in-arg',
       },
     ],
   },

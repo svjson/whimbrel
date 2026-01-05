@@ -1,11 +1,27 @@
 import { makeTokenizer, Token, Tokenizer } from './tokenize'
-import { states, type Emittable, type ParserStateMachine, type State } from './state'
+import {
+  states,
+  Transition,
+  type Emittable,
+  type ParserStateMachine,
+  type State,
+} from './state'
 
 const OPERATORS = {
   '&&': 'and',
   '||': 'or',
   '|': 'pipe',
   '2>': 'err',
+  '2>>': 'err-append',
+  '>': 'redirect',
+  '>>': 'append',
+}
+
+interface Context {
+  state: State
+  delimiter: Token
+  slurp: boolean
+  transition: Transition
 }
 
 /**
@@ -68,6 +84,7 @@ const makeTokenOutput = (states: ParserStateMachine) => {
   let output = makeNodeOutput()
   let node: Record<string, any> | null = null
   let state: State = states.initial
+  let contextStack: Context[] = []
   let tokenBuf = []
   let nodeLiteral = ''
 
@@ -127,9 +144,27 @@ const makeTokenOutput = (states: ParserStateMachine) => {
       tokenBuf = []
     },
 
+    processTransitionToken(transition: Transition, token: Token) {
+      if (!transition.ignore) {
+        tokenBuf.push(token)
+      }
+      if (transition.emit) {
+        this.emit(transition.emit, tokenBuf)
+      }
+    },
+
+    finalizeTransition(transition: Transition) {
+      state =
+        typeof transition.state === 'string' ? states[transition.state] : transition.state
+    },
+
     readToken(token: Token) {
       const transition = state.transitions.find(
-        (t) => t.token === token.type && (!t.text || t.text === token.text)
+        (t) =>
+          (t.token === token.type && (!t.text || t.text === token.text)) ||
+          (t.token === 'context-delimiter' &&
+            contextStack.at(-1)?.delimiter.type === token.type &&
+            contextStack.at(-1)?.delimiter.text === token.text)
       )
 
       if (transition) {
@@ -141,18 +176,39 @@ const makeTokenOutput = (states: ParserStateMachine) => {
         } else {
           nodeLiteral += token.text
 
-          if (!transition.ignore) {
-            tokenBuf.push(token)
+          if (transition.context) {
+            const [ctxOp, ctxState] = transition.context
+            if (ctxOp === 'push') {
+              contextStack.push({
+                state,
+                delimiter: token,
+                slurp: true,
+                transition: transition,
+              })
+              tokenBuf.push(token)
+              state = states[ctxState]
+              return
+            } else if (ctxOp === 'pop') {
+              const popped = contextStack.pop()
+              if (popped.transition) {
+                this.processTransitionToken(popped.transition, token)
+                if (popped.transition.state === 'context') {
+                  state = popped.state
+                } else {
+                  this.finalizeTransition(popped.transition)
+                }
+              }
+              return
+            }
           }
-          if (transition.emit) {
-            this.emit(transition.emit, tokenBuf)
-          }
+
+          this.processTransitionToken(transition, token)
         }
-        state =
-          typeof transition.state === 'string'
-            ? states[transition.state]
-            : transition.state
+        this.finalizeTransition(transition)
       } else {
+        if (contextStack.at(-1)?.slurp) {
+          tokenBuf.push(token)
+        }
         nodeLiteral += token.text
       }
     },

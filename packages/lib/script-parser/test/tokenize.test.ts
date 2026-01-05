@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { makeTokenizer } from '@src/index'
-import { word, whitespace, tokenType, symbol } from '@src/tokenize'
+import { word, whitespace, tokenType, symbol, string } from '@src/tokenize'
 
 describe('tokenType', () => {
   describe('symbol', () => {
@@ -19,6 +19,14 @@ describe('tokenType', () => {
       }
     )
   })
+  describe('string', () => {
+    it.each(['"$PATH"', "'$PATH'", '"The \"Thing\""'])(
+      'should recognize "%s" as "string"',
+      (input: string) => {
+        expect(tokenType(input)).toEqual('string')
+      }
+    )
+  })
   describe('invalid', () => {
     it.each(['tsc ', '64tass '])(
       'should not recognized "%s" as a valid token',
@@ -31,12 +39,12 @@ describe('tokenType', () => {
 
 describe('tokenize', () => {
   describe('command+arg', () => {
-    it.each([['tsc --noEmit', [word('tsc'), whitespace(), word('--noEmit')]]])(
-      'should tokenize "%s"',
-      (input, tokens) => {
-        expect(makeTokenizer().tokenize(input)).toEqual(tokens)
-      }
-    )
+    it.each([
+      ['tsc --noEmit', [word('tsc'), whitespace(), word('--noEmit')]],
+      ['echo "$PATH"', [word('echo'), whitespace(), string('"$PATH"')]],
+    ])('should tokenize "%s"', (input, tokens) => {
+      expect(makeTokenizer().tokenize(input)).toEqual(tokens)
+    })
   })
   describe('env', () => {
     it.each([

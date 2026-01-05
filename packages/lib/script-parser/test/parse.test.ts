@@ -326,6 +326,59 @@ describe('parse', () => {
         }
       )
     })
+    describe('string values', () => {
+      it.each([
+        [
+          'echo "$PATH"',
+          [
+            {
+              type: 'command',
+              command: 'echo',
+              args: ['"$PATH"'],
+              env: {},
+              literal: 'echo "$PATH"',
+            },
+          ],
+        ],
+        [
+          "docker compose -f ../../docker-compose.yaml up -d && docker exec -i sql-service sh -lc '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -b -Q \"IF DB_ID(N'\\''app-test-db'\\'') IS NULL BEGIN CREATE DATABASE [app-test-db]; END\"'",
+          [
+            {
+              type: 'logical',
+              kind: 'and',
+              operator: '&&',
+              literal:
+                "docker compose -f ../../docker-compose.yaml up -d && docker exec -i sql-service sh -lc '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -b -Q \"IF DB_ID(N'\\''app-test-db'\\'') IS NULL BEGIN CREATE DATABASE [app-test-db]; END\"'",
+              left: {
+                type: 'command',
+                command: 'docker',
+                args: ['compose', '-f', '../../docker-compose.yaml', 'up', '-d'],
+                env: {},
+                literal: 'docker compose -f ../../docker-compose.yaml up -d',
+              },
+              right: {
+                type: 'command',
+                command: 'docker',
+                args: [
+                  'exec',
+                  '-i',
+                  'sql-service',
+                  'sh',
+                  '-lc',
+                  `'/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -b -Q \"IF DB_ID(N'\\''app-test-db'\\'') IS NULL BEGIN CREATE DATABASE [app-test-db]; END\"'`,
+                ],
+                env: {},
+                literal: `docker exec -i sql-service sh -lc '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -b -Q \"IF DB_ID(N'\\''app-test-db'\\'') IS NULL BEGIN CREATE DATABASE [app-test-db]; END\"'`,
+              },
+            },
+          ],
+        ],
+      ])(
+        'should parse "%s" into a single command with string argument',
+        (script, expectedNodes) => {
+          expect(makeParser().parse(script)).toEqual(expectedNodes)
+        }
+      )
     })
   })
 })

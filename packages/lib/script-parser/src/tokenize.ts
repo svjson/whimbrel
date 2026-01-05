@@ -52,10 +52,32 @@ export const whitespace = (content: string = ' '): Token => {
   }
 }
 
+export const string = (content: string): Token => {
+  return {
+    type: 'string',
+    text: content,
+  }
+}
+
 /**
  * List of recognized symbols.
  */
-const SYMBOLS = ['=', '&', '&&', '|', '||', '>', '>>', '2>', '2>>', "'", '"']
+const SYMBOLS = [
+  '=',
+  '&',
+  '&&',
+  '|',
+  '||',
+  '>',
+  '>>',
+  '2>',
+  '2>>',
+  '(',
+  ')',
+  '[',
+  ']',
+  ';',
+]
 
 /**
  * Token matchers.
@@ -64,7 +86,13 @@ const TOKEN_MATCHERS = [
   {
     type: 'word',
     match: (text: string) => {
-      return text.match(/^[a-zA-Z0-9_\-@\/\.:]+$/)
+      return text.match(/^(?:[a-zA-Z0-9_\-@\/\.:\$]|\\.)+$/)
+    },
+  },
+  {
+    type: 'string',
+    match: (content: string) => {
+      return content.match(/^(?:'.*'|".*")$/)
     },
   },
   {
@@ -85,6 +113,7 @@ const TOKEN_MATCHERS = [
  * Token constructors.
  */
 const TOKENS = {
+  string,
   symbol,
   whitespace,
   word,
