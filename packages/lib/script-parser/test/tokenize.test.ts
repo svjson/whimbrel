@@ -4,9 +4,12 @@ import { word, whitespace, tokenType, symbol } from '@src/tokenize'
 
 describe('tokenType', () => {
   describe('symbol', () => {
-    it.each(['=', '&&', '|'])("should recognize '%s' as 'symbol'", (input: string) => {
-      expect(tokenType(input)).toEqual('symbol')
-    })
+    it.each(['=', '&&', '|', '2>'])(
+      "should recognize '%s' as 'symbol'",
+      (input: string) => {
+        expect(tokenType(input)).toEqual('symbol')
+      }
+    )
   })
   describe('word', () => {
     it.each(['tsc', '64tass', 'ci:test'])(
@@ -53,6 +56,20 @@ describe('tokenize', () => {
           whitespace(),
           word('./publish.sh'),
         ],
+      ],
+    ])('should tokenize "%s"', (input, tokens) => {
+      expect(makeTokenizer().tokenize(input)).toEqual(tokens)
+    })
+  })
+  describe('command+redirect+path/command', () => {
+    it.each([
+      [
+        'cmd1 | cmd2',
+        [word('cmd1'), whitespace(), symbol('|'), whitespace(), word('cmd2')],
+      ],
+      [
+        'cmd1 2> /dev/null',
+        [word('cmd1'), whitespace(), symbol('2>'), whitespace(), word('/dev/null')],
       ],
     ])('should tokenize "%s"', (input, tokens) => {
       expect(makeTokenizer().tokenize(input)).toEqual(tokens)

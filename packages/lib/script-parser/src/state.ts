@@ -1,4 +1,4 @@
-export type Emittable = 'command' | 'arg' | 'env'
+export type Emittable = 'command' | 'arg' | 'env' | 'path' | 'keyword'
 
 interface Transition {
   token?: string
@@ -35,8 +35,21 @@ export const states: ParserStateMachine = {
       },
       {
         token: 'symbol',
+        text: '||',
+        wrap: 'logical',
+        state: 'initial',
+      },
+      {
+        token: 'symbol',
         text: '|',
         wrap: 'forward',
+        state: 'initial',
+      },
+      {
+        token: 'word',
+        text: 'true',
+        emit: 'keyword',
+        collect: true,
         state: 'initial',
       },
       {
@@ -87,9 +100,30 @@ export const states: ParserStateMachine = {
       },
       {
         token: 'symbol',
+        text: '||',
+        wrap: 'logical',
+        state: 'initial',
+      },
+      {
+        token: 'symbol',
         text: '|',
         wrap: 'forward',
         state: 'initial',
+      },
+      {
+        token: 'symbol',
+        text: '2>',
+        wrap: 'forward',
+        state: {
+          transitions: [
+            {
+              token: 'word',
+              emit: 'path',
+              collect: true,
+              state: 'initial',
+            },
+          ],
+        },
       },
       {
         token: 'word',

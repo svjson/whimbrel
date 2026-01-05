@@ -119,16 +119,19 @@ describe('parse', () => {
             },
           ],
         ],
-      ])('should parse "%s" into a single command node', (script, expectedNodes) => {
-        // Given
-        const parser = makeParser()
+      ])(
+        'should parse "%s" into a single command node with env dict',
+        (script, expectedNodes) => {
+          // Given
+          const parser = makeParser()
 
-        // When
-        const ir = parser.parse(script)
+          // When
+          const ir = parser.parse(script)
 
-        // Then
-        expect(ir).toEqual(expectedNodes)
-      })
+          // Then
+          expect(ir).toEqual(expectedNodes)
+        }
+      )
     })
 
     describe('logical expr', () => {
@@ -158,9 +161,50 @@ describe('parse', () => {
             },
           ],
         ],
-      ])('should parse "%s" into a single command node', (script, expectedNodes) => {
-        expect(makeParser().parse(script)).toEqual(expectedNodes)
-      })
+        [
+          'cmd1 && cmd2 && cmd3',
+          [
+            {
+              type: 'logical',
+              kind: 'and',
+              operator: '&&',
+              literal: 'cmd1 && cmd2 && cmd3',
+              left: {
+                type: 'logical',
+                kind: 'and',
+                operator: '&&',
+                literal: 'cmd1 && cmd2',
+                left: {
+                  type: 'command',
+                  command: 'cmd1',
+                  args: [],
+                  env: {},
+                  literal: 'cmd1',
+                },
+                right: {
+                  type: 'command',
+                  command: 'cmd2',
+                  args: [],
+                  env: {},
+                  literal: 'cmd2',
+                },
+              },
+              right: {
+                type: 'command',
+                command: 'cmd3',
+                args: [],
+                env: {},
+                literal: 'cmd3',
+              },
+            },
+          ],
+        ],
+      ])(
+        'should parse "%s" into a nested single logical expression node',
+        (script, expectedNodes) => {
+          expect(makeParser().parse(script)).toEqual(expectedNodes)
+        }
+      )
     })
 
     describe('forward', () => {
@@ -190,9 +234,98 @@ describe('parse', () => {
             },
           ],
         ],
-      ])('should parse "%s" into a single command node', (script, expectedNodes) => {
-        expect(makeParser().parse(script)).toEqual(expectedNodes)
-      })
+        [
+          'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9 2>/dev/null',
+          [
+            {
+              type: 'forward',
+              kind: 'err',
+              operator: '2>',
+              literal: 'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9 2> /dev/null',
+
+              left: {
+                type: 'forward',
+                kind: 'pipe',
+                operator: '|',
+                literal: 'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9',
+                left: {
+                  type: 'command',
+                  command: 'lsof',
+                  args: ['-ti:7800', '-ti:7810', '-ti:7820'],
+                  env: {},
+                  literal: 'lsof -ti:7800 -ti:7810 -ti:7820',
+                },
+                right: {
+                  type: 'command',
+                  command: 'xargs',
+                  args: ['kill', '-9'],
+                  env: {},
+                  literal: 'xargs kill -9',
+                },
+              },
+              right: {
+                type: 'path',
+                path: '/dev/null',
+                literal: '/dev/null',
+              },
+            },
+          ],
+        ],
+        [
+          'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9 2>/dev/null || true',
+          [
+            {
+              type: 'logical',
+              kind: 'or',
+              operator: '||',
+              literal:
+                'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9 2> /dev/null || true',
+              left: {
+                type: 'forward',
+                kind: 'err',
+                operator: '2>',
+                literal: 'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9 2> /dev/null',
+                left: {
+                  type: 'forward',
+                  kind: 'pipe',
+                  operator: '|',
+                  literal: 'lsof -ti:7800 -ti:7810 -ti:7820 | xargs kill -9',
+                  left: {
+                    type: 'command',
+                    command: 'lsof',
+                    args: ['-ti:7800', '-ti:7810', '-ti:7820'],
+                    env: {},
+                    literal: 'lsof -ti:7800 -ti:7810 -ti:7820',
+                  },
+                  right: {
+                    type: 'command',
+                    command: 'xargs',
+                    args: ['kill', '-9'],
+                    env: {},
+                    literal: 'xargs kill -9',
+                  },
+                },
+                right: {
+                  type: 'path',
+                  path: '/dev/null',
+                  literal: '/dev/null',
+                },
+              },
+              right: {
+                type: 'keyword',
+                keyword: 'true',
+                literal: 'true',
+              },
+            },
+          ],
+        ],
+      ])(
+        'should parse "%s" into a single nested forward node',
+        (script, expectedNodes) => {
+          expect(makeParser().parse(script)).toEqual(expectedNodes)
+        }
+      )
+    })
     })
   })
 })

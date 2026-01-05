@@ -5,6 +5,7 @@ const OPERATORS = {
   '&&': 'and',
   '||': 'or',
   '|': 'pipe',
+  '2>': 'err',
 }
 
 /**
@@ -81,6 +82,20 @@ const makeTokenOutput = (states: ParserStateMachine) => {
           literal: nodeLiteral.trim(),
         } satisfies CommandNode)
       }
+      if (node.type === 'path') {
+        output.accept({
+          type: 'path',
+          path: node.path,
+          literal: nodeLiteral.trim(),
+        })
+      }
+      if (node.type === 'keyword') {
+        output.accept({
+          type: 'keyword',
+          keyword: node.keyword,
+          literal: nodeLiteral.trim(),
+        })
+      }
       nodeLiteral = ''
       node = null
       state = states.initial
@@ -99,6 +114,14 @@ const makeTokenOutput = (states: ParserStateMachine) => {
         case 'env':
           const [key, value] = tokens.map((t) => t.text)
           ;(node.env ??= {})[key] = value
+          break
+        case 'path':
+          node.type = 'path'
+          node.path = tokens.map((t) => t.text).join('')
+          break
+        case 'keyword':
+          node.type = 'keyword'
+          node.keyword = tokens.map((t) => t.text).join('')
           break
       }
       tokenBuf = []

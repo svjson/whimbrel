@@ -55,7 +55,7 @@ export const whitespace = (content: string = ' '): Token => {
 /**
  * List of recognized symbols.
  */
-const SYMBOLS = ['=', '&&', '|']
+const SYMBOLS = ['=', '&', '&&', '|', '||', '>', '>>', '2>', '2>>', "'", '"']
 
 /**
  * Token matchers.
@@ -106,10 +106,15 @@ export const tokenize = (line: string): Token[] => {
   let tok: null | string = null
   for (let i = 0; i < line.length; i++) {
     const nextChar = line.charAt(i)
-    if (tok && tok !== tokenType(buf + nextChar)) {
-      tokens.push(TOKENS[tok](buf))
-      buf = ''
-      tok = null
+    const nextToken = tokenType(buf + nextChar)
+    if (tok && tok !== nextToken) {
+      if (nextToken === 'symbol') {
+        tok = 'symbol'
+      } else {
+        tokens.push(TOKENS[tok](buf))
+        buf = ''
+        tok = null
+      }
     }
     buf += nextChar
     if (!tok) {
