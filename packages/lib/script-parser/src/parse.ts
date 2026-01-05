@@ -220,7 +220,7 @@ const makeTokenOutput = () => {
     },
 
     flush() {
-      if (!node && state.end) {
+      if (state.end) {
         if (state.end.emit) {
           this.emit(state.end.emit, tokenBuf)
         }

@@ -92,6 +92,20 @@ describe('parse', () => {
     describe('env-prefixed', () => {
       it.each([
         [
+          'DOTENV_CONFIG_PATH=.env.ci jest',
+          [
+            {
+              type: 'command',
+              command: 'jest',
+              args: [],
+              env: {
+                DOTENV_CONFIG_PATH: '.env.ci',
+              },
+              literal: 'DOTENV_CONFIG_PATH=.env.ci jest',
+            },
+          ],
+        ],
+        [
           'DOTENV_CONFIG_PATH=.env.test jest --watch',
           [
             {
