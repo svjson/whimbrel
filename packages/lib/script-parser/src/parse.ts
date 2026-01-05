@@ -6,13 +6,18 @@ interface Transition {
   token?: string
   text?: string
   ignore?: boolean
-  emit?: 'command' | 'arg' | 'env'
+  emit?: Emittable
   wrap?: 'logical' | 'forward'
   collect?: boolean
   state: string | State
 }
 
+interface EndState {
+  emit?: Emittable
+}
+
 interface State {
+  end?: EndState
   transitions: Transition[]
 }
 
@@ -34,6 +39,9 @@ const states: Record<string, State> = {
       {
         token: 'word',
         state: {
+          end: {
+            emit: 'command',
+          },
           transitions: [
             {
               token: 'whitespace',
@@ -212,6 +220,11 @@ const makeTokenOutput = () => {
     },
 
     flush() {
+      if (!node && state.end) {
+        if (state.end.emit) {
+          this.emit(state.end.emit, tokenBuf)
+        }
+      }
       if (node) {
         this.collect()
       }

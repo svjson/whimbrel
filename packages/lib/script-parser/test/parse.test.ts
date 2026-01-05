@@ -6,6 +6,18 @@ describe('parse', () => {
     describe('plain', () => {
       it.each([
         [
+          'tsc',
+          [
+            {
+              type: 'command',
+              command: 'tsc',
+              args: [],
+              env: {},
+              literal: 'tsc',
+            },
+          ],
+        ],
+        [
           'tsc --noEmit',
           [
             {
@@ -14,6 +26,18 @@ describe('parse', () => {
               args: ['--noEmit'],
               env: {},
               literal: 'tsc --noEmit',
+            },
+          ],
+        ],
+        [
+          'pnpm -r lint',
+          [
+            {
+              type: 'command',
+              command: 'pnpm',
+              args: ['-r', 'lint'],
+              env: {},
+              literal: 'pnpm -r lint',
             },
           ],
         ],
