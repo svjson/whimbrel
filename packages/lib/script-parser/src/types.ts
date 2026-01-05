@@ -2,7 +2,7 @@
  * Defines the structure of various script nodes used in a scripting language
  * parser.
  */
-interface BaseNode {
+export interface BaseNode {
   /**
    * The type of the script node.
    */
@@ -23,15 +23,15 @@ interface BaseNode {
      * Detailed and structured information about the node and its semantic
      * intent.
      */
-    intent: any
+    intent?: any
   }
 }
 
-interface NoOpNode extends BaseNode {
+export interface NoOpNode extends BaseNode {
   type: 'no-op'
 }
 
-interface CommandNode extends BaseNode {
+export interface CommandNode extends BaseNode {
   type: 'command'
   command: string
   args: string[]
@@ -39,7 +39,7 @@ interface CommandNode extends BaseNode {
   literal: string
 }
 
-interface LogicalNode extends BaseNode {
+export interface LogicalNode extends BaseNode {
   type: 'logical'
   kind: 'and' | 'or'
   operator: string
@@ -47,7 +47,7 @@ interface LogicalNode extends BaseNode {
   right: ScriptNode
 }
 
-interface ForwardNode extends BaseNode {
+export interface ForwardNode extends BaseNode {
   type: 'forward'
   kind: 'pipe'
   operator: string
@@ -55,13 +55,13 @@ interface ForwardNode extends BaseNode {
   right: ScriptNode
 }
 
-interface PathNode extends BaseNode {
+export interface PathNode extends BaseNode {
   type: 'path'
   path: string
   literal: string
 }
 
-interface KeywordNode extends BaseNode {
+export interface KeywordNode extends BaseNode {
   type: 'keyword'
   keyword: string
   literal: string
@@ -70,7 +70,7 @@ interface KeywordNode extends BaseNode {
 /**
  * Union type representing all possible script nodes.
  */
-type ScriptNode =
+export type ScriptNode =
   | CommandNode
   | LogicalNode
   | ForwardNode

@@ -7,6 +7,8 @@ import {
   type State,
 } from './state'
 
+import type { ScriptNode, CommandNode, PathNode, KeywordNode } from './types'
+
 const OPERATORS = {
   '&&': 'and',
   '||': 'or',
@@ -104,14 +106,14 @@ const makeTokenOutput = (states: ParserStateMachine) => {
           type: 'path',
           path: node.path,
           literal: nodeLiteral.trim(),
-        })
+        } satisfies PathNode)
       }
       if (node.type === 'keyword') {
         output.accept({
           type: 'keyword',
           keyword: node.keyword,
           literal: nodeLiteral.trim(),
-        })
+        } satisfies KeywordNode)
       }
       nodeLiteral = ''
       node = null
