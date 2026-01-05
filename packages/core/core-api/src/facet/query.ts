@@ -2,6 +2,12 @@ import { Actor } from '@src/actor'
 import { WhimbrelContext } from '@src/context'
 import { FacetId } from './declaration'
 import { FunctionInvocationDescription, SourceFolder } from '@src/lang'
+import {
+  ExplainScriptCriteria,
+  ScriptDescription,
+  ProjectMetaData,
+  LicenseIdentifier,
+} from './role'
 
 /**
  * Describes a query to be performed against the facets of an Actor.
@@ -131,17 +137,16 @@ export type FacetQueryTypes = {
     QueryResultType: string
     CriteriaType: never
   }
+  'package-manager:explain-script': {
+    QueryResultType: ScriptDescription
+    CriteriaType: ExplainScriptCriteria
+  }
   'project:license': {
-    QueryResultType: { spdx: string }
+    QueryResultType: LicenseIdentifier
     CriteriaType: never
   }
   'project:metadata': {
-    QueryResultType: {
-      name: string
-      version: string
-      license: string
-      author: string
-    }
+    QueryResultType: ProjectMetaData
     CriteriaType: never
   }
   'project:source-folders': {

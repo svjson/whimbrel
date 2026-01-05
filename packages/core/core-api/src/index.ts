@@ -72,6 +72,7 @@ export type {
   ConfigProviderRole,
   VersionControlRole,
   EngineRole,
+  ExplainScriptCriteria,
   HttpAdapterRole,
   IgnoreFileRole,
   InferQueryResultType,
@@ -95,6 +96,7 @@ export type {
   FacetQueryResult,
   MergeConfigFunction,
   QueryIndex,
+  ScriptDescription,
 } from './facet'
 export type {
   FileEntry,

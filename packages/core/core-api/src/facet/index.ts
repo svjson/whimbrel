@@ -26,6 +26,7 @@ export type {
   BuildConfigRole,
   ConfigProviderRole,
   EngineRole,
+  ExplainScriptCriteria,
   FacetRole,
   FacetRoles,
   HttpAdapterRole,
@@ -33,5 +34,6 @@ export type {
   LicenseRole,
   PackageFileRole,
   PackageManagerRole,
+  ScriptDescription,
   VersionControlRole,
 } from './role'
