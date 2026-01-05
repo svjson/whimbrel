@@ -142,7 +142,7 @@ const makeTokenReader = <G extends Grammar>(
     readToken(token: Token) {
       const transition = readerState.state.transitions.find(
         (t) =>
-          (t.token === token.type && (!t.text || t.text === token.text)) ||
+          ((!t.token || t.token === token.type) && (!t.text || t.text === token.text)) ||
           (t.token === 'context-delimiter' &&
             contextStack.at(-1)?.delimiter.type === token.type &&
             contextStack.at(-1)?.delimiter.text === token.text)
