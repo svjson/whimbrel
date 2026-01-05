@@ -1,79 +1,71 @@
 /**
- * Defines the structure of various script nodes used in a scripting language
- * parser.
+ * Type definition for a parser grammar.
  */
-export interface BaseNode {
+export type Grammar<IR = any, Emittable = any, Wrappable = any> = {
   /**
-   * The type of the script node.
+   * The output IR type of this grammar.
    */
-  type: string
+  Output: IR
   /**
-   * The literal text content of the script node
+   * Type of symbols and concepts that can be emitted by a parser to
+   * shape an instance of IR. Usually a union type of string keywords.
+   *
+   * Used by state machine grammars to describe side-effects of transitioning
+   * between states.
    */
-  literal: string
+  Emittable: Emittable
   /**
-   * Optional description decoration
+   * Type of symbols and concepts that can be emitter by a parser to
+   * signal that a concept is wrapping the current or previously collected
+   * information.
+   *
+   * Used by state machine grammars to signal that wrapping of an output
+   * node should happen, and of what kind.
    */
-  description?: {
-    /**
-     * A brief human-readable summary of the node's purpose.
-     */
-    summary?: string
-    /**
-     * Detailed and structured information about the node and its semantic
-     * intent.
-     */
-    intent?: any
-  }
-}
-
-export interface NoOpNode extends BaseNode {
-  type: 'no-op'
-}
-
-export interface CommandNode extends BaseNode {
-  type: 'command'
-  command: string
-  args: string[]
-  env: Record<string, string>
-  literal: string
-}
-
-export interface LogicalNode extends BaseNode {
-  type: 'logical'
-  kind: 'and' | 'or'
-  operator: string
-  left: ScriptNode
-  right: ScriptNode
-}
-
-export interface ForwardNode extends BaseNode {
-  type: 'forward'
-  kind: 'pipe'
-  operator: string
-  left: ScriptNode
-  right: ScriptNode
-}
-
-export interface PathNode extends BaseNode {
-  type: 'path'
-  path: string
-  literal: string
-}
-
-export interface KeywordNode extends BaseNode {
-  type: 'keyword'
-  keyword: string
-  literal: string
+  Wrappable: Wrappable
 }
 
 /**
- * Union type representing all possible script nodes.
+ * A lexical token. The smallest parse:able unit.
  */
-export type ScriptNode =
-  | CommandNode
-  | LogicalNode
-  | ForwardNode
-  | PathNode
-  | KeywordNode
-  | NoOpNode
+export interface Token {
+  /**
+   * The type of token.
+   */
+  type: string
+  /**
+   * The literal text content of the token.
+   */
+  text: string
+}
+
+/**
+ * A tokenizer that can convert an instance of InputType to
+ * tokens suitable for parsing.
+ *
+ * The templated Input allows for other token sources
+ * than string input.
+ *
+ * @template InputType - The type of input to tokenize
+ */
+export interface Tokenizer<Input = string> {
+  /**
+   * Tokenize a input into tokens.
+   *
+   * @param input - The input to tokenize
+   *
+   * @returns An array of tokens
+   */
+  tokenize: (input: Input) => Token[]
+}
+
+export interface Parser<Input = string, IR = any> {
+  /**
+   * Parse input into the IR format of this parser instance.
+   *
+   * @param input - The input to parse
+   *
+   * @returns An array of parsed output instances
+   */
+  parse: (input: Input) => IR[]
+}

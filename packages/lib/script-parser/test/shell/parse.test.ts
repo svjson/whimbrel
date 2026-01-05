@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { makeParser } from '@src/index'
+import { makeParser } from '@src/shell'
 
 describe('parse', () => {
   describe('single command', () => {

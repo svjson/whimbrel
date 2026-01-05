@@ -1,160 +1,88 @@
-export type Emittable = 'command' | 'arg' | 'env' | 'path' | 'keyword'
+import { Grammar } from './types'
 
-export interface Transition {
+/**
+ * A parser grammar state machine.
+ */
+export type ParserStateMachine<G extends Grammar> = {
+  /**
+   * The initial state of the parser grammar.
+   */
+  initial: State<G>
+  /**
+   * Named states of the parser grammar.
+   */
+  [key: string]: State<G>
+}
+
+/**
+ * A transition between states in the parser grammar state machine
+ *
+ * @template G - The grammar type
+ */
+export interface Transition<G extends Grammar> {
+  /**
+   * Require a token to be of this type to allow this transition to
+   * be selected.
+   */
   token?: string
+  /**
+   * Require the text of a token to equal this string to allow this
+   * transition to be selected.
+   */
   text?: string
+  /**
+   * Determines if the evaluated token that resulted in this transition
+   * being selected should be ignored.
+   */
   ignore?: boolean
-  emit?: Emittable
-  wrap?: 'logical' | 'forward'
+  /**
+   * Trigger an emit-event of this type when transition has been fully
+   * processed.
+   */
+  emit?: G['Emittable']
+  /**
+   * Trigger a wrap-event of this type when the transitation is being
+   * evaluated.
+   */
+  wrap?: G['Wrappable']
+  /**
+   * Modify the current context when this transition is selected by
+   * either pushing a named state or popping the current state.
+   */
   context?: ['push', string] | ['pop']
+  /**
+   * Determines if the completion of this transition should cause
+   * the emitter to collect the current node.
+   */
   collect?: boolean
-  state: string | State
+  /**
+   * The target state of this transition. Either inline, or a named
+   * state in the parser grammar state machine.
+   */
+  state: string | State<G>
 }
 
-interface EndState {
+/**
+ * Describes actions to be taken in case no transition is taken due
+ * to the end of input tokens having been reached.
+ */
+export interface EndState<Emittable> {
+  /**
+   * Trigger an emit-event.
+   */
   emit?: Emittable
 }
 
-export interface State {
-  end?: EndState
-  transitions: Transition[]
-}
-
-export type ParserStateMachine = {
-  initial: State
-  [key: string]: State
-}
-
-export const states: ParserStateMachine = {
-  initial: {
-    transitions: [
-      {
-        token: 'symbol',
-        text: '&&',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '||',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '|',
-        wrap: 'forward',
-        state: 'initial',
-      },
-      {
-        token: 'word',
-        text: 'true',
-        emit: 'keyword',
-        collect: true,
-        state: 'initial',
-      },
-      {
-        token: 'word',
-        state: {
-          end: {
-            emit: 'command',
-          },
-          transitions: [
-            {
-              token: 'whitespace',
-              ignore: true,
-              emit: 'command',
-              state: 'args',
-            },
-            {
-              token: 'symbol',
-              text: '=',
-              ignore: true,
-              state: {
-                transitions: [
-                  {
-                    token: 'word',
-                    emit: 'env',
-                    state: 'initial',
-                  },
-                  {
-                    token: 'whitespace',
-                    ignore: true,
-                    emit: 'env',
-                    state: 'initial',
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  },
-  args: {
-    transitions: [
-      {
-        token: 'symbol',
-        text: '&&',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '||',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '|',
-        wrap: 'forward',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '2>',
-        wrap: 'forward',
-        state: {
-          transitions: [
-            {
-              token: 'word',
-              emit: 'path',
-              collect: true,
-              state: 'initial',
-            },
-          ],
-        },
-      },
-      {
-        token: 'string',
-        state: 'in-arg',
-      },
-      {
-        token: 'word',
-        state: 'in-arg',
-      },
-    ],
-  },
-  'in-arg': {
-    end: {
-      emit: 'arg',
-    },
-    transitions: [
-      {
-        token: 'whitespace',
-        ignore: true,
-        emit: 'arg',
-        state: 'args',
-      },
-      {
-        token: 'string',
-        state: 'in-arg',
-      },
-      {
-        token: 'word',
-        state: 'in-arg',
-      },
-    ],
-  },
+/**
+ * Describes a State of the parser grammar state machine.
+ */
+export interface State<G extends Grammar> {
+  /**
+   * Actions to be taken when the end of input tokens is reached.
+   */
+  end?: EndState<G['Emittable']>
+  /**
+   * Possible transitions from this state.
+   */
+  transitions: Transition<G>[]
 }

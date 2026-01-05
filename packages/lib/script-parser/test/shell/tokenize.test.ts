@@ -1,40 +1,32 @@
 import { describe, it, expect } from 'vitest'
 import { makeTokenizer } from '@src/index'
-import { word, whitespace, tokenType, symbol, string } from '@src/tokenize'
+import { tokenType } from '@src/shell/tokenize'
+import { word, whitespace, symbol, string } from '@src/token'
 
 describe('tokenType', () => {
-  describe('symbol', () => {
-    it.each(['=', '&&', '|', '2>'])(
-      "should recognize '%s' as 'symbol'",
-      (input: string) => {
-        expect(tokenType(input)).toEqual('symbol')
-      }
-    )
-  })
-  describe('word', () => {
-    it.each(['tsc', '64tass', 'ci:test'])(
-      'should recognize "%s" as "word"',
-      (input: string) => {
-        expect(tokenType(input)).toEqual('word')
-      }
-    )
-  })
-  describe('string', () => {
-    it.each(['"$PATH"', "'$PATH'", '"The \"Thing\""'])(
-      'should recognize "%s" as "string"',
-      (input: string) => {
-        expect(tokenType(input)).toEqual('string')
-      }
-    )
-  })
-  describe('invalid', () => {
-    it.each(['tsc ', '64tass '])(
-      'should not recognized "%s" as a valid token',
-      (input: string) => {
-        expect(tokenType(input)).toBeUndefined()
-      }
-    )
-  })
+  it.each([
+    // Symbol
+    ['=', 'symbol'],
+    ['&&', 'symbol'],
+    ['|', 'symbol'],
+    ['2>', 'symbol'],
+    // Word
+    ['tsc', 'word'],
+    ['64tass', 'word'],
+    ['ci:test', 'word'],
+    // String
+    ['"$PATH"', 'string'],
+    ["'$PATH'", 'string'],
+    ['"The \"Thing\""', 'string'],
+    // Undefined
+    ['tsc ', undefined],
+    ['64tass ', undefined],
+  ])(
+    "should recognize '%s' as '%s'",
+    (input: string, expectedType: string | undefined) => {
+      expect(tokenType(input)).toEqual(expectedType)
+    }
+  )
 })
 
 describe('tokenize', () => {

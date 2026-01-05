@@ -1,63 +1,5 @@
-/**
- * A lexical token. The smallest parse:able unit.
- */
-export interface Token {
-  /**
-   * The type of token.
-   */
-  type: string
-  /**
-   * The literal text content of the token.
-   */
-  text: string
-}
-
-/**
- * A tokenizer that can convert a line of text into tokens.
- */
-export interface Tokenizer {
-  /**
-   * Tokenize a line of text into tokens.
-   */
-  tokenize: (line: string) => Token[]
-}
-
-/**
- * Create a symbol token.
- */
-export const symbol = (symbol: string): Token => {
-  return {
-    type: 'symbol',
-    text: symbol,
-  }
-}
-
-/**
- * Create a word token.
- */
-export const word = (word: string): Token => {
-  return {
-    type: 'word',
-    text: word,
-  }
-}
-
-/**
- * Create a whitespace token.
- */
-export const whitespace = (content: string = ' '): Token => {
-  return {
-    type: 'whitespace',
-    text: content,
-  }
-}
-
-export const string = (content: string): Token => {
-  return {
-    type: 'string',
-    text: content,
-  }
-}
+import { string, symbol, whitespace, word } from '@src/token'
+import type { Token, Tokenizer } from '@src/types'
 
 /**
  * List of recognized symbols.
@@ -159,7 +101,7 @@ export const tokenize = (line: string): Token[] => {
 /**
  * Create a tokenizer instance.
  */
-export const makeTokenizer = () => {
+export const makeTokenizer = (): Tokenizer<string> => {
   return {
     tokenize(line: string): Token[] {
       return tokenize(line)
