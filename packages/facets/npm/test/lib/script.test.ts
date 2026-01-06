@@ -17,6 +17,34 @@ describe('decorateScript', () => {
         },
       },
     ],
+    [
+      'npm run test && npm run test:integration',
+      'Execute package.json script "test" and execute package.json script "test:integration"',
+      {
+        op: 'composite',
+        kind: 'and',
+        intents: [
+          {
+            op: 'execute',
+            kind: 'package.json-script',
+            id: 'test',
+            target: {
+              type: 'module',
+              module: 'self',
+            },
+          },
+          {
+            op: 'execute',
+            kind: 'package.json-script',
+            id: 'test:integration',
+            target: {
+              type: 'module',
+              module: 'self',
+            },
+          },
+        ],
+      },
+    ],
   ])('should decorate "%s"', async (script, expectedSummary, expectedIntent) => {
     // Given
     const scriptIR = makeShellParser().parse(script)

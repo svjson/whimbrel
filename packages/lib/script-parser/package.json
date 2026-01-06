@@ -22,10 +22,12 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
+    "@whimbrel/core-api": "^0.0.6"
   },
   "dependencies": {
   },
   "devDependencies": {
+    "@whimbrel/core-api": "^0.0.6",
     "@types/node": "^24.3.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
