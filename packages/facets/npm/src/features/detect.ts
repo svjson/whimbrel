@@ -19,6 +19,22 @@ export const detect: DetectFunction = async (ctx, dir) => {
         },
       },
     }
+
+    if (!pkgJson.getPackageManager()) {
+      if (await ctx.disk.exists(path.join(dir, 'package-lock.json'))) {
+        detected = true
+      }
+
+      for (const scriptId of pkgJson.getScriptNames()) {
+        const scriptCommand = pkgJson.getScript(scriptId)
+        if (typeof scriptCommand === 'string') {
+          if (scriptCommand.startsWith('npm ') || scriptCommand.includes(' npm ')) {
+            detected = true
+          }
+        }
+      }
+    }
+
     const workspaces = pkgJson.get('workspaces')
     if (
       workspaces &&
