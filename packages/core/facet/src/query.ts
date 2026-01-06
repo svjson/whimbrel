@@ -80,11 +80,11 @@ export const queryFacets = async <QT extends string, QRS = InferQueryResultType<
  *
  * @return The best ranked result, or undefined if no results are provided.
  */
-export const pickRankedResult = (
+export const pickRankedResult = <T = any>(
   actor: Actor,
-  result: FacetQueryResult[],
+  result: FacetQueryResult<T>[],
   order: FacetCriteria[]
-) => {
+): T | undefined => {
   const ordered = [...result].sort((a: FacetQueryResult, b: FacetQueryResult) => {
     const aIndex = order.findIndex((fc) =>
       actor.facets[a.source]?.roles?.includes(fc.role)
