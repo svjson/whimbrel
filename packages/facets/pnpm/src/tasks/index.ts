@@ -4,5 +4,5 @@ export {
 } from './set-workspace-dependencies'
 
 export { MigrateProject, PNPM__MIGRATE_PROJECT } from './migrate-project'
-
+export { MigrateScripts, PNPM__MIGRATE_SCRIPTS } from './migrate-scripts'
 export { MigrateWorkspaces, PNPM__MIGRATE_WORKSPACES } from './migrate-workspaces'
