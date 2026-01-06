@@ -10,7 +10,7 @@ export type {
   NoDetectFunction,
   NoFacetDetected,
 } from './detect'
-export type { FacetModule } from './module'
+export type { FacetModule, FacetModulePrototype } from './module'
 export type {
   FacetQuery,
   FacetQueryFunction,

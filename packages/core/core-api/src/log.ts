@@ -108,54 +108,54 @@ export interface ApplicationLog {
   /**
    * Displays the argument messages as a banner.
    */
-  banner: Function
+  banner: (...args: string[]) => void
   /**
    * Log on the INFO-level
    */
-  info: Function
+  info: (...args: any[]) => void
   /**
    * Log on the DEBUG-level
    */
-  debug: Function
+  debug: (...args: any[]) => void
   /**
    * Log on the ERROR-level
    */
-  error: Function
+  error: (...args: any[]) => void
   /**
    * Log on the WARN-level
    */
-  warn: Function
+  warn: (...args: any[]) => void
   /**
    * Show a semi-persistent status message, according to the implementation.
    */
-  showStatus: Function
+  showStatus: (status?: string) => void
   /**
    * Hide the status message, if present.
    */
-  hideStatus: Function
+  hideStatus: () => void
   /**
    * Update the contents of the status message.
    */
-  updateStatus: Function
+  updateStatus: (status: string) => void
   /**
    * Increase the indentation-level for subsequent output.
    */
-  indent: Function
+  indent: () => void
   /**
    * Decrease the indentation-level for subsequent output.
    */
-  deindent: Function
+  deindent: () => void
   /**
    * Set indentation
    */
-  setIndentation: Function
+  setIndentation: (indentationLevel: number) => void
 }
 
 /**
  * Stock instance of a NullAppender - that throws any output straight into
  * the void.
  */
-export const NullAppender = {
+export const NullAppender: ApplicationLog = {
   banner: () => null,
   info: () => null,
   debug: () => null,
