@@ -1,7 +1,7 @@
 import ora from 'ora'
 import chalk from 'chalk'
-import stripAnsi from 'strip-ansi'
 import { ApplicationLog, indent } from '@whimbrel/core-api'
+import { banner } from './banner'
 
 /**
  * Default ConsoleAppender implementation of ApplicationLog, suitable
@@ -95,20 +95,16 @@ export class ConsoleAppender implements ApplicationLog {
    * @param args[2] - Additional text (optional).
    */
   banner(...args: string[]) {
-    const prefixes = ['', ': ', ' - ']
-    const decorators = [
-      (s: string) => s,
-      (s: string) => chalk.green(s),
-      (s: string) => chalk.blue(s),
-    ]
-    const title = args.reduce((result, arg, i) => {
-      if (arg === undefined) return result
-      const prefix = prefixes[Math.min(i, prefixes.length - 1)]
-      const decorator = decorators[Math.min(i, decorators.length - 1)]
-      return `${result}${prefix}${decorator(arg)}`
-    }, '')
-    console.log(indent(this.indentation, title))
-    console.log(indent(this.indentation, '-'.repeat(stripAnsi(title).length)))
+    banner({
+      message: args,
+      indentation: this.indentation,
+      prefixes: ['', ': ', ' - '],
+      decorators: [
+        (s: string) => s,
+        (s: string) => chalk.green(s),
+        (s: string) => chalk.blue(s),
+      ],
+    }).forEach((l) => console.log(l))
   }
 
   /**
@@ -177,8 +173,12 @@ export class ConsoleAppender implements ApplicationLog {
 
   /**
    * Set the indentation level for subsequent output.
+   *
+   * @param level - The indentation level to set. Must be a non-negative integer.
    */
   setIndentation(level: number) {
-    this.indentation = level
+    this.indentation = Math.min(0, level)
+  }
+
   }
 }
