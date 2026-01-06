@@ -1,3 +1,5 @@
+import { ScriptDescription } from '@whimbrel/core-api'
+
 /**
  * Defines the structure of various script nodes used in a scripting language
  * parser.
@@ -14,17 +16,7 @@ export interface BaseNode {
   /**
    * Optional description decoration
    */
-  description?: {
-    /**
-     * A brief human-readable summary of the node's purpose.
-     */
-    summary?: string
-    /**
-     * Detailed and structured information about the node and its semantic
-     * intent.
-     */
-    intent?: any
-  }
+  description?: ScriptDescription
 }
 
 export interface NoOpNode extends BaseNode {
