@@ -48,21 +48,44 @@ export interface WhimbrelContextOptions {
  * Maps 1-1 to the command-line flags allowed by the Whimbrel CLI.
  *
  * @interface WhimbrelCommandOptions
- * @property {boolean} [silent] - If true, suppresses all output except errors.
- * @property {boolean} [verbose] - If true, enables verbose output.
- * @property {string} [haltAt] - If set, halts execution at the specified step ID.
- * @property {string} [cat] - Outputs the contents of a file post execution
- * @property {boolean} [showStepIds] - If true, shows step IDs in output.
- * @property {Record<string, string>} [prop] - Additional properties to pass to the command.
  */
 export interface WhimbrelCommandOptions {
+  /**
+   * If true, perform only a dry run of the execution
+   */
   dryRun?: boolean
+  /**
+   * If true, suppresses all ansi codes and non-appending
+   * output.
+   */
+  plain?: boolean
+  /**
+   * If true, suppresses all output except errors.
+   */
   silent?: boolean
+  /**
+   * If true, enables verbose output.
+   */
   verbose?: boolean
+  /**
+   * If set, halts execution at the specified step ID.
+   */
   haltAt?: string
+  /**
+   * Outputs the contents of a file post execution
+   */
   cat?: string
+  /**
+   * If true, shows step IDs in output.
+   */
   showStepIds?: boolean
+  /**
+   * If set, outputs more verbose facet details for one or more actors
+   */
   showFacetDetails?: string
+  /**
+   * Additional, non-standard, properties to pass to the command.
+   */
   prop: Record<string, string>
 }
 
