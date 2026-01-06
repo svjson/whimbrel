@@ -1,4 +1,4 @@
-import type { Tokenizer } from '@src/types'
+import type { Token, Tokenizer } from '@src/types'
 import { Command } from './types'
 
 /**
@@ -30,6 +30,18 @@ const TOKEN_MATCHERS = [
     },
   },
 ]
+
+/**
+ * Construct a command Token
+ *
+ * @param command The command name
+ *
+ * @returns A command-Token
+ */
+export const command = (command: string): Token => ({
+  type: 'command',
+  text: command,
+})
 
 /**
  * Determine the token type of the given content

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { tokenType } from '@src/command/tokenize'
+import { makeTokenizer, tokenType, command } from '@src/command/tokenize'
+import { word } from '@src/token'
 
 describe('tokenType', () => {
   it.each([
@@ -25,4 +26,19 @@ describe('tokenType', () => {
       expect(tokenType(input)).toEqual(expectedType)
     }
   )
+})
+
+describe('Tokenizer', () => {
+  const tokenizer = makeTokenizer()
+
+  describe('tokenize', () => {
+    it('should tokenize "npm run build"', () => {
+      expect(
+        tokenizer.tokenize({
+          command: 'npm',
+          args: ['run', 'build'],
+        })
+      ).toEqual([command('npm'), word('run'), word('build')])
+    })
+  })
 })

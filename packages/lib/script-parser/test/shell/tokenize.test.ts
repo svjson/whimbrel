@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { makeTokenizer } from '@src/index'
+import { makeTokenizer } from '@src/shell'
 import { tokenType } from '@src/shell/tokenize'
 import { word, whitespace, symbol, string } from '@src/token'
 
