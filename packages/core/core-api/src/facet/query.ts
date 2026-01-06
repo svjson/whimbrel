@@ -4,9 +4,9 @@ import { FacetId } from './declaration'
 import { FunctionInvocationDescription, SourceFolder } from '@src/lang'
 import {
   ExplainScriptCriteria,
-  ScriptDescription,
   ProjectMetaData,
   LicenseIdentifier,
+  ScriptExplanation,
 } from './role'
 
 /**
@@ -138,7 +138,7 @@ export type FacetQueryTypes = {
     CriteriaType: never
   }
   'package-manager:explain-script': {
-    QueryResultType: ScriptDescription
+    QueryResultType: ScriptExplanation
     CriteriaType: ExplainScriptCriteria
   }
   'project:license': {

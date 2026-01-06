@@ -1,3 +1,5 @@
+import { ScriptDescription } from '@src/script'
+
 interface ExplainScriptId {
   scriptId: string
 }
@@ -8,4 +10,7 @@ interface ExplainScriptContent {
 
 export type ExplainScriptCriteria = ExplainScriptId | ExplainScriptContent
 
-export interface ScriptDescription {}
+export interface ScriptExplanation {
+  description: ScriptDescription
+  script: any
+}

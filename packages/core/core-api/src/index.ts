@@ -96,7 +96,7 @@ export type {
   FacetQueryResult,
   MergeConfigFunction,
   QueryIndex,
-  ScriptDescription,
+  ScriptExplanation,
 } from './facet'
 export type {
   FileEntry,
@@ -138,4 +138,5 @@ export type {
   StepAugmentationRules,
   StepAugmentationGenerator,
 } from './plan'
+export type { ScriptDescription, ScriptIntent } from './script'
 export type { VCSMutation, VCSFileEntry, VCSMutationType } from './vcs'

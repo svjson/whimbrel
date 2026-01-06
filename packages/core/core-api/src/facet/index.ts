@@ -34,6 +34,6 @@ export type {
   LicenseRole,
   PackageFileRole,
   PackageManagerRole,
-  ScriptDescription,
+  ScriptExplanation,
   VersionControlRole,
 } from './role'

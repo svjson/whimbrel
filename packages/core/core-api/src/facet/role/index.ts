@@ -15,4 +15,4 @@ export type {
 
 export type { ProjectMetaData, LicenseIdentifier } from './project'
 
-export type { ExplainScriptCriteria, ScriptDescription } from './package-manager'
+export type { ExplainScriptCriteria, ScriptExplanation } from './package-manager'
