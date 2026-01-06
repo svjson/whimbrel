@@ -40,6 +40,52 @@ describe('PackageJSON', () => {
     })
   })
 
+  describe('getScriptNames', () => {
+    it('should return an array of declared script keys', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        path: 'package.json',
+        storage: {} as FileSystem,
+        content: {
+          scripts: {
+            dev: 'node src/index.js',
+            test: 'vitest --run',
+          },
+          dependencies: {
+            'fast-deep-equal': '^3.1.3',
+          },
+          devDependencies: {
+            '@types/node': '^24.3.0',
+            vite: '^7.1.2',
+          },
+        },
+      })
+
+      // Then
+      expect(pkgJson.getScriptNames()).toEqual(['dev', 'test'])
+    })
+
+    it('should return empty array if the scripts property is not present', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        path: 'package.json',
+        storage: {} as FileSystem,
+        content: {
+          dependencies: {
+            'fast-deep-equal': '^3.1.3',
+          },
+          devDependencies: {
+            '@types/node': '^24.3.0',
+            vite: '^7.1.2',
+          },
+        },
+      })
+
+      // Then
+      expect(pkgJson.getScriptNames()).toEqual([])
+    })
+  })
+
   describe('getDependencyVersion', () => {
     it('should return dependency version if listed as dependency', () => {
       // Given
