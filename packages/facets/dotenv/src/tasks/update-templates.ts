@@ -4,7 +4,7 @@ import { actorFacetConfig, makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { beginFlow } from '@whimbrel/flow'
 
 /**
- * Identifier for the UpdateTemplates task.
+ * Global identifier for the UpdateTemplates task.
  */
 export const DOTENV__UPDATE_TEMPLATES = 'dotenv:update-templates'
 

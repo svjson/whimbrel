@@ -68,7 +68,7 @@ describe('detect', () => {
     })
   })
 
-  it('should detect npm and advise project subModulesif workspaces are defined package.json', async () => {
+  it('should detect npm and advise project subModules if workspaces are defined package.json', async () => {
     // Given
     const ctx = await memFsContext()
     const root = await createDirectory(

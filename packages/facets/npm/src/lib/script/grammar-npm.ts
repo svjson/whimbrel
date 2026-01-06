@@ -1,0 +1,88 @@
+import { Grammar, ParserStateMachine } from '@whimbrel/script-parser'
+import { NpmBinCommand } from './types'
+
+/**
+ * Grammar type definition the Npm Command Grammar
+ */
+export type NpmGrammar = Grammar<
+  NpmBinCommand,
+  | 'type'
+  | 'command'
+  | 'arg'
+  | 'script-name'
+  | 'workspaces-scope'
+  | 'if-present'
+  | 'access-type',
+  never
+>
+
+/**
+ * The grammar state machine for the npm grammar
+ */
+export const npmGrammar: ParserStateMachine<NpmGrammar> = {
+  initial: {
+    transitions: [
+      {
+        text: 'npm',
+        emit: 'type',
+        state: 'npm',
+      },
+    ],
+  },
+  npm: {
+    transitions: [
+      {
+        text: 'run',
+        emit: 'command',
+        state: 'run',
+      },
+      {
+        text: 'publish',
+        emit: 'command',
+        state: 'publish',
+      },
+    ],
+  },
+  publish: {
+    transitions: [
+      {
+        text: '--access',
+        state: {
+          transitions: [
+            {
+              token: 'word',
+              emit: 'access-type',
+              state: {
+                transitions: [],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+  run: {
+    transitions: [
+      {
+        text: '--workspaces',
+        emit: 'workspaces-scope',
+        state: 'run',
+      },
+      {
+        token: 'word',
+        emit: 'script-name',
+        state: {
+          transitions: [
+            {
+              text: '--if-present',
+              emit: 'if-present',
+              state: {
+                transitions: [],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+}
