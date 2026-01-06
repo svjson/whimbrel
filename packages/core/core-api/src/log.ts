@@ -109,46 +109,72 @@ export interface ApplicationLog {
    * Displays the argument messages as a banner.
    */
   banner: (...args: string[]) => void
+
   /**
    * Log on the INFO-level
+   *
+   * @param args - The arguments to log.
    */
   info: (...args: any[]) => void
+
   /**
    * Log on the DEBUG-level
+   *
+   * @param args - The arguments to log.
    */
   debug: (...args: any[]) => void
+
   /**
    * Log on the ERROR-level
+   *
+   * @param args - The arguments to log.
    */
   error: (...args: any[]) => void
+
   /**
    * Log on the WARN-level
    */
   warn: (...args: any[]) => void
+
   /**
    * Show a semi-persistent status message, according to the implementation.
+   *
+   * @param status - The status message to show. If omitted, shows a blank
+   *                 or restores previous status message.
    */
   showStatus: (status?: string) => void
+
   /**
    * Hide the status message, if present.
    */
   hideStatus: () => void
+
   /**
    * Update the contents of the status message.
    */
   updateStatus: (status: string) => void
+
   /**
    * Increase the indentation-level for subsequent output.
    */
   indent: () => void
+
   /**
    * Decrease the indentation-level for subsequent output.
    */
   deindent: () => void
+
   /**
-   * Set indentation
+   * Set indentation level
+   *
+   * @param indentationLevel - The new indentation level.
    */
   setIndentation: (indentationLevel: number) => void
+
+  /**
+   * Get current indentation level
+   */
+  getIndentation: () => number
 }
 
 /**
@@ -167,4 +193,5 @@ export const NullAppender: ApplicationLog = {
   indent: () => null,
   deindent: () => null,
   setIndentation: () => null,
+  getIndentation: () => 0,
 }

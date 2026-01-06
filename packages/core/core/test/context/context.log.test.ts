@@ -13,6 +13,7 @@ class DummyLogger implements ApplicationLog {
   indent: () => {}
   deindent: () => {}
   setIndentation: (indentationLevel: number) => {}
+  getIndentation: () => 0
 }
 
 describe('makeWhimbrelContext', () => {

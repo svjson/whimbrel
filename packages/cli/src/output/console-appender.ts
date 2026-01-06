@@ -180,5 +180,12 @@ export class ConsoleAppender implements ApplicationLog {
     this.indentation = Math.min(0, level)
   }
 
+  /**
+   * Get the current indentation level
+   *
+   * @return The current indentation level.
+   */
+  getIndentation() {
+    return this.indentation
   }
 }
