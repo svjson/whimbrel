@@ -4,16 +4,10 @@ import chalk from 'chalk'
 import { executeCommand, withCommonOptions } from './common'
 import { pushDistinct } from '@whimbrel/array'
 import { Actor } from '@whimbrel/core-api'
-import {
-  analyzePath,
-  makeWhimbrelContext,
-  WhimbrelContext,
-  WhimbrelError,
-} from '@whimbrel/core'
-import { CLIFormatter, ConsoleAppender } from '@src/output'
-import { makeFacetRegistry } from '@src/facets'
+import { analyzePath, WhimbrelContext, WhimbrelError } from '@whimbrel/core'
 import { queryFacets } from '@whimbrel/facet'
 import { Command } from 'commander'
+import { makeCLIWhimbrelContext } from '@src/context'
 
 /**
  * Defines the Query CLI command.
@@ -36,16 +30,7 @@ export const addQueryCommand = (program: Command) => {
       if (!cmdPath) {
         cmdPath = path.resolve('.')
       }
-      const context = await makeWhimbrelContext(
-        {
-          cwd: process.cwd(),
-          dir: cmdPath,
-          formatter: CLIFormatter,
-          facets: makeFacetRegistry(),
-          log: new ConsoleAppender(),
-        },
-        options
-      )
+      const context = await makeCLIWhimbrelContext(options, cmdPath)
       await runCommand(context, queryName, options.actor, cmdPath)
     })
   })

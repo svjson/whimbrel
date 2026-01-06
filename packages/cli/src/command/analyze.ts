@@ -2,15 +2,10 @@ import path from 'node:path'
 
 import { Command } from 'commander'
 import { WhimbrelContext } from '@whimbrel/core-api'
-import {
-  analyzePath,
-  makeWhimbrelContext,
-  outputPostExecutionReports,
-} from '@whimbrel/core'
+import { analyzePath, outputPostExecutionReports } from '@whimbrel/core'
 
 import { executeCommand, withCommonOptions } from './common'
-import { CLIFormatter, ConsoleAppender } from '@src/output'
-import { makeFacetRegistry } from '@src/facets'
+import { makeCLIWhimbrelContext } from '@src/context'
 
 /**
  * Defines the Analyze CLI command.
@@ -33,16 +28,7 @@ export const addAnalyzeCommand = (program: Command) => {
       if (!cmdPath) {
         cmdPath = path.resolve('.')
       }
-      const context = await makeWhimbrelContext(
-        {
-          cwd: process.cwd(),
-          dir: cmdPath,
-          formatter: CLIFormatter,
-          facets: makeFacetRegistry(),
-          log: new ConsoleAppender(),
-        },
-        options
-      )
+      const context = await makeCLIWhimbrelContext(options, cmdPath)
       await runCommand(context, cmdPath)
     }, options)
   })

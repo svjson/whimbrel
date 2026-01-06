@@ -1,11 +1,7 @@
-import path from 'node:path'
-
 import { Command } from 'commander'
-import { makeWhimbrelContext } from '@whimbrel/core'
-import { makeFacetRegistry } from '@src/facets'
-import { ConsoleAppender } from '@src/output/console-appender'
 import { WhimbrelContext } from '@whimbrel/core-api'
 import { executeCommand, withCommonOptions } from './common'
+import { makeCLIWhimbrelContext } from '@src/context'
 
 export const addDescribeFacetCommand = (program: Command) => {
   withCommonOptions(
@@ -14,15 +10,7 @@ export const addDescribeFacetCommand = (program: Command) => {
   ).action(async (facetId: string) => {
     executeCommand(
       async () => {
-        const context = await makeWhimbrelContext(
-          {
-            cwd: process.cwd(),
-            dir: path.resolve('.'),
-            facets: makeFacetRegistry(),
-            log: new ConsoleAppender(),
-          },
-          { prop: {} }
-        )
+        const context = await makeCLIWhimbrelContext({ prop: {} })
         await describeFacet(context, facetId)
       },
       { prop: {} }

@@ -12,7 +12,6 @@ import {
 import {
   inferPreparationSteps,
   makeRunner,
-  makeWhimbrelContext,
   materializePlan,
   outputPostExecutionReports,
 } from '@whimbrel/core'
@@ -20,8 +19,8 @@ import {
 import { PROJECT__EACH_SUBMODULE } from '@whimbrel/project'
 
 import { ALL_OPTION_GROUPS, executeCommand, withCommonOptions } from './common'
-import { CLIFormatter, ConsoleAppender } from '@src/output'
 import { makeFacetRegistry } from '@src/facets'
+import { makeCLIWhimbrelContext } from '@src/context'
 
 /**
  * Defines the Execute Task CLI command.
@@ -40,16 +39,7 @@ export const addExecuteTaskCommand = (program: Command, preParser: Command) => {
         if (!cmdPath) {
           cmdPath = path.resolve('.')
         }
-        const context = await makeWhimbrelContext(
-          {
-            cwd: process.cwd(),
-            dir: cmdPath,
-            formatter: CLIFormatter,
-            facets: makeFacetRegistry(),
-            log: new ConsoleAppender(),
-          },
-          options
-        )
+        const context = await makeCLIWhimbrelContext(options, cmdPath)
         await executeTask(context, taskId, cmdPath)
       }, options)
     }
@@ -139,6 +129,19 @@ export const executeTask = async (
     })
   }
   if (submodules) {
+    console.log({
+      type: PROJECT__EACH_SUBMODULE,
+      inputs: {
+        ...inputs,
+        task: {
+          type: taskId,
+          inputs,
+        },
+      },
+      parameters: {
+        ...task.parameters,
+      },
+    })
     taskSteps.push({
       type: PROJECT__EACH_SUBMODULE,
       inputs: {
