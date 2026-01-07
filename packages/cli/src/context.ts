@@ -32,6 +32,7 @@ export const makeCLIWhimbrelContext = async (
       dir: cmdPath ?? path.resolve('.'),
       formatter: CLIFormatter,
       facets: makeFacetRegistry(),
+      maxMaterializationIterations: options.maxMaterializationIterations,
       log,
     },
     options

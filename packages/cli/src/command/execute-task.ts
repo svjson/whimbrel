@@ -129,19 +129,6 @@ export const executeTask = async (
     })
   }
   if (submodules) {
-    console.log({
-      type: PROJECT__EACH_SUBMODULE,
-      inputs: {
-        ...inputs,
-        task: {
-          type: taskId,
-          inputs,
-        },
-      },
-      parameters: {
-        ...task.parameters,
-      },
-    })
     taskSteps.push({
       type: PROJECT__EACH_SUBMODULE,
       inputs: {

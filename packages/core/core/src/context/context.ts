@@ -66,6 +66,7 @@ export const makeWhimbrelContext = async (
     formatter = DefaultFormatter,
     acceptJournalEntry,
     acceptMutation,
+    maxMaterializationIterations,
     sources,
     targets,
     memCacheOnly = false,
@@ -77,6 +78,9 @@ export const makeWhimbrelContext = async (
     cwd: cwd ?? dir ?? '.',
     disk: contextOptions.disk ?? DiskFileSystem,
     materializationRun: false,
+    materializationOptions: {
+      maxIterations: maxMaterializationIterations ?? 20,
+    },
     dryRun: false,
     facets: facets ?? new DefaultFacetRegistry(),
     formatter: null as Formatter,

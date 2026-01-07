@@ -36,6 +36,7 @@ export interface WhimbrelContextOptions {
   log?: ApplicationLog
   sources?: Record<ActorId, Actor>
   targets?: Record<ActorId, Actor>
+  maxMaterializationIterations?: number
   memCacheOnly?: boolean
   acceptJournalEntry?: AcceptJournalEntryHandler
   acceptMutation?: AcceptMutationHandler
@@ -84,6 +85,11 @@ export interface WhimbrelCommandOptions {
    */
   showFacetDetails?: string
   /**
+   * If set, overrides that max number of iterations of the materialization
+   * phase that are allowed.
+   */
+  maxMaterializationIterations?: number
+  /**
    * Additional, non-standard, properties to pass to the command.
    */
   prop: Record<string, string>
@@ -97,44 +103,142 @@ export interface WhimbrelCommandOptions {
  * It also provides methods to emit events and accept mutations.
  *
  * @interface WhimbrelContext
- * @property {string} cwd - The current working directory.
- * @property {FileSystem} disk - The file system abstraction used for operations.
- * @property {boolean} materializationRun - Indicates if the context is in materialize mode.
- * @property {boolean} dryRun - Indicates if the context is in dry-run mode.
- * @property {FacetRegistry} facets - The registry of facets available in the context.
- * @property {Formatter} formatter - The formatter used for output.
- * @property {ApplicationLog} log - The application log for logging messages.
- * @property {Record<string, Actor>} sources - The source Actors available in the context.
- * @property {Record<string, Actor>} targets - The target Actors available in the context.
- * @property {Actor} [rootTarget] - The root target actor, if any.
- * @property {Actor} [target] - The current target actor being processed.
- * @property {Actor} [source] - The current source actor being processed.
- * @property {ExecutionStep} step - The current execution step being processed.
- * @property {StepExecutionResult} [stepResult] - The result of the last executed step, if any.
- * @property {WhimbrelCommandOptions} options - The command options for the Whimbrel operation.
- * @method emitEvent - Emits an event to the context's event bus.
- * @method acceptMutation - Accepts a mutation to be applied to the context's state.
  */
 export interface WhimbrelContext {
+  /**
+   * The current working directory.
+   */
   cwd: string
+
+  /**
+   * The file system abstraction used for disk access.
+   *
+   * All disk operations during Whimbrel execution are performed through
+   * this instance, allowing Whimbrel to operate normally regardless of
+   * the underlying file system implementation.
+   *
+   * This allows for seemless "dry run" operations in all aspects of
+   * Whimbrel.
+   */
   disk: FileSystem
-  materializationRun: boolean
-  dryRun: boolean
+
+  /**
+   * Registry containing all facet modules known to Whimbrel.
+   */
   facets: FacetRegistry
-  formatter: Formatter
-  log: ApplicationLog
+
+  /**
+   * Source Actors known to this WhimbrelContext, discovered during
+   * the materialization phase, or provided during construction.
+   */
   sources: Record<ActorId, Actor>
+
+  /**
+   * Target Actors known to this WhimbrelContext, discovered during
+   * the materialization phase, or provided during construction.
+   */
   targets: Record<ActorId, Actor>
+
+  /**
+   * The Root Target Actor, if any.
+   */
   rootTarget?: Actor
-  target?: Actor
+
+  /**
+   * The currently selected Source Actor, if any.
+   */
   source?: Actor
+
+  /**
+   * The currently selected Target Actor, if any.
+   */
+  target?: Actor
+
+  /**
+   * Whimbrel application log.
+   */
+  log: ApplicationLog
+
+  /**
+   * Formatter-instance used for formatting Whimbrel output.
+   */
+  formatter: Formatter
+
+  /**
+   * The current execution step being processed.
+   */
   step: ExecutionStep
+
+  /**
+   * Options affecting the materialization phase.
+   */
+  materializationOptions: {
+    maxIterations: number
+  }
+
+  /**
+   * True while the materialization phase is ongoing.
+   */
+  materializationRun: boolean
+
+  /**
+   * Signals if Whimbrel is currently performing a dry run.
+   */
+  dryRun: boolean
+
+  /**
+   * The result of the last executed or currently executing step, if any.
+   */
   stepResult?: StepExecutionResult
+
+  /**
+   * The initialization options of this WhimbrelContext
+   */
   options: WhimbrelCommandOptions
+
+  /**
+   * Retrieves a single actor based on ActorId or filter criteria.
+   *
+   * @param identifier - ActorId or ActorFilter used to identify the Actor
+   * @param type - Optional ActorType to further narrow the search
+   *
+   * @return The located Actor, or undefined if not found
+   */
   getActor: GetActorFunction
+
+  /**
+   * Emits a WhimbrelEvent
+   *
+   * @param event - The WhimbrelEvent to emit.
+   */
   emitEvent(event: WhimbrelEvent): void
+
+  /**
+   * Executes a command on the host system.
+   *
+   * @param cwd - The current working directory to execute the command in.
+   * @param command - The command to execute, either as a string or an array
+   *
+   * @return A promise that resolves to a tuple containing the command's
+   */
   runCommand: CtxCommandRunner
+
+  /**
+   * Records a state mutation.
+   *
+   * @param mutation - The mutation to record
+   */
   acceptMutation: AcceptMutationHandler
+
+  /**
+   * Records a journal entry.
+   *
+   * @param entry - The journal entry to record
+   */
   acceptJournalEntry: AcceptJournalEntryHandler
+
+  /**
+   * Resets all actors in the context.
+   */
   resetActors(): void
 }

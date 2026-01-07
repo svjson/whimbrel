@@ -32,6 +32,10 @@ export const withCommonOptions = (groups: OptionGroup[], cmdBuilder: Command) =>
       '-d, --show-facet-details [pattern]',
       'Output Facet details for one or all actors.'
     )
+    cmdBuilder.option(
+      '--max-materialization-iterations <amount>',
+      'Set the max number of iterations allowed during the plan materialization phase.'
+    )
   }
 
   if (groups.includes('output')) {

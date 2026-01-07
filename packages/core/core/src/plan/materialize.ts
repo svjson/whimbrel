@@ -147,6 +147,7 @@ export const materializePlan = async (
   ctx: WhimbrelContext,
   blueprint: Blueprint
 ): Promise<ExecutionPlan> => {
+  const { maxIterations } = ctx.materializationOptions
   const stepTree: ExecutionStep[] = generateInitialStepTree(ctx, blueprint)
 
   const mCtx: MaterializationContext = {
@@ -166,7 +167,7 @@ export const materializePlan = async (
   while (!mCtx.complete) {
     ctx.log.setIndentation(0)
     mCtx.iteration++
-    if (mCtx.iteration > 20) {
+    if (mCtx.iteration > maxIterations) {
       throw new WhimbrelError('Plan Materialization Failed: Too many iterations.')
     }
     const iterCtx: IterationContext = {

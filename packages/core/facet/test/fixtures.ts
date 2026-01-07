@@ -33,6 +33,9 @@ export const makeWhimbrelContext = (opts: WhimbrelContextOptions): WhimbrelConte
     acceptMutation: (mutation: FileSystemMutation) => {
       throw new Error(`Unexpected mutation: ${JSON.stringify(mutation)}`)
     },
+    materializationOptions: {
+      maxIterations: 20,
+    },
     options: { prop: {} },
     sources: {},
     step: makeNullExecutionStep(),

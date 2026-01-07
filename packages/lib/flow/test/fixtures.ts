@@ -28,6 +28,9 @@ export const makeWhimbrelContext = (
     targets: {},
     step: makeNullExecutionStep(),
     options: { prop: {} },
+    materializationOptions: {
+      maxIterations: 20,
+    },
     emitEvent: (event: WhimbrelEvent) => {
       throw new Error(`Unexpected event: ${event}`)
     },

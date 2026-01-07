@@ -36,6 +36,9 @@ export const makeTestContext = (
     targets: ctxOpts.targets ?? {},
     step: makeNullExecutionStep(),
     options: cmdOpts,
+    materializationOptions: {
+      maxIterations: 20,
+    },
     getActor: function (
       actorId: ActorId | ActorFilter,
       type?: ActorType
