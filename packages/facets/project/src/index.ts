@@ -6,7 +6,12 @@ import {
   mergeConfig,
 } from './features'
 
-export { PROJECT__EACH_SUBMODULE, PROJECT__DEFINE_SUBMODULES } from './tasks'
+export {
+  EachSubmodule,
+  DefineSubmodules,
+  PROJECT__EACH_SUBMODULE,
+  PROJECT__DEFINE_SUBMODULES,
+} from './tasks'
 
 export const ProjectFacet = makeFacetModule({
   id: 'project',
