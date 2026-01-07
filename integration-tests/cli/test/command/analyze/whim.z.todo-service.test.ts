@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeAll, test } from 'vitest'
+import { describe, expect, beforeAll, test } from 'vitest'
 import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { DiskFileSystem } from '@whimbrel/filesystem'
 import { whimCli } from 'test/whim-fixture'
 
 const { prepareGitRepository } = makeTreeFixture(DiskFileSystem)
 
-describe('whim z <todo-service.ts>', () => {
+describe('whim z <todo-service>', () => {
   let root: string
 
   beforeAll(async () => {

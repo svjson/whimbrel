@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`whim z <todo-service.ts> > whim z --no-color 1`] = `
+exports[`whim z <todo-service> > whim z --no-color 1`] = `
 "
 Analyze path: /tmp/whim-repo-XXXX
 -----------------------------------
@@ -18,7 +18,7 @@ Analyze path: /tmp/whim-repo-XXXX
 "
 `;
 
-exports[`whim z <todo-service.ts> > whim z 1`] = `
+exports[`whim z <todo-service> > whim z 1`] = `
 "
 Analyze path: [32m/tmp/whim-repo-XXXX[39m
 -----------------------------------
