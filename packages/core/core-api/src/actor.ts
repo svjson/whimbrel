@@ -1,9 +1,14 @@
 import { FacetId, FacetScope } from './facet'
 
 /**
+ * The two main "roles" that an actor can hold or take.
+ */
+export type ActorRole = 'target' | 'source'
+
+/**
  * Enum-type for types of Actor that may occur in a WhimbrelContext.
  */
-export type ActorType = 'target' | 'source' | 'rootTarget'
+export type ActorType = ActorRole | 'rootTarget'
 
 /**
  * Structure of the Actor metadata object.
@@ -22,6 +27,11 @@ export interface ActorFilter {
 /**
  * Function signature for retrieving a single actor from a container of
  * actors, e.g, WhimbrelContext
+ *
+ * @param identifier - ActorId or ActorFilter used to identify the Actor
+ * @param type - Optional ActorType to further narrow the search
+ *
+ * @return The located Actor, or undefined if not found
  */
 export type GetActorFunction = (
   identifier: ActorId | ActorFilter,
