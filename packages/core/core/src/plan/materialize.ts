@@ -34,11 +34,27 @@ interface MaterializationContext {
   lastExpectationTree: ExpectationNode[]
 }
 
+/**
+ * Context-type for materialization runs, that tracks modifications to
+ * the execution true being materialized during a single iteration
+ */
 interface IterationContext {
   sources: Record<string, Actor>
   targets: Record<string, Actor>
+
+  /**
+   * Number of new steps added during the most recent iteration.
+   */
   newSteps: number
+
+  /**
+   * Total number of new steps added during the life-cycle of this context.
+   */
   totalNewSteps: number
+
+  /**
+   * Number of tree expansion iterations performed during the life-cycle of this context.
+   */
   expandIterations: number
 }
 
@@ -75,6 +91,11 @@ export const generateExecutionStep = (
 
 /**
  * Generate an initial tree of ExecutionStep nodes from the provided Blueprint.
+ *
+ * @param ctx - The context containing collaborators and options.
+ * @param blueprint - The blueprint object containing the step definitions.
+ *
+ * @return An array of ExecutionStep nodes representing the initial step tree.
  */
 const generateInitialStepTree = (
   ctx: WhimbrelContext,
@@ -128,6 +149,17 @@ const buildExpectationTree = (stepTree: ExecutionStep[]): ExpectationNode[] => {
 }
 
 /**
+ * Create a context state object tracking iteration and materialization details.
+ */
+export const makeIterationContext = (ctx: WhimbrelContext): IterationContext => ({
+  sources: ctx.sources,
+  targets: ctx.targets,
+  newSteps: 0,
+  totalNewSteps: 0,
+  expandIterations: 0,
+})
+
+/**
  * Generate an executable step tree from a step tree skeleton, allowing
  * facets to attach additional steps.
  *
@@ -170,13 +202,7 @@ export const materializePlan = async (
     if (mCtx.iteration > maxIterations) {
       throw new WhimbrelError('Plan Materialization Failed: Too many iterations.')
     }
-    const iterCtx: IterationContext = {
-      sources: ctx.sources,
-      targets: ctx.targets,
-      newSteps: 0,
-      totalNewSteps: 0,
-      expandIterations: 0,
-    }
+    const iterCtx = makeIterationContext(ctx)
 
     ctx.log.updateStatus(mCtx.statusText + '.'.repeat(mCtx.iteration))
 
