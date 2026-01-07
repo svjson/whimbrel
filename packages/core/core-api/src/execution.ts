@@ -1,6 +1,7 @@
 import { WhimbrelContext } from './context'
 import { FileSystemMutation } from './fs'
 import { ContextMutation } from './mutation'
+import { StepAugmentation } from './plan'
 import { makeTask, Task, TaskId, TaskParameters } from './task'
 import { VCSMutation } from './vcs'
 
@@ -17,42 +18,54 @@ export interface ExecutionStep {
    * eslint configuration file in project described by Actor 'myproject'.
    */
   id: string
+
   /**
    * The StepIds of the direct parents of this step, if any.
    */
   parents: string[]
+
   /**
    * The human-readable name of the Step, as shown in the step tree output
    * of a plan.
    */
   name: string
+
   /**
    * The Task associated with this step.
    */
   task: Task
+
   /**
    * The input parameters of this step.
    */
   inputs: any
+
   /**
    * Declaration of expected and required parameters to be provided by
    * `inputs`.
    */
   parameters: TaskParameters
+
   /**
    * Bind-directives for this step, controlling the selection of source
    * and target actors or this step and its children.
    */
   bind: StepBinding
+
   /**
-   * Meta-data collection or this step.
+   * Meta-data collection for this step.
    */
-  meta: any
+  meta: {
+    appliedAugmentations?: StepAugmentation[]
+    [key: string]: any
+  }
+
   /**
    * The expected result of this execution step. This is determined during
    * plan materialization.
    */
   expectedResult: StepExecutionResult
+
   /**
    * The "state" of this step in the execution tree. Typically determined
    * during plan materialization, and is used to signal if a step is satisfied
@@ -60,6 +73,7 @@ export interface ExecutionStep {
    * already being fulfilled.
    */
   treeState: TreeState
+
   /**
    * The child steps and tasks of this step.
    */

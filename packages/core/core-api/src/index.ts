@@ -7,6 +7,7 @@ export {
   EVENT__STEP_EXECUTION_INITIATED,
   EVENT__STEP_EXECUTION_COMPLETED,
 } from './event'
+export { resolveStepActorRole } from './plan'
 export { FacetImplementationError, makeFacetModule } from './facet'
 export { toFileSystemReadOptions, toFileSystemWriteOptions } from './fs'
 export {
