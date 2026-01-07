@@ -42,7 +42,35 @@ describe('NpmCommandParser', () => {
         ],
       ],
       [
-        'workspaces run command',
+        'run test --workspaces',
+        {
+          command: 'npm',
+          args: ['run', 'test', '--workspaces'],
+        },
+        [
+          {
+            type: 'npm',
+            command: 'run',
+            script: 'test',
+            scope: {
+              type: 'workspaces',
+            },
+            description: {
+              summary: 'Execute package.json script "test" in all modules',
+              intent: {
+                op: 'execute',
+                kind: 'package.json-script',
+                id: 'test',
+                target: {
+                  type: 'workspace',
+                },
+              },
+            },
+          },
+        ],
+      ],
+      [
+        '--workspaces run test',
         {
           command: 'npm',
           args: ['--workspaces', 'run', 'test'],

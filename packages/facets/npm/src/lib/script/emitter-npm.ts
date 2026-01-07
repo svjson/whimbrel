@@ -116,6 +116,7 @@ export const makeNpmEmitter = (): Emitter<NpmGrammar> => {
           summaryStub.context = 'in all modules'
           const intentTarget = (intentStub.target ??= {})
           intentTarget.type = 'workspace'
+          delete intentTarget.module
           break
         case 'script-name':
           node.script = tokenText

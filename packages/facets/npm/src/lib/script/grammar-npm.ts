@@ -85,6 +85,11 @@ export const npmGrammar: ParserStateMachine<NpmGrammar> = {
                 transitions: [],
               },
             },
+            {
+              text: '--workspaces',
+              emit: 'workspaces-scope',
+              state: 'run',
+            },
           ],
         },
       },
