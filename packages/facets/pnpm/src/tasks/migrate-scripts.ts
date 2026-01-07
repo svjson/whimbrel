@@ -8,6 +8,15 @@ import { PackageJSON } from '@whimbrel/package-json'
  */
 export const PNPM__MIGRATE_SCRIPTS = 'pnpm:migrate-scripts'
 
+/**
+ * Executes the MigrateScripts task.
+ *
+ * Queries the current package manager for an explanation of the script,
+ * and uses resulting the ScriptIntent to rewrite any scripts involving
+ * the package manager to use pnpm/pnpx in place of the original equivalents.
+ *
+ * @param ctx The Whimbrel context.
+ */
 const execute = async (ctx: WhimbrelContext) => {
   const { target } = ctx.step.inputs
 
@@ -21,7 +30,7 @@ const execute = async (ctx: WhimbrelContext) => {
         criteria: { scriptId },
       })
 
-      const expl = pickRankedResult(target, qr, [{ role: 'package-manaager' }])
+      const expl = pickRankedResult(target, qr, [{ role: 'package-manager' }])
       return {
         scriptId,
         description: expl,

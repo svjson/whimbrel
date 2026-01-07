@@ -1,2 +1,5 @@
 export { detect } from './detect'
-export { migrateProjectAugmentation } from './step-augmentation'
+export {
+  migrateProjectAugmentation,
+  migrateSubmoduleAugmentation,
+} from './step-augmentation'
