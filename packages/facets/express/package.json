@@ -1,0 +1,47 @@
+{
+  "name": "@whimbrel/express",
+  "version": "0.0.6",
+  "description": "ExpressJS Facet for Whimbrel",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf ./dist && rimraf ./node_modules",
+    "publish": "npm publish --access public"
+  },
+  "peerDependencies": {
+    "@whimbrel/array": "^0.0.6",
+    "@whimbrel/core-api": "^0.0.6",
+    "@whimbrel/facet": "^0.0.6",
+    "@whimbrel/filesystem": "^0.0.6",
+    "@whimbrel/flow": "^0.0.6",
+    "@whimbrel/package-json": "^0.0.6"
+  },
+  "devDependencies": {
+    "@whimbrel/core-api": "^0.0.6",
+    "@whimbrel/core": "^0.0.6",
+    "@whimbrel/facet": "^0.0.6",
+    "@whimbrel/filesystem": "^0.0.6",
+    "@whimbrel/flow": "^0.0.6",
+    "@whimbrel/struct-file": "^0.0.6",
+    "@whimbrel/typescript": "^0.0.6",
+    "@whimbrel-test/asset-fixtures": "0.0.6",
+    "@whimbrel-test/tree-fixtures": "0.0.6",
+    "@whimbrel-test/context-fixtures": "0.0.6",
+    "@types/node": "^24.3.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
+  }
+}

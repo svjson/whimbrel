@@ -1,6 +1,7 @@
 import Actor from '@whimbrel/actor'
 import DockerCompose from '@whimbrel/docker-compose'
 import DotEnv from '@whimbrel/dotenv'
+import Express from '@whimbrel/express'
 import Fastify from '@whimbrel/fastify'
 import Git from '@whimbrel/git'
 import GitIgnore from '@whimbrel/gitignore'
@@ -28,6 +29,7 @@ export const makeFacetRegistry = (): FacetRegistry => {
     Actor,
     DockerCompose,
     DotEnv,
+    Express,
     Fastify,
     Git,
     GitIgnore,
