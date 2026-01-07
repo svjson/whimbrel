@@ -15,6 +15,11 @@ const execute = async (ctx: WhimbrelContext) => {
   await ws.forEachModule(async (pkgJson) => {
     packageJson.setDependencyVersion(pkgJson.get('name'), 'workspace:*')
   })
+  Object.entries(packageJson.get('dependencies') ?? {}).forEach(([dep, version]) => {
+    if (version === '*') {
+      packageJson.setDependencyVersion(dep, 'workspace:*')
+    }
+  })
 
   await packageJson.write()
 }
