@@ -9,7 +9,6 @@ import {
 import { performDryRun } from '@src/execution'
 import { DryRunError, resetDryRun } from '@src/execution/dry-run'
 import { mergeLeft } from '@whimbrel/walk'
-import { includesEqual } from '@whimbrel/array'
 
 import {
   ExecutionPlan,
@@ -286,7 +285,7 @@ const expandStepTree = async (
  *
  * @return {Promise<void>} A promise that resolves when the step is expanded.
  */
-const expandStep = async (
+export const expandStep = async (
   ctx: WhimbrelContext,
   iterCtx: IterationContext,
   step: ExecutionStep,
@@ -356,13 +355,50 @@ const assignId = (step: ExecutionStep) => {
 }
 
 /**
+ * Compares two StepAugmentation instances for identity from the perspective
+ * of if `aug` is the same conceptual StepAugmentation that has already been
+ * applied (`other`).
+ *
+ * FIXME: This is brittle, and relies on the actor parameter to have been
+ * properly defined _and_ lifted over as a parameter to the StepAugmentation
+ * definition of the Task/Step.
+ *
+ * @param aug - The StepAugmentation to check.
+ * @param other - The StepAugmentation to compare against.
+ *
+ * @return true if the StepAugmentation instances are
+ */
+const isStepAugmentation = (aug: StepAugmentation, other: StepAugmentation) => {
+  if (aug.type !== other.type) return false
+  if (!equal(aug.bind, other.bind)) return false
+  if (aug.inputs && other.inputs) {
+    for (const inputKey of Object.keys(aug.inputs)) {
+      if (aug.parameters?.[inputKey]?.type === 'actor') {
+        if (aug.inputs[inputKey]?.root !== other.inputs?.[inputKey]?.root) {
+          return false
+        }
+      } else if (!equal(aug.inputs?.[inputKey], other.inputs?.[inputKey])) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
+/**
  * Allow any active facets to augment and attach child steps to `step`.
+ *
+ * @param ctx - The context containing collaborators and options.
+ * @param step - The step to augment.
+ * @param iterCtx - The iteration context tracking new steps.
+ *
+ * @return {Promise<void>} A promise that resolves when augmentations are applied.
  */
 const attachStepAugmentations = async (
   ctx: WhimbrelContext,
   iterCtx: IterationContext,
   step: ExecutionStep
-) => {
+): Promise<void> => {
   if (!step.meta.appliedAugmentations) step.meta.appliedAugmentations = []
 
   for (const facet of ctx.facets.all()) {
@@ -383,8 +419,11 @@ const attachStepAugmentations = async (
       stepAugmentations.push(...(await augmentationEntry.steps({ ctx, step })))
     }
 
+    if (!stepAugmentations.length) continue
     for (const augStep of stepAugmentations) {
-      if (includesEqual(step.meta.appliedAugmentations, augStep)) {
+      if (
+        step.meta.appliedAugmentations.find((aug) => isStepAugmentation(augStep, aug))
+      ) {
         continue
       }
       step.meta.appliedAugmentations.push(augStep)

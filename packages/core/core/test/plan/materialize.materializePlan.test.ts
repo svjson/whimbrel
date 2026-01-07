@@ -1,9 +1,15 @@
 import path from 'node:path'
 import { describe, it, expect } from 'vitest'
 
-import { makeWhimbrelContext, materializePlan } from '@src/index'
+import {
+  inferPreparationSteps,
+  makeTask,
+  makeWhimbrelContext,
+  materializePlan,
+} from '@src/index'
 import { makeAnalyzeScaffold } from '@src/index'
-import SourceFacet, { Define as DefineSource, SOURCE__DEFINE } from '@whimbrel/source'
+import ProjectFacet, { PROJECT__EACH_SUBMODULE } from '@whimbrel/project'
+import SourceFacet, { SOURCE__DEFINE } from '@whimbrel/source'
 import TargetFacet, { TARGET__DEFINE } from '@whimbrel/target'
 import ActorFacet, {
   ACTOR__ANALYZE,
@@ -13,87 +19,12 @@ import ActorFacet, {
 } from '@whimbrel/actor'
 import { makeTreeFixture } from '@whimbrel-test/tree-fixtures'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
-import { ExecutionStepBlueprint, makeTask, newStepResult } from '@whimbrel/core-api'
-import { determinePlanFsMode, generateExecutionStep } from '@src/plan/materialize'
 import { DiskFileSystem } from '@whimbrel/filesystem'
+import { FakeProjectFacet, testFacetBuilder, toArrayTree } from './fixtures'
 
 const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('materialize', () => {
-  describe('generateExecutionStep', () => {
-    it('should generate a complete ExecutionStep and use the default Task name if none is provided', async () => {
-      // Given
-      const ctx = await makeWhimbrelContext({
-        facets: new DefaultFacetRegistry([SourceFacet, ActorFacet]),
-      })
-      const stepBlueprint: ExecutionStepBlueprint = {
-        type: SOURCE__DEFINE,
-      }
-
-      // When
-      const executionStep = generateExecutionStep(ctx, stepBlueprint)
-
-      // Then
-      expect(executionStep).toEqual({
-        id: SOURCE__DEFINE,
-        name: 'Define Source',
-        parents: [],
-        task: DefineSource,
-        inputs: {},
-        parameters: {},
-        expectedResult: newStepResult(),
-        bind: {},
-        meta: {},
-        treeState: {
-          state: 'default',
-        },
-        steps: [],
-      })
-    })
-
-    it('should generate a complete ExecutionStep and use the parameters specified by the Task', async () => {
-      // Given
-      const ctx = await makeWhimbrelContext({
-        facets: new DefaultFacetRegistry([SourceFacet, ActorFacet]),
-      })
-      const stepBlueprint: ExecutionStepBlueprint = {
-        type: ACTOR__DISCOVER_FACETS,
-      }
-
-      // When
-      const executionStep = generateExecutionStep(ctx, stepBlueprint)
-
-      // Then
-      expect(executionStep).toEqual({
-        id: ACTOR__DISCOVER_FACETS,
-        name: 'Discover Actor Facets',
-        parents: [],
-        task: DiscoverFacets,
-        inputs: {},
-        bind: {},
-        meta: {},
-        expectedResult: newStepResult(),
-        parameters: {
-          actor: {
-            type: 'actor',
-            required: true,
-            cli: {
-              positional: false,
-              excludes: [],
-              sets: {},
-            },
-            resolvers: [],
-            defaults: [{ ref: 'source' }, { ref: 'target' }],
-          },
-        },
-        steps: [],
-        treeState: {
-          state: 'default',
-        },
-      })
-    })
-  })
-
   describe('materializePlan', () => {
     it('should create an execution plan and attach augmented steps for SOURCE__DEFINE', async () => {
       // Given
@@ -256,51 +187,124 @@ describe('materialize', () => {
         ],
       })
     })
-  })
-})
 
-describe('determinePlanFsMode', async () => {
-  const ctx = await makeWhimbrelContext({
-    facets: new DefaultFacetRegistry([SourceFacet, ActorFacet]),
-  })
+    it('should not re-apply augmentation after input actor submodules have been discovered', async () => {
+      // Given
+      const rootDir = await createDirectory([
+        [
+          'mono-root',
+          [
+            { 'fake-project.json': { isRoot: true } },
+            ['frontend', [{ 'fake-project.json': { name: 'frontendileinen' } }]],
+            ['backend', [{ 'fake-project.json': { name: 'backendileinen' } }]],
+          ],
+        ],
+      ])
 
-  it(`should return 'r' for step tree of exclusively fsMode='r' steps`, () => {
-    // Given
-    const stepTree = [
-      generateExecutionStep(ctx, {
-        type: SOURCE__DEFINE,
-      }),
-      generateExecutionStep(ctx, {
-        type: ACTOR__DISCOVER_FACETS,
-      }),
-    ]
+      const ctx = await makeWhimbrelContext({
+        cwd: path.join(rootDir, 'mono-root'),
+        facets: new DefaultFacetRegistry([
+          FakeProjectFacet,
+          ProjectFacet,
+          SourceFacet,
+          TargetFacet,
+          ActorFacet,
+          testFacetBuilder('dummy')
+            .tasks(
+              makeTask({
+                id: 'dummy:do-nested-things',
+                parameters: {
+                  target: {
+                    type: 'actor',
+                    required: true,
+                    defaults: [{ ref: 'target' }],
+                  },
+                },
+              }),
+              makeTask({
+                id: 'dummy:für-alle',
+                parameters: {
+                  target: {
+                    type: 'actor',
+                    required: true,
+                    defaults: [{ ref: 'target' }],
+                  },
+                },
+              }),
+              'even-more-nested'
+            )
+            .augmentationFor('dummy:do-nested-things', (b) =>
+              b.bindActor('target').attach('dummy:für-alle', {
+                type: PROJECT__EACH_SUBMODULE,
+                inputs: {
+                  task: {
+                    type: 'dummy:even-more-nested',
+                  },
+                  inputs: {},
+                },
+                parameters: {
+                  target: {
+                    type: 'actor',
+                    required: true,
+                    defaults: [{ ref: 'target' }],
+                  },
+                },
+              })
+            )
+            .augmentationFor('dummy:even-more-nested', (b) => b.attach('dummy:für-alle'))
+            .build(),
+        ]),
+      })
 
-    // When
-    const treeMode = determinePlanFsMode(stepTree)
+      const task = ctx.facets.lookupTask('dummy:do-nested-things')
 
-    // Then
-    expect(treeMode).toEqual('r')
-  })
+      const blueprint = {
+        steps: [
+          ...inferPreparationSteps(ctx, task),
+          {
+            type: task.id,
+            inputs: {},
+          },
+        ],
+      }
 
-  it(`should return 'rw' for step tree of mixed 'r'/'w' steps`, () => {
-    // Given
-    const stepTree = [
-      generateExecutionStep(ctx, {
-        type: SOURCE__DEFINE,
-      }),
-      generateExecutionStep(ctx, {
-        type: 'write-things',
-        task: makeTask({
-          id: 'write-things',
-          fsMode: 'w',
-        }),
-      }),
-    ]
+      // When
+      const plan = await materializePlan(ctx, blueprint)
 
-    // When
-    const treeMode = determinePlanFsMode(stepTree)
+      // Then
+      expect(toArrayTree(plan.steps)).toEqual([
+        [
+          'mono-root:target:define',
+          [
+            'mono-root:actor:analyze',
+            ['mono-root:actor:discover-facets'],
+            [
+              'mono-root:project:define-submodules',
+              [
+                'backend:target:define',
 
-    // Then
-    expect(treeMode).toEqual('rw')
+                ['backend:actor:analyze', ['backend:actor:discover-facets']],
+                ['backend:actor:reify'],
+              ],
+              [
+                'frontend:target:define',
+                ['frontend:actor:analyze', ['frontend:actor:discover-facets']],
+                ['frontend:actor:reify'],
+              ],
+            ],
+          ],
+          ['mono-root:actor:reify'],
+        ],
+        [
+          'dummy:do-nested-things',
+          ['mono-root:dummy:für-alle'],
+          [
+            'mono-root:project:each-submodule',
+            ['backend:dummy:even-more-nested', ['backend:dummy:für-alle']],
+            ['frontend:dummy:even-more-nested', ['frontend:dummy:für-alle']],
+          ],
+        ],
+      ])
+    })
   })
 })
