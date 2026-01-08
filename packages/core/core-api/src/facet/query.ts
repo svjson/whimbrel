@@ -8,6 +8,7 @@ import {
   LicenseIdentifier,
   ScriptExplanation,
 } from './role'
+import { Artifact } from './artifact'
 
 /**
  * Describes a query to be performed against the facets of an Actor.
@@ -135,6 +136,10 @@ export type FacetQueryTypes = {
   }
   'license:context-default': {
     QueryResultType: string
+    CriteriaType: never
+  }
+  'package-manager:artifacts': {
+    QueryResultType: Artifact[]
     CriteriaType: never
   }
   'package-manager:explain-script': {

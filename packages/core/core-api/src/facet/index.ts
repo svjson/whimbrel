@@ -1,6 +1,7 @@
 export { FacetImplementationError } from './error'
 export { makeFacetModule } from './factory'
 
+export type { Artifact } from './artifact'
 export type { MergeConfigFunction } from './config'
 export type { DeclaredFacet, FacetDeclaration, FacetId } from './declaration'
 export type {

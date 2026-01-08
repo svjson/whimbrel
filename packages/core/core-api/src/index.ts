@@ -68,6 +68,7 @@ export type {
   WhimbrelContextOptions,
 } from './context'
 export type {
+  Artifact,
   PackageFileRole,
   PackageManagerRole,
   BuildConfigRole,
