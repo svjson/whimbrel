@@ -40,7 +40,7 @@ describe('whim x pnpm:migrate-submodule', () => {
         // Then
         const pkgJson = await PackageJSON.read(DiskFileSystem, modulePath)
         expect(pkgJson.get('dependencies')).toEqual(
-          pennantFixture.fromNpm['packages/backend']['package.json'].dependencies
+          pennantFixture.fromNpm.packages['packages/backend']['package.json'].dependencies
         )
       })
 
@@ -58,7 +58,7 @@ describe('whim x pnpm:migrate-submodule', () => {
             path.join(root, submodulePath)
           )
           expect(pkgJson.get('dependencies')).toEqual(
-            pennantFixture.fromNpm[submodulePath]['package.json'].dependencies
+            pennantFixture.fromNpm.packages[submodulePath]['package.json'].dependencies
           )
         }
       })
