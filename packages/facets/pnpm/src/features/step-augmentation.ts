@@ -36,6 +36,13 @@ export const migrateProjectAugmentation: StepAugmentationGenerator = async ({
       },
     },
     {
+      type: PNPM__MIGRATE_SCRIPTS,
+      bind: {
+        target: target.name,
+        key: 'target',
+      },
+    },
+    {
       type: PROJECT__EACH_SUBMODULE,
       bind: {
         target: target.name,

@@ -15,6 +15,10 @@ const rewritePkgManagerNode = (node: CommandNode) => {
         parts.push('-r')
       }
 
+      if (intent.target.type === 'module' && intent.target.module !== 'self') {
+        parts.push('--filter', intent.target.module)
+      }
+
       parts.push(command)
     }
   } else if (intent.op === 'publish') {
