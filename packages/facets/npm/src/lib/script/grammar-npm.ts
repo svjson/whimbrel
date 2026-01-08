@@ -11,6 +11,7 @@ export type NpmGrammar = Grammar<
   | 'arg'
   | 'script-name'
   | 'workspaces-scope'
+  | 'workspace-module'
   | 'if-present'
   | 'access-type',
   never
@@ -86,12 +87,33 @@ export const npmGrammar: ParserStateMachine<NpmGrammar> = {
               },
             },
             {
+              text: '--workspace',
+              state: 'postCmdWs',
+            },
+            {
               text: '--workspaces',
               emit: 'workspaces-scope',
               state: 'run',
             },
           ],
         },
+      },
+    ],
+  },
+  postCmd: {
+    transitions: [
+      {
+        text: '--workspace',
+        state: 'postCmdWs',
+      },
+    ],
+  },
+  postCmdWs: {
+    transitions: [
+      {
+        token: 'word',
+        emit: 'workspace-module',
+        state: 'postCmd',
       },
     ],
   },

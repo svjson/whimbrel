@@ -118,6 +118,18 @@ export const makeNpmEmitter = (): Emitter<NpmGrammar> => {
           intentTarget.type = 'workspace'
           delete intentTarget.module
           break
+        case 'workspace-module':
+          const module = tokenBuffer.at(-1).text
+          node.scope = {
+            type: 'module',
+            module: module,
+          }
+          summaryStub.context = `in module "${module}"`
+          intentStub.target = Object.assign(intentStub.target ?? {}, {
+            type: 'module',
+            module: module,
+          })
+          break
         case 'script-name':
           node.script = tokenText
           summaryStub.subject = `"${tokenText}"`

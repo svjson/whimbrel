@@ -97,6 +97,36 @@ describe('NpmCommandParser', () => {
           },
         ],
       ],
+      [
+        'run dev --workspace @myproj/core',
+        {
+          command: 'npm',
+          args: ['run', 'dev', '--workspace', '@myproj/core'],
+        },
+        [
+          {
+            type: 'npm',
+            command: 'run',
+            script: 'dev',
+            scope: {
+              type: 'module',
+              module: '@myproj/core',
+            },
+            description: {
+              summary: 'Execute package.json script "dev" in module "@myproj/core"',
+              intent: {
+                op: 'execute',
+                kind: 'package.json-script',
+                id: 'dev',
+                target: {
+                  type: 'module',
+                  module: '@myproj/core',
+                },
+              },
+            },
+          },
+        ],
+      ],
     ] as TestCase[])('should parse %s', testFn)
   })
 
