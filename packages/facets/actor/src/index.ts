@@ -17,13 +17,14 @@ export {
   DiscoverFacets,
   Reify,
   ACTOR__ANALYZE,
+  ACTOR__DELETE_FACET_ARTIFACTS,
   ACTOR__DISCOVER_FACETS,
   ACTOR__REIFY,
 } from './tasks'
 
 export const ActorFacet = makeFacetModule({
   id: 'actor',
-  tasks: moduleTasks(Analyze, DiscoverFacets, Reify),
+  tasks: moduleTasks(Analyze, DeleteFacetArtifacts, DiscoverFacets, Reify),
   taskAugmentations: {
     'source:define': sourceDefineAugmentation,
     'target:define': targetDefineAugmentation,
