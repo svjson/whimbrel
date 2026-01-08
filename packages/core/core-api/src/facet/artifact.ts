@@ -9,6 +9,14 @@ export type ArtifactRole =
   | 'package-manager-config'
 
 /**
+ * The origin of a facet artifact.
+ *
+ * - `authored`: Manually created and maintained.
+ * - `generated`: Created and maintained by tools.
+ */
+export type ArtifactOrigin = 'authored' | 'generated'
+
+/**
  * Definition of a conceptual Facet artifact
  */
 export interface Artifact {
@@ -30,9 +38,6 @@ export interface Artifact {
 
   /**
    * The origin of the artifact content.
-   *
-   * - `authored`: Manually created and maintained.
-   * - `generated`: Created and maintained by tools.
    */
   origin: 'authored' | 'generated'
 
