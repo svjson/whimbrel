@@ -51,7 +51,7 @@ export abstract class AbstractFileSystem implements FileSystem {
     return parseJSON((await this.read(filePath, encoding)) as string) as T
   }
 
-  abstract rmdir(dirPath: string): Promise<void>
+  abstract rmdir(dirPath: string, opts?: FileSystemCtxOptions): Promise<void>
 
   abstract scanDir(filePath: string, opts: FileSystemScanOptions): Promise<FileEntry[]>
 

@@ -97,8 +97,9 @@ export class ContextFileSystem extends AbstractFileSystem implements FileSystem 
     return await this.impl.read(filePath, encoding)
   }
 
-  async rmdir(dirPath: string) {
-    return await this.impl.rmdir(dirPath)
+  async rmdir(dirPath: string, opts: FileSystemCtxOptions = {}) {
+    await this.impl.rmdir(dirPath)
+    this.reporter.dirDeleted(dirPath, opts)
   }
 
   async scanDir(dirPath: string, opts: FileSystemScanOptions = {}) {
