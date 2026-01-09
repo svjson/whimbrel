@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel-test/lib-integration-tests",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "type": "module",
   "private": true,
   "description": "Integration tests for Whimbrel-as-a-library",
@@ -8,11 +8,11 @@
     "test:integration": "vitest run"
   },
   "devDependencies": {
-    "@whimbrel/core": "0.0.6",
-    "@whimbrel-test/asset-fixtures": "0.0.6",
-    "@whimbrel-test/tree-fixtures": "0.0.6",
-    "@whimbrel/filesystem": "0.0.6",
-    "@whimbrel/git": "0.0.6",
+    "@whimbrel/core": "0.1.0",
+    "@whimbrel-test/asset-fixtures": "0.1.0",
+    "@whimbrel-test/tree-fixtures": "0.1.0",
+    "@whimbrel/filesystem": "0.1.0",
+    "@whimbrel/git": "0.1.0",
     "vitest": "^3.2.4"
   }
 }

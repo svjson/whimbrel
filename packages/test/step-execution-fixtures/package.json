@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel-test/step-execution-fixtures",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "private": true,
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,10 +19,10 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "0.0.6",
-    "@whimbrel/facet": "0.0.6",
-    "@whimbrel/project": "0.0.6",
-    "@whimbrel-test/step-fixtures": "0.0.6",
-    "@whimbrel-test/context-fixtures": "0.0.6"
+    "@whimbrel/core-api": "0.1.0",
+    "@whimbrel/facet": "0.1.0",
+    "@whimbrel/project": "0.1.0",
+    "@whimbrel-test/step-fixtures": "0.1.0",
+    "@whimbrel-test/context-fixtures": "0.1.0"
   }
 }

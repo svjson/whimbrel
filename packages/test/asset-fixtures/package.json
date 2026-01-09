@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel-test/asset-fixtures",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "private": true,
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,6 +18,6 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "0.0.6"
+    "@whimbrel/core-api": "0.1.0"
   }
 }

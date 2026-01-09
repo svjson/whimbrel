@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/core",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Whimbrel Core Library",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,26 +22,26 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/actor": "^0.0.6",
-    "@whimbrel/array": "^0.0.6",
-    "@whimbrel/core-api": "^0.0.6",
-    "@whimbrel/facet": "^0.0.6",
-    "@whimbrel/filesystem": "^0.0.6",
-    "@whimbrel/project": "^0.0.6",
-    "@whimbrel/source": "^0.0.6",
-    "@whimbrel/target": "^0.0.6",
-    "@whimbrel/walk": "^0.0.6"
+    "@whimbrel/actor": "^0.1.0",
+    "@whimbrel/array": "^0.1.0",
+    "@whimbrel/core-api": "^0.1.0",
+    "@whimbrel/facet": "^0.1.0",
+    "@whimbrel/filesystem": "^0.1.0",
+    "@whimbrel/project": "^0.1.0",
+    "@whimbrel/source": "^0.1.0",
+    "@whimbrel/target": "^0.1.0",
+    "@whimbrel/walk": "^0.1.0"
   },
   "devDependencies": {
-    "@whimbrel-test/tree-fixtures": "^0.0.6",
-    "@whimbrel/actor": "^0.0.6",
-    "@whimbrel/array": "^0.0.6",
-    "@whimbrel/core-api": "^0.0.6",
-    "@whimbrel/facet": "^0.0.6",
-    "@whimbrel/filesystem": "^0.0.6",
-    "@whimbrel/project": "^0.0.6",
-    "@whimbrel/source": "^0.0.6",
-    "@whimbrel/target": "^0.0.6",
-    "@whimbrel/walk": "^0.0.6"
+    "@whimbrel-test/tree-fixtures": "^0.1.0",
+    "@whimbrel/actor": "^0.1.0",
+    "@whimbrel/array": "^0.1.0",
+    "@whimbrel/core-api": "^0.1.0",
+    "@whimbrel/facet": "^0.1.0",
+    "@whimbrel/filesystem": "^0.1.0",
+    "@whimbrel/project": "^0.1.0",
+    "@whimbrel/source": "^0.1.0",
+    "@whimbrel/target": "^0.1.0",
+    "@whimbrel/walk": "^0.1.0"
   }
 }

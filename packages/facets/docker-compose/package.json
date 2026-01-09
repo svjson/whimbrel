@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/docker-compose",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "docker-compose Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,16 +22,16 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.0.6",
-    "@whimbrel/facet": "^0.0.6",
-    "@whimbrel/flow": "^0.0.6",
-    "@whimbrel/struct-file": "^0.0.6"
+    "@whimbrel/core-api": "^0.1.0",
+    "@whimbrel/facet": "^0.1.0",
+    "@whimbrel/flow": "^0.1.0",
+    "@whimbrel/struct-file": "^0.1.0"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "0.0.6",
-    "@whimbrel/facet": "0.0.6",
-    "@whimbrel/flow": "^0.0.6",
-    "@whimbrel/struct-file": "^0.0.6",
+    "@whimbrel/core-api": "0.1.0",
+    "@whimbrel/facet": "0.1.0",
+    "@whimbrel/flow": "^0.1.0",
+    "@whimbrel/struct-file": "^0.1.0",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
