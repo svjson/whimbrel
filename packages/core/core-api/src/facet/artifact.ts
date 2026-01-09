@@ -2,8 +2,8 @@
  * Recognized roles of facet artifacts
  */
 export type ArtifactRole =
-  | 'dependency-versions'
-  | 'dependency-packages'
+  | 'dependency-lock'
+  | 'dependency-store'
   | 'workspace'
   | 'submodule-definition'
   | 'package-manager-config'

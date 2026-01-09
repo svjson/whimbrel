@@ -24,7 +24,7 @@ export const queryArtifacts: FacetQueryFunction<'package-manager:artifacts'> = a
     {
       type: 'dir',
       name: 'node_modules',
-      role: ['dependency-store'],
+      roles: ['dependency-store'],
       origin: 'generated',
       regenerable: 'always',
       vcs: 'never',
