@@ -1,3 +1,4 @@
+import { ACTOR__DELETE_FACET_ARTIFACTS } from '@whimbrel/actor'
 import {
   MigrateSubmodule,
   PNPM__MIGRATE_SCRIPTS,
@@ -60,7 +61,16 @@ export const migrateProjectAugmentation: StepAugmentationGenerator = async ({
         ...MigrateSubmodule.parameters,
       },
     },
-    // TODO: tree:delete-file
+    {
+      type: ACTOR__DELETE_FACET_ARTIFACTS,
+      bind: {
+        target: target.name,
+        key: 'target',
+      },
+      inputs: {
+        actorRole: 'package-manager',
+      },
+    },
   ]
 }
 
@@ -89,6 +99,16 @@ export const migrateSubmoduleAugmentation: StepAugmentationGenerator = async ({
       bind: {
         target: target.name,
         key: 'target',
+      },
+    },
+    {
+      type: ACTOR__DELETE_FACET_ARTIFACTS,
+      bind: {
+        target: target.name,
+        key: 'target',
+      },
+      inputs: {
+        actorRole: 'package-manager',
       },
     },
   ]
