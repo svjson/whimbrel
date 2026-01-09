@@ -21,20 +21,15 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/array": "^0.1.0",
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/package-json": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/array": "*",
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/package-json": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/core": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
     "@whimbrel/struct-file": "^0.1.0",
     "@whimbrel/typescript": "^0.1.0",
     "@whimbrel-test/asset-fixtures": "0.1.0",

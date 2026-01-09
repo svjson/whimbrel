@@ -21,27 +21,21 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/flow": "*",
+    "spdx-license-list": "^6.10.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
-    "@whimbrel/core": "^0.1.0",
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
+    "@whimbrel-test/context-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
+    "@whimbrel/core": "*",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "spdx-license-list": "^6.10.0"
   }
 }

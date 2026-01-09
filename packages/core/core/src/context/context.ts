@@ -21,8 +21,7 @@ import {
   DiskFileSystem,
   FileSystemMutationReporter,
 } from '@whimbrel/filesystem'
-import { makeLogger } from '../log'
-import { DefaultFormatter } from '@src/log/formatter'
+import { makeLogger, DefaultFormatter } from '@src/log'
 import { runCommand } from '@src/cmd/command'
 
 const getActorByCriteria = (

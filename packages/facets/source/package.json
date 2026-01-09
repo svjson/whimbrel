@@ -21,18 +21,14 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/walk": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/walk": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/walk": "^0.1.0",
-    "@whimbrel-test/step-execution-fixtures": "0.1.0",
+    "@whimbrel-test/step-execution-fixtures": "*",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-tsconfig-paths": "^5.1.4",

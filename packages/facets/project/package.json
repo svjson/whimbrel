@@ -21,14 +21,12 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
+    "@whimbrel-test/context-fixtures": "*",
     "@types/node": "^24.3.0",
     "rimraf": "^6.0.1",
     "vite": "^7.1.2",

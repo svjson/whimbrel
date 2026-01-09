@@ -21,13 +21,12 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/array": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/array": "*"
   },
   "devDependencies": {
     "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/array": "^0.1.0",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-tsconfig-paths": "^5.1.4",

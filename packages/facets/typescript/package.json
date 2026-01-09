@@ -21,31 +21,24 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/array": "^0.1.0",
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/package-json": "^0.1.0"
+  "dependencies": {
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "@whimbrel/array": "*",
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/package-json": "*"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.28.0",
     "@types/node": "^24.3.0",
-    "@whimbrel-test/asset-fixtures": "0.1.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
+    "@whimbrel-test/asset-fixtures": "*",
+    "@whimbrel-test/context-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
     "@whimbrel/core": "^0.1.0",
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/struct-file": "^0.1.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "@babel/parser": "^7.28.5",
-    "@babel/traverse": "^7.28.5"
   }
 }

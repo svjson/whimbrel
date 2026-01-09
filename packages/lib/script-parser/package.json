@@ -21,10 +21,9 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*"
   },
-  "dependencies": {},
   "devDependencies": {
     "@whimbrel/core-api": "^0.1.0",
     "@types/node": "^24.3.0",

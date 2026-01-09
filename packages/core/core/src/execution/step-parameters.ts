@@ -7,7 +7,7 @@ import {
   WhimbrelContext,
   WhimbrelError,
 } from '@whimbrel/core-api'
-import { Resolution, resolve, resolveWithMetadata } from '@whimbrel/walk'
+import { Resolution, resolveWithMetadata } from '@whimbrel/walk'
 
 export type ParamResolution = Partial<Resolution> & {
   type: RequirementType

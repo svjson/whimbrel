@@ -13,7 +13,6 @@ export default defineConfig({
   outExtension: ({ format }) => (format === 'cjs' ? { js: '.cjs' } : { js: '.js' }),
   external: [
     ...Object.keys(pkg.devDependencies ?? {}),
-    ...Object.keys(pkg.peerDependencies ?? {}),
     ...builtinModules,
     /^@whimbrel\//,
   ],

@@ -21,27 +21,18 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/actor": "^0.1.0",
-    "@whimbrel/array": "^0.1.0",
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/project": "^0.1.0",
-    "@whimbrel/source": "^0.1.0",
-    "@whimbrel/target": "^0.1.0",
-    "@whimbrel/walk": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/actor": "*",
+    "@whimbrel/array": "*",
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/project": "*",
+    "@whimbrel/source": "*",
+    "@whimbrel/target": "*",
+    "@whimbrel/walk": "*"
   },
   "devDependencies": {
-    "@whimbrel-test/tree-fixtures": "^0.1.0",
-    "@whimbrel/actor": "^0.1.0",
-    "@whimbrel/array": "^0.1.0",
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/project": "^0.1.0",
-    "@whimbrel/source": "^0.1.0",
-    "@whimbrel/target": "^0.1.0",
-    "@whimbrel/walk": "^0.1.0"
+    "@whimbrel-test/tree-fixtures": "^0.1.0"
   }
 }

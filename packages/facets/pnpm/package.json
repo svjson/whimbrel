@@ -21,23 +21,18 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/package-json": "^0.1.0",
-    "@whimbrel/project": "^0.1.0",
-    "@whimbrel/script-parser": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/package-json": "*",
+    "@whimbrel/project": "*",
+    "@whimbrel/script-parser": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/package-json": "^0.1.0",
-    "@whimbrel/project": "^0.1.0",
-    "@whimbrel/script-parser": "^0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
+    "@whimbrel/core-api": "*",
+    "@whimbrel-test/tree-fixtures": "*",
+    "@whimbrel-test/context-fixtures": "*",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",

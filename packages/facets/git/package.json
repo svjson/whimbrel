@@ -21,13 +21,14 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/gitignore": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/struct-file": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/gitignore": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/struct-file": "*",
+    "isomorphic-git": "^1.33.1"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
@@ -40,8 +41,5 @@
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "isomorphic-git": "^1.33.1"
   }
 }

@@ -21,23 +21,18 @@
     "clean": "rimraf ./dist && rimraf ./node_modules",
     "publish": "npm publish --access public"
   },
-  "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/struct-file": "^0.1.0"
+  "dependencies": {
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/struct-file": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/core": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/struct-file": "^0.1.0",
-    "@whimbrel-test/asset-fixtures": "0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
+    "@whimbrel/core": "*",
+    "@whimbrel-test/asset-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
+    "@whimbrel-test/context-fixtures": "*",
     "@types/node": "^24.3.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
