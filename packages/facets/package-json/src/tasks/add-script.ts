@@ -1,8 +1,20 @@
 import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { PackageJSON } from '@src/adapters'
 
+/**
+ * Global identifier for the AddScript task.
+ */
 export const PACKAGE_JSON__ADD_SCRIPT = 'package.json:add-script'
 
+/**
+ * Executes the AddScript task.
+ *
+ * Adds a script to the package.json scripts section.
+ * If the script with the given name already exists
+ * with the same content, no changes are made.
+ *
+ * @param ctx The Whimbrel context.
+ */
 const execute = async (ctx: WhimbrelContext) => {
   const { target, name, script } = ctx.step.inputs
 
@@ -21,6 +33,10 @@ const execute = async (ctx: WhimbrelContext) => {
   await packageJson.write()
 }
 
+/**
+ * Task that adds a script to the scripts section of the
+ * package.json file of the target actor
+ */
 export const AddScript = makeTask({
   id: PACKAGE_JSON__ADD_SCRIPT,
   name: 'Add package.json Script',

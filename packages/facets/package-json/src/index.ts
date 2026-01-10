@@ -3,11 +3,13 @@ import { detect, applyLicenseAugmentation } from './features'
 import {
   AddScript,
   RemoveScript,
+  RenameScript,
   ResolveConflict,
   SetProperty,
   SetVersion,
   PACKAGE_JSON__ADD_SCRIPT,
   PACKAGE_JSON__REMOVE_SCRIPT,
+  PACKAGE_JSON__RENAME_SCRIPT,
   PACKAGE_JSON__RESOLVE_CONFLICT,
   PACKAGE_JSON__SET_PROPERTY,
   PACKAGE_JSON__SET_VERSION,
@@ -28,11 +30,13 @@ export { PackageJSON, WorkspaceAdapter } from './adapters'
 export {
   AddScript,
   RemoveScript,
+  RenameScript,
   ResolveConflict,
   SetProperty,
   SetVersion,
   PACKAGE_JSON__ADD_SCRIPT,
   PACKAGE_JSON__REMOVE_SCRIPT,
+  PACKAGE_JSON__RENAME_SCRIPT,
   PACKAGE_JSON__RESOLVE_CONFLICT,
   PACKAGE_JSON__SET_PROPERTY,
   PACKAGE_JSON__SET_VERSION,
@@ -41,7 +45,14 @@ export {
 export default makeFacetModule({
   id: 'package.json',
   implicits: [{ facet: 'node', scope: { roles: ['engine'] } }, 'project'],
-  tasks: moduleTasks(AddScript, RemoveScript, ResolveConflict, SetProperty, SetVersion),
+  tasks: moduleTasks(
+    AddScript,
+    RemoveScript,
+    RenameScript,
+    ResolveConflict,
+    SetProperty,
+    SetVersion
+  ),
   detect,
   taskAugmentations: {
     'license:apply': {

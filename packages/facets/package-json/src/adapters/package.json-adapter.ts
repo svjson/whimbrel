@@ -123,6 +123,15 @@ export class PackageJSON extends JSONFile {
   }
 
   /**
+   * Delete a declared script from the "scripts" section
+   *
+   * @param scriptName - The name of the script to delete
+   */
+  deleteScript(scriptName: string): void {
+    return this.delete(['scripts', scriptName])
+  }
+
+  /**
    * Get the declared version string for a dependency.
    *
    * @param dependency - The name of the dependency to get the version for.

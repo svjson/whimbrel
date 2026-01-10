@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## [UNRELEASED]
+
+### Added
+
+**@whimbrel/package-json**
+- Task - npm:rename-script
 
 ### Fixes
 
-* - Fixed overzealous reliance on peerDependencies, causing dependency mismatch in consuming projects
+- Fixed overzealous reliance on peerDependencies, causing dependency mismatch in consuming projects
 
 
 ---
