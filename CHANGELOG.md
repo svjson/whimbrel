@@ -7,6 +7,13 @@
 **@whimbrel/package-json**
 - Task - npm:rename-script
 
+
+### Changed
+
+**@whimbrel/script-parser**
+- Multiple values for token/text criteria on state transitions, with any-of semantics
+
+
 ### Fixes
 
 - Fixed overzealous reliance on peerDependencies, causing dependency mismatch in consuming projects

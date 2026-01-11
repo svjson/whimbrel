@@ -24,12 +24,12 @@ export interface Transition<G extends Grammar> {
    * Require a token to be of this type to allow this transition to
    * be selected.
    */
-  token?: string
+  token?: string | string[]
   /**
    * Require the text of a token to equal this string to allow this
    * transition to be selected.
    */
-  text?: string
+  text?: string | string[]
   /**
    * Determines if the evaluated token that resulted in this transition
    * being selected should be ignored.

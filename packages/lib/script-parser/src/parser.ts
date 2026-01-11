@@ -134,18 +134,47 @@ const makeTokenReader = <G extends Grammar>(
     },
 
     /**
+     * Tests if a Token fulfills the criteria of a Transition.
+     *
+     * For non-special cases, like 'context-delimiter', the transition criteria
+     * is met if all specified criteria in the transition are met by the token.
+     *
+     * @param t - The transition to test against
+     * @param token - The token to test
+     *
+     * @return True if the token meets the transition criteria, false otherwise
+     */
+    meetsTransitionCriteria(t: Transition<G>, token: Token) {
+      if (
+        t.token === 'context-delimiter' &&
+        contextStack.at(-1)?.delimiter.type === token.type &&
+        contextStack.at(-1)?.delimiter.text === token.text
+      ) {
+        return true
+      }
+
+      if (
+        t.token &&
+        !(Array.isArray(t.token) ? t.token : [t.token]).includes(token.type)
+      ) {
+        return false
+      }
+
+      if (t.text && !(Array.isArray(t.text) ? t.text : [t.text]).includes(token.text))
+        return false
+
+      return true
+    },
+
+    /**
      * Read a token and update the reader state accordingly.
      *
      * @param token - The token to read
      * @return void
      */
     readToken(token: Token) {
-      const transition = readerState.state.transitions.find(
-        (t) =>
-          ((!t.token || t.token === token.type) && (!t.text || t.text === token.text)) ||
-          (t.token === 'context-delimiter' &&
-            contextStack.at(-1)?.delimiter.type === token.type &&
-            contextStack.at(-1)?.delimiter.text === token.text)
+      const transition = readerState.state.transitions.find((t) =>
+        this.meetsTransitionCriteria(t, token)
       )
 
       if (transition) {

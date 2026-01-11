@@ -13,13 +13,7 @@ export const grammar: ParserStateMachine<ShellGrammar> = {
     transitions: [
       {
         token: 'symbol',
-        text: '&&',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '||',
+        text: ['&&', '||'],
         wrap: 'logical',
         state: 'initial',
       },
@@ -78,13 +72,7 @@ export const grammar: ParserStateMachine<ShellGrammar> = {
     transitions: [
       {
         token: 'symbol',
-        text: '&&',
-        wrap: 'logical',
-        state: 'initial',
-      },
-      {
-        token: 'symbol',
-        text: '||',
+        text: ['&&', '||'],
         wrap: 'logical',
         state: 'initial',
       },
@@ -96,7 +84,7 @@ export const grammar: ParserStateMachine<ShellGrammar> = {
       },
       {
         token: 'symbol',
-        text: '2>',
+        text: ['>', '2>'],
         wrap: 'forward',
         state: {
           transitions: [
@@ -110,11 +98,7 @@ export const grammar: ParserStateMachine<ShellGrammar> = {
         },
       },
       {
-        token: 'string',
-        state: 'in-arg',
-      },
-      {
-        token: 'word',
+        token: ['string', 'word'],
         state: 'in-arg',
       },
     ],
@@ -131,11 +115,7 @@ export const grammar: ParserStateMachine<ShellGrammar> = {
         state: 'args',
       },
       {
-        token: 'string',
-        state: 'in-arg',
-      },
-      {
-        token: 'word',
+        token: ['string', 'word'],
         state: 'in-arg',
       },
     ],
