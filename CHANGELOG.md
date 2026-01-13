@@ -4,11 +4,23 @@
 
 ### Added
 
+**@whimbrel/array**:
+- Function - *juxtCyclic* - Variant of *juxt* that cycles shorter array when lengths differ
+
 **@whimbrel/package-json**:
 - Task - npm:rename-script
 
-**@whimbrel/array**:
-- Function - *juxtCyclic* - Variant of *juxt* that cycles shorter array when lengths differ
+**@whimbrel/express**:
+- Interpret `builtin-funcall` in query `http-adapter:port`
+
+**@whimbrel/fastify**:
+- Interpret `builtin-funcall` in query `http-adapter:port`
+
+**@whimbrel/koa**:
+- Interpret `builtin-funcall` in query `http-adapter:port`
+
+**@whimbrel/typescript**:
+- Support resolving synthetic values safe built-in function invocations
 
 ### Changed
 

@@ -78,6 +78,14 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
       return { type: 'process-arg', index: argExpr.argIndex.map(toPortResolution) }
     }
 
+    if (argExpr.type === 'builtin-funcall') {
+      return {
+        type: 'builtin-funcall',
+        name: argExpr.name,
+        arguments: argExpr.arguments.map(toPortResolution),
+      }
+    }
+
     if (argExpr.type === 'process-env') {
       return { type: 'env', name: argExpr.name.map(toPortResolution) }
     }
