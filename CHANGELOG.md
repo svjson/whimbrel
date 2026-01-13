@@ -4,17 +4,19 @@
 
 ### Added
 
-**@whimbrel/package-json**
+**@whimbrel/package-json**:
 - Task - npm:rename-script
 
+**@whimbrel/array**:
+- Function - *juxtCyclic* - Variant of *juxt* that cycles shorter array when lengths differ
 
 ### Changed
 
-**@whimbrel/script-parser**
+**@whimbrel/script-parser**:
 - Multiple values for token/text criteria on state transitions, with any-of semantics
 
-**@whimbrel/array**
-- `juxt` now supports any number of arrays
+**@whimbrel/array**:
+- *juxt* now supports any number of arrays
 
 
 ### Fixes

@@ -46,6 +46,14 @@ describe('juxt', () => {
   })
 })
 
+describe('juxtCyclic', () => {
+  it('juxtaposes three arrays of different types and lengths', () => {
+    expect(juxtCyclic(['one', 'two', 'three'], [1], [{ t: 'ek' }, { t: 'do' }])).toEqual([
+      ['one', 1, { t: 'ek' }],
+      ['two', 1, { t: 'do' }],
+      ['three', 1, { t: 'ek' }],
+    ])
+  })
 })
 
 describe('leftPad', () => {

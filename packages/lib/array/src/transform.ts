@@ -22,6 +22,29 @@ export const juxt = <T extends readonly unknown[][]>(...arrays: T) =>
     (_, i) => arrays.map((a) => a[i]) as { [K in keyof T]: T[K][number] }
   )
 
+/**
+ * Juxtaposes any number of arrays, creating a new array where each element
+ * is an array of the positional values from each of the source arrays.
+ *
+ * If the arrays are of unequal length, the resulting array will have the length
+ * of the longest array, with missing values from the shorter arrays filled
+ * by cycling back to the beginning of those arrays
+ *
+ * Example:
+ * ```ts
+ * juxt(['one'], ['ein', 'zwei'], ['ek', 'do', 'teen'])
+ * // => [['one', 'ein', 'ek'], ['one', 'zwei', 'do'], ['one', 'ein', 'teen']]
+ * ```
+ *
+ * @param arrays - The arrays to juxtapose.
+ *
+ * @return A new array of juxtaposed values.
+ */
+export const juxtCyclic = <T extends readonly unknown[][]>(...arrays: T) =>
+  Array.from(
+    { length: Math.max(...arrays.map((a) => a.length)) },
+    (_, i) => arrays.map((a) => a[i % a.length]) as { [K in keyof T]: T[K][number] }
+  )
 
 /**
  * Left-pads an array with `undefined` values to reach a specified maximum length.
