@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { juxt, leftPad } from '@src/index'
+import { juxt, juxtCyclic, leftPad } from '@src/index'
 
 describe('juxt', () => {
   it('juxtaposes two arrays of string of equal length', () => {
@@ -34,6 +34,18 @@ describe('juxt', () => {
       ['three', 3],
     ])
   })
+
+  it('juxtaposes three arrays of different types', () => {
+    expect(
+      juxt(['one', 'two', 'three'], [1, 2, 3], [{ t: 'ek' }, { t: 'do' }, { t: 'teen' }])
+    ).toEqual([
+      ['one', 1, { t: 'ek' }],
+      ['two', 2, { t: 'do' }],
+      ['three', 3, { t: 'teen' }],
+    ])
+  })
+})
+
 })
 
 describe('leftPad', () => {

@@ -13,6 +13,9 @@
 **@whimbrel/script-parser**
 - Multiple values for token/text criteria on state transitions, with any-of semantics
 
+**@whimbrel/array**
+- `juxt` now supports any number of arrays
+
 
 ### Fixes
 

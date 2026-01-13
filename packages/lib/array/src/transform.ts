@@ -1,10 +1,10 @@
 /**
- * Juxtaposes two arrays, creating a new array where each element is an array of
- * the positional values from each of the source arrays.
+ * Juxtaposes any number of arrays, creating a new array where each element
+ * is an array of the positional values from each of the source arrays.
  *
  * If the arrays are of unequal length, the resulting array will have the length
- * of the longer array, with `undefined` filling in for missing values from the
- * shorter array.
+ * of the longest array, with `undefined` filling in for missing values from the
+ * shorter arrays.
  *
  * Example:
  * ```ts
@@ -12,13 +12,16 @@
  * // => [['one', 'ein'], ['two', 'zwei'], ['three', 'drei']]
  * ```
  *
- * @param arr1 - The first array.
- * @param arr2 - The second array.
+ * @param arrays - The arrays to juxtapose.
  *
  * @return A new array of juxtaposed values.
  */
-export const juxt = <TypeA, TypeB>(arr1: TypeA[], arr2: TypeB[]): [TypeA, TypeB][] =>
-  Array.from({ length: Math.max(arr1.length, arr2.length) }, (_, i) => [arr1[i], arr2[i]])
+export const juxt = <T extends readonly unknown[][]>(...arrays: T) =>
+  Array.from(
+    { length: Math.max(...arrays.map((a) => a.length)) },
+    (_, i) => arrays.map((a) => a[i]) as { [K in keyof T]: T[K][number] }
+  )
+
 
 /**
  * Left-pads an array with `undefined` values to reach a specified maximum length.
