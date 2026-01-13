@@ -11,6 +11,7 @@ import { makeActor } from '@whimbrel/core-api'
 
 import {
   TSCONFIG_JSON__VANILLA,
+  TYPESCRIPT__EXPRESS__SINGLE_FILE__PARSED_PROCESS_ENV_WITH_FALLBACK,
   TYPESCRIPT__EXPRESS__SINGLE_FILE__VANILLA_EXPRESS,
 } from '@whimbrel-test/asset-fixtures'
 import { DefaultFacetRegistry } from '@whimbrel/facet'
@@ -28,7 +29,29 @@ describe('http-adapter:port', () => {
           fallbacks: [],
         },
       ],
-    ])('should resolve', async (_, sourceFile, expectedResult) => {
+      [
+        'Number-parsed process.env.PORT with fallback',
+        TYPESCRIPT__EXPRESS__SINGLE_FILE__PARSED_PROCESS_ENV_WITH_FALLBACK,
+        {
+          primary: {
+            type: 'builtin-funcall',
+            name: 'Number',
+            arguments: [
+              {
+                type: 'env',
+                name: [
+                  {
+                    name: 'PORT',
+                    type: 'concrete',
+                  },
+                ],
+              },
+            ],
+          },
+          fallbacks: [{ type: 'concrete', value: 4321 }],
+        },
+      ],
+    ])('should resolve %s', async (_, sourceFile, expectedResult) => {
       // Given
       const ctx = await memFsContext({
         facets: new DefaultFacetRegistry([TypeScriptFacet, TsConfigJSONFacet]),
