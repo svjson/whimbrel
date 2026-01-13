@@ -6,6 +6,8 @@ import { DiskFileSystem } from '@whimbrel/filesystem'
 import { queryLanguageInvocation } from '@src/query/language.invocation'
 import { FunctionInvocationDescription } from '@whimbrel/core-api'
 import {
+  SOURCE__EXPRESS__SINGLE_FILE__PARSED_PROCESS_ENV_WITH_FALLBACK,
+  SOURCE__EXPRESS__SINGLE_FILE__VANILLA,
   SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_CONFIG_OBJ_DEREF,
   SOURCE__FASTIFY__SINGLE_FILE__STARTUP_ARROW_FUNCTION_WITH_PORT_ARG,
   SOURCE__FASTIFY__SINGLE_FILE__STARTUP_FUNCTION_WITH_PORT_ARG,
@@ -321,6 +323,100 @@ describe('language:invocation', () => {
           from: {
             type: 'library',
             name: 'koa',
+            importType: 'default',
+          },
+        },
+      }
+
+      // When
+      const result = await queryLanguageInvocation(ctx, {
+        type: 'language:invocation',
+        criteria: {
+          functionInvocation: invocationDescription,
+          sourceFolders: [root],
+        },
+      })
+
+      // Then
+      expect(result).toHaveLength(1)
+      expect(result[0]).toEqual({
+        language: 'typescript',
+        description: invocationDescription,
+        arguments: expectedArguments,
+      })
+    })
+  })
+
+  describe('Query Express.listen', () => {
+    it.each([
+      [
+        'with literal argument',
+        [
+          {
+            'index.ts': SOURCE__EXPRESS__SINGLE_FILE__VANILLA,
+          },
+        ],
+        [
+          {
+            type: 'literal',
+            literal: '4444',
+            value: 4444,
+          },
+        ],
+      ],
+      [
+        'with process-env and fallback passed to Number()',
+        [
+          {
+            'index.ts': SOURCE__EXPRESS__SINGLE_FILE__PARSED_PROCESS_ENV_WITH_FALLBACK,
+          },
+        ],
+        [
+          {
+            type: 'expression',
+            literal: 'Number(process.env.PORT || 4321)',
+            resolutions: [
+              {
+                type: 'builtin-funcall',
+                name: 'Number',
+                literal: 'Number(process.env.PORT || 4321)',
+                arguments: [
+                  {
+                    type: 'process-env',
+                    literal: 'process.env.PORT',
+                    name: [
+                      {
+                        type: 'symbol',
+                        name: 'PORT',
+                        resolutions: [],
+                      },
+                    ],
+                  },
+                ],
+                resolutions: [],
+              },
+              {
+                type: 'literal',
+                literal: '4321',
+                value: 4321,
+              },
+            ],
+          },
+        ],
+      ],
+    ])('should locate listen-invocation %s', async (_, files, expectedArguments) => {
+      // Given
+      const ctx = await memFsContext()
+      const root = await createDirectory(files, ctx.disk)
+      const invocationDescription: FunctionInvocationDescription = {
+        name: 'listen',
+        type: 'instance',
+        instance: {
+          type: 'return-value',
+          name: 'express',
+          from: {
+            type: 'library',
+            name: 'express',
             importType: 'default',
           },
         },

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { ExpressionStatement } from '@babel/types'
 import { findNode, findRecursive, resolveExpression, sourceToAST } from '@src/lib'
 import { stripASTDetails } from './fixtures'
 
@@ -35,6 +36,7 @@ describe('resolveExpression', () => {
                 value: 4,
               },
             ],
+            resolutions: [],
           },
           {
             category: 'literal',
@@ -72,6 +74,7 @@ describe('resolveExpression', () => {
                 value: 4,
               },
             ],
+            resolutions: [],
           },
           {
             category: 'literal',
@@ -100,6 +103,7 @@ describe('resolveExpression', () => {
                 value: 2,
               },
             ],
+            resolutions: [],
           },
           {
             category: 'literal',
@@ -148,6 +152,7 @@ describe('resolveExpression', () => {
                 value: 2,
               },
             ],
+            resolutions: [],
           },
         ],
       ],
@@ -219,6 +224,96 @@ describe('resolveExpression', () => {
 
       // Then
       expect(stripASTDetails(resolutions)).toEqual(expectedResolutions)
+    })
+  })
+
+  describe('Invocation', () => {
+    it.each([
+      [
+        'Number("2188")',
+        [
+          {
+            type: 'SyntheticValue',
+            category: 'literal',
+            valueType: 'number',
+            value: 2188,
+          },
+        ],
+      ],
+      [
+        'Number(process.env.PORT) || 8321',
+        [
+          {
+            type: 'CallExpression',
+            category: 'builtin-funcall',
+            name: 'Number',
+            arguments: [
+              {
+                category: 'process-env',
+                name: [
+                  {
+                    type: 'Identifier',
+                    category: 'expression',
+                    name: 'PORT',
+                    resolutions: [],
+                  },
+                ],
+                type: 'MemberExpression',
+              },
+            ],
+            resolutions: [],
+          },
+          {
+            type: 'NumericLiteral',
+            category: 'literal',
+            value: 8321,
+          },
+        ],
+      ],
+      [
+        'Number(process.env.PORT || 8321)',
+        [
+          {
+            type: 'CallExpression',
+            category: 'builtin-funcall',
+            name: 'Number',
+            arguments: [
+              {
+                category: 'process-env',
+                name: [
+                  {
+                    type: 'Identifier',
+                    category: 'expression',
+                    name: 'PORT',
+                    resolutions: [],
+                  },
+                ],
+                type: 'MemberExpression',
+              },
+            ],
+            resolutions: [],
+          },
+          {
+            type: 'SyntheticValue',
+            category: 'literal',
+            value: 8321,
+            valueType: 'number',
+          },
+        ],
+      ],
+    ])('should resolve %s', async (source, expectedResolutions) => {
+      // Given
+      const ast = sourceToAST(source)
+      const node = findRecursive<ExpressionStatement>(
+        ast.nodes[0],
+        'ExpressionStatement'
+      )[0].expression
+
+      // When
+      const resolutions = await resolveExpression(ast, node)
+
+      // Then
+      expect(stripASTDetails(resolutions, ['type'])).toEqual(expectedResolutions)
     })
   })
 })

@@ -199,10 +199,10 @@ export const findNode = <T extends Node = Node>(
  *
  * @return Array of located AST nodes
  */
-export const findRecursive = (
+export const findRecursive = <T extends Node = Node>(
   node: Node | Node[],
   exprTypes: string | string[]
-): Node[] => {
+): T[] => {
   if (!Array.isArray(exprTypes)) exprTypes = [exprTypes]
 
   if (Array.isArray(node)) {
@@ -222,5 +222,5 @@ export const findRecursive = (
       }
     }
   }
-  return found
+  return found as T[]
 }

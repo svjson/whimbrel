@@ -1,7 +1,6 @@
 import {
   ArrowFunctionExpression,
   CallExpression,
-  Expression,
   FunctionDeclaration,
   Identifier,
   ImportDeclaration,
@@ -9,7 +8,6 @@ import {
   Node,
   ObjectExpression,
   ObjectProperty,
-  PrivateName,
   VariableDeclaration,
 } from '@babel/types'
 
@@ -27,6 +25,29 @@ export interface SourceReference<NT extends Node = Node> {
   type: string
   ast: AST
   node: NT
+}
+
+export type SyntheticValueType = 'number' | 'string' | 'boolean' | 'undefined'
+
+export type SyntheticValueMap = {
+  number: number
+  string: string
+  boolean: boolean
+  undefined: undefined
+}
+
+export type SyntheticValueMapRev = {
+  number: 'number'
+  string: 'string'
+  boolean: 'boolean'
+  undefined: 'undefined'
+}
+
+export interface SyntheticValue<T extends SyntheticValueType = SyntheticValueType> {
+  type: 'SyntheticValue'
+  category: 'literal'
+  valueType: T
+  value: SyntheticValueMap[T]
 }
 
 /**
@@ -147,8 +168,9 @@ export type ObjectEntryReference = PropertyReference
  */
 export interface InvocationExpressionReference extends SourceReference<CallExpression> {
   type: 'CallExpression'
-  category: 'expression'
-  arguments: ValueExpression[]
+  category: 'expression' | 'builtin-funcall'
+  name?: string
+  arguments: ExpressionResolution[]
   resolutions: ExpressionResolution[]
 }
 
@@ -178,6 +200,7 @@ export interface ProcessArgumentReference extends SourceReference<MemberExpressi
   type: string
   category: 'process-arg'
   argIndex: ExpressionResolution[]
+  resolutions: []
 }
 
 /**
@@ -191,6 +214,12 @@ export interface EnvironmentVariableReference extends SourceReference<Node> {
   type: string
   category: 'process-env'
   name: ExpressionResolution[]
+}
+
+export interface BuiltInIdentifierReference extends SourceReference<Identifier> {
+  type: 'Identifier'
+  category: 'builtin'
+  name: string
 }
 
 /**
@@ -243,6 +272,8 @@ export type ExpressionResolution =
   | ExpressionReference
   | ProcessArgumentReference
   | EnvironmentVariableReference
+  | BuiltInIdentifierReference
+  | SyntheticValue
 
 /**
  * Extract the literal source being referenced by `sourceRef` as it appears
@@ -252,6 +283,9 @@ export type ExpressionResolution =
  *
  * @return The literal source string
  */
-export const getLiteral = (sourceRef: SourceReference): string => {
-  return sourceRef.ast.source.substring(sourceRef.node.start, sourceRef.node.end)
+export const getLiteral = (sourceRef: SourceReference | SyntheticValue): string => {
+  if ('node' in sourceRef) {
+    return sourceRef.ast.source.substring(sourceRef.node.start, sourceRef.node.end)
+  }
+  return String(sourceRef.value)
 }

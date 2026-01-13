@@ -1,5 +1,9 @@
 import path from 'node:path'
-import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
+import {
+  FacetQueryFunction,
+  FunctionInvocationDescription,
+  WhimbrelContext,
+} from '@whimbrel/core-api'
 import { getLiteral, locateInvocations, resolveInvocationArguments } from '@src/lib'
 import type {
   ValueExpression,
@@ -7,10 +11,12 @@ import type {
   ExpressionReference,
   IdentifierReference,
   ProcessArgumentReference,
+  InvocationExpressionReference,
+  ExpressionResolution,
 } from '@src/lib'
-import { ObjectReference } from '@src/lib/reference'
+import { ObjectReference, SyntheticValue } from '@src/lib/reference'
 
-const ARG_FORMAT: Record<string, (arg: ValueExpression) => any> = {
+const ARG_FORMAT: Record<string, (arg: ExpressionResolution) => any> = {
   literal: (arg) => ({
     type: arg.category,
     literal: getLiteral(arg),
@@ -20,6 +26,13 @@ const ARG_FORMAT: Record<string, (arg: ValueExpression) => any> = {
     type: arg.category,
     literal: getLiteral(arg),
     resolutions: (arg as ExpressionReference).resolutions.map(format),
+  }),
+  'builtin-funcall': (arg) => ({
+    type: arg.category,
+    literal: getLiteral(arg),
+    name: (arg as InvocationExpressionReference).name,
+    arguments: (arg as InvocationExpressionReference).arguments.map(format),
+    resolutions: (arg as InvocationExpressionReference).resolutions.map(format),
   }),
   'process-arg': (arg) => ({
     type: 'process-arg',
@@ -43,6 +56,11 @@ const ARG_FORMAT: Record<string, (arg: ValueExpression) => any> = {
       key: e.name,
       value: format(e.value),
     })),
+  }),
+  SyntheticValue: (arg: SyntheticValue) => ({
+    type: arg.category,
+    literal: String(arg.value),
+    value: arg.value,
   }),
 }
 

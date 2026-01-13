@@ -13,8 +13,10 @@ export { findNode, findRecursive, sourceToAST } from './ast'
 
 export type {
   SourceReference,
+  BuiltInIdentifierReference,
   ValueExpression,
   EnvironmentVariableReference,
+  InvocationExpressionReference,
   ExpressionReference,
   ExpressionResolution,
   IdentifierReference,

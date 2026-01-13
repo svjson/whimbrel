@@ -8,8 +8,6 @@ import type {
 import { listSourceFiles, matchesImportSource } from './source-tree'
 import { AST, filePathToAST, findRecursive, isLiteralNode, isTraversalNode } from './ast'
 import {
-  ArrowFunctionExpression,
-  FunctionDeclaration,
   type Identifier,
   type Node,
   type VariableDeclaration,

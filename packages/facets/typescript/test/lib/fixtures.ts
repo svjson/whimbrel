@@ -1,7 +1,8 @@
 import { SourceReference } from '@src/lib'
+import { SyntheticValue } from './reference'
 
 export const stripASTDetails = (
-  refs: SourceReference | SourceReference[],
+  refs: (SourceReference | SyntheticValue) | (SourceReference | SyntheticValue)[],
   keep: string[] = []
 ) => {
   if (Array.isArray(refs)) {

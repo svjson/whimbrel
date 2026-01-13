@@ -1,4 +1,6 @@
+import { juxtCyclic } from '@whimbrel/array'
 import {
+  CallExpression,
   Identifier,
   LogicalExpression,
   MemberExpression,
@@ -9,6 +11,7 @@ import { AST, getNodeLiteral } from './ast'
 import {
   ExpressionResolution,
   FunctionArgumentDeclaration,
+  IdentifierReference,
   InvocationExpressionReference,
   LiteralReference,
   ObjectPathReference,
@@ -24,7 +27,12 @@ import {
   resolveObjectProperties,
 } from './object'
 import { findFunctionInvocations } from './function'
-import { makeProcessArgReference, makeProcessEnvReference } from './binding'
+import {
+  makeProcessArgReference,
+  makeProcessEnvReference,
+  resolveBinding,
+  resolveBuiltInFunctionCall,
+} from './binding'
 
 export interface ExpressionResolutionOptions<
   R extends SourceReference = SourceReference,
@@ -106,20 +114,21 @@ const resolveIdentifierExpression = async (
   node: Identifier,
   opts?: ExpressionResolutionOptions
 ): Promise<ExpressionResolution[]> => {
-  if (opts?.acceptIdentifier) {
+  const decl = findIdentifierDefinition(ast, node)
+
+  if (!decl.length && opts?.acceptIdentifier) {
     return [
-      {
-        type: 'Identifier',
-        name: node.name,
-        category: 'expression',
-        resolutions: [],
-        node: node,
-        ast,
-      },
+      (await resolveBinding(ast, node)) ??
+        ({
+          type: 'Identifier',
+          name: node.name,
+          category: 'expression',
+          resolutions: [],
+          node: node,
+          ast,
+        } satisfies IdentifierReference),
     ]
   }
-
-  const decl = findIdentifierDefinition(ast, node)
 
   return (
     await Promise.all(
@@ -207,6 +216,47 @@ export const resolveObjectPathReference = async (
   return resolutions
 }
 
+export const resolveCallExpression = async (
+  ast: AST,
+  node: CallExpression,
+  _opts: ExpressionResolutionOptions
+) => {
+  const calleeResolutions = await resolveExpression(ast, node.callee, {
+    acceptIdentifier: true,
+  })
+  const argResolutions = juxtCyclic(
+    ...(await Promise.all(node.arguments.map((arg) => resolveExpression(ast, arg))))
+  )
+
+  const resolutions = []
+
+  for (const callee of calleeResolutions) {
+    for (const argSet of argResolutions) {
+      const callExpr = {
+        type: 'CallExpression',
+        category: callee.category === 'builtin' ? 'builtin-funcall' : 'expression',
+        name: callee.category === 'builtin' ? callee.name : undefined,
+        arguments: argSet,
+        resolutions: [],
+        ast,
+        node,
+      } satisfies InvocationExpressionReference
+
+      if (callExpr.category === 'builtin-funcall') {
+        const builtInResolution = await resolveBuiltInFunctionCall(callExpr)
+        if (builtInResolution) {
+          resolutions.push(builtInResolution)
+          continue
+        }
+      }
+
+      resolutions.push(callExpr)
+    }
+  }
+
+  return resolutions
+}
+
 /**
  * Resolves an expression AST node into its possible literal references or
  * external resources.
@@ -236,6 +286,8 @@ export const resolveExpression = async (
       return resolveMemberExpression(ast, node, opts)
     case 'Identifier':
       return resolveIdentifierExpression(ast, node, opts)
+    case 'CallExpression':
+      return resolveCallExpression(ast, node, opts)
     case 'FunctionDeclaration':
     case 'ArrowFunctionExpression':
       if (opts?.nodeRef?.type === 'FunctionArgumentDeclaration') {
@@ -249,7 +301,7 @@ export const resolveExpression = async (
       return resolveObjectExpression(ast, node, opts)
   }
 
-  // console.warn('Unable to resolve: ', node.type)
+  console.warn('Unable to resolve: ', node.type)
 
   return []
 }
