@@ -25,7 +25,8 @@
     "@whimbrel/core-api": "*",
     "@whimbrel/facet": "*",
     "@whimbrel/flow": "*",
-    "ignore": "^7.0.5"
+    "ignore": "^7.0.5",
+    "micromatch": "^4.0.8"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

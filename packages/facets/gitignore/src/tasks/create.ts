@@ -4,6 +4,7 @@ import { makeTask, WhimbrelContext } from '@whimbrel/core-api'
 import { queryFacets } from '@whimbrel/facet'
 import { beginFlow } from '@whimbrel/flow'
 import { unique } from '@whimbrel/array'
+import { purgeRedundant } from '@src/adapters/gitignore-adapter'
 
 export const GITIGNORE__CREATE = 'gitignore:create'
 
@@ -23,7 +24,11 @@ const execute = async (ctx: WhimbrelContext) => {
     .let('contributors', ({ queryResult }) =>
       unique(queryResult.map((qr) => qr.source)).join(', ')
     )
-    .let('ignoreFiles', ({ queryResult }) => queryResult.flatMap((qr) => qr.result), true)
+    .let(
+      'ignoreFiles',
+      ({ queryResult }) => purgeRedundant(queryResult.flatMap((qr) => qr.result)),
+      true
+    )
     .do(async ({ ignoreFiles }) => {
       const contents = [
         '# --- Ignore Files ---',

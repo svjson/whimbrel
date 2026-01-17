@@ -34,6 +34,9 @@
 **@whimbrel/array**:
 - *juxt* now supports any number of arrays
 
+**@whimbrel/gitignore**:
+- Updated task `gitignore:create` to remove redundant patterns from list of discovered files to ignore
+
 **@whimbrel/tsconfig.json**:
 - Updated `detect` to include the full reference tree of detected base tsconfig.json files
 - Updated query `version-control:ignore-files` to consider the full tsconfig file hierarchy

@@ -81,6 +81,11 @@ describe(GITIGNORE__CREATE, () => {
                   source: 'tsconfig.json',
                   result: [
                     { pattern: 'dist/', groups: ['build'], source: 'tsconfig.json' },
+                    {
+                      pattern: 'tsconfig.tsbuildinfo',
+                      groups: ['build'],
+                      source: 'tsconfig.json',
+                    },
                   ],
                 },
               ],
@@ -104,6 +109,11 @@ describe(GITIGNORE__CREATE, () => {
               value: [
                 { pattern: 'node_modules', groups: ['generated'], source: 'node' },
                 { pattern: 'dist/', groups: ['build'], source: 'tsconfig.json' },
+                {
+                  pattern: 'tsconfig.tsbuildinfo',
+                  groups: ['build'],
+                  source: 'tsconfig.json',
+                },
               ],
             },
             private: true,
@@ -125,7 +135,13 @@ describe(GITIGNORE__CREATE, () => {
 
       expect(
         ((await ctx.disk.read(gitIgnorePath, 'utf8')) as string).split('\n')
-      ).toEqual(['# --- Ignore Files ---', 'node_modules', 'dist/', ''])
+      ).toEqual([
+        '# --- Ignore Files ---',
+        'node_modules',
+        'dist/',
+        'tsconfig.tsbuildinfo',
+        '',
+      ])
     },
   })
 })
