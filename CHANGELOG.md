@@ -19,6 +19,10 @@
 **@whimbrel/koa**:
 - Interpret `builtin-funcall` in query `http-adapter:port`
 
+**@whimbrel/tsconfig-json**:
+- Function *TsConfigJSON.getReferencedPaths*
+- Function *TsConfigJSON.readReferenceTree*
+
 **@whimbrel/typescript**:
 - Support resolving synthetic values safe built-in function invocations
 
@@ -30,6 +34,10 @@
 **@whimbrel/array**:
 - *juxt* now supports any number of arrays
 
+**@whimbrel/tsconfig.json**:
+- Updated `detect` to include the full reference tree of detected base tsconfig.json files
+- Updated query `version-control:ignore-files` to consider the full tsconfig file hierarchy
+- Updated query `version-control:ignore-files` to include tsconfig.buildinfo files
 
 ### Fixes
 

@@ -6,7 +6,7 @@ import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { DiskFileSystem } from '@whimbrel/filesystem'
 import { TsConfigJSON } from '@src/index'
 
-const { createDirectory } = makeTreeFixture(DiskFileSystem)
+const { createDirectory, populateDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('TsConfigJSON', () => {
   describe('read', () => {
@@ -80,6 +80,24 @@ describe('TsConfigJSON', () => {
 
       // Then
       expect(tsConfigJson.hasRelativeParent()).toBe(expected)
+    })
+  })
+
+  describe('getReferencedPaths', () => {
+    it('should return path values of reference entries', async () => {
+      const tsConfigJson = new TsConfigJSON({
+        content: {
+          references: [
+            { path: './tsconfig.build.json' },
+            { path: './tsconfig.node.json' },
+          ],
+        },
+      })
+
+      expect(tsConfigJson.getReferencedPaths()).toEqual([
+        './tsconfig.build.json',
+        './tsconfig.node.json',
+      ])
     })
   })
 
@@ -216,6 +234,102 @@ describe('TsConfigJSON', () => {
         module: 'ESNext',
         allowImportingTsExtensions: false,
       })
+    })
+  })
+
+  describe('readReferenceTree', () => {
+    it.each([
+      {
+        case: 'a single node',
+        dir: [{ 'tsconfig.json': { compilerOptions: { noEmit: true } } }],
+        expectedTree: {
+          fileName: '/tmp/root/tsconfig.json',
+          references: [],
+        },
+      },
+      {
+        case: 'a node with parent',
+        dir: [
+          {
+            'tsconfig.json': {
+              extends: './tsconfig.base.json',
+              compilerOptions: { noEmit: true },
+            },
+          },
+          {
+            'tsconfig.base.json': {
+              compilerOptions: { module: 'ESNext' },
+            },
+          },
+        ],
+        expectedTree: {
+          fileName: '/tmp/root/tsconfig.json',
+          references: [],
+          extends: {
+            fileName: '/tmp/root/tsconfig.base.json',
+            references: [],
+          },
+        },
+      },
+      {
+        case: 'a project/reference root with referenced hierarchies',
+        dir: [
+          {
+            'tsconfig.json': {
+              references: [
+                { path: './tsconfig.build.json' },
+                { path: './tsconfig.tooling.json' },
+              ],
+            },
+          },
+          {
+            'tsconfig.build.json': {
+              extends: './tsconfig.base.json',
+            },
+          },
+          {
+            'tsconfig.tooling.json': {
+              extends: './tsconfig.base.json',
+            },
+          },
+          {
+            'tsconfig.base.json': {
+              compilerOptions: { module: 'ESNext' },
+            },
+          },
+        ],
+        expectedTree: {
+          fileName: '/tmp/root/tsconfig.json',
+          references: [
+            {
+              fileName: '/tmp/root/tsconfig.build.json',
+              references: [],
+              extends: {
+                fileName: '/tmp/root/tsconfig.base.json',
+                references: [],
+              },
+            },
+            {
+              fileName: '/tmp/root/tsconfig.tooling.json',
+              references: [],
+              extends: {
+                fileName: '/tmp/root/tsconfig.base.json',
+                references: [],
+              },
+            },
+          ],
+        },
+      },
+    ])('should read $case', async ({ dir, expectedTree }) => {
+      // Given
+      const ctx = await memFsContext()
+      await populateDirectory('/tmp/root', dir, ctx.disk)
+
+      // When
+      const tree = await TsConfigJSON.readReferenceTree(ctx.disk, '/tmp/root')
+
+      // Then
+      expect(tree).toEqual(expectedTree)
     })
   })
 })

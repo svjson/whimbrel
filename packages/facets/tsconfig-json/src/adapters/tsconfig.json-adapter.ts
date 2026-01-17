@@ -12,6 +12,20 @@ import {
 } from '@whimbrel/struct-file'
 import { walk } from '@whimbrel/walk'
 
+export type ReferenceTree = {
+  fileName: string
+  references: ReferenceTreeNode[]
+  extends?: ReferenceTreeNode
+  file?: TsConfigJSON
+}
+
+export type RecursiveTreeNode = {
+  fileName: string
+  recursive: true
+}
+
+export type ReferenceTreeNode = ReferenceTree | RecursiveTreeNode
+
 const TSCONFIG_SCHEMA: StructuredFileSchema = {
   properties: [
     {
@@ -283,6 +297,20 @@ export class TsConfigJSON extends JSONFile {
     return Boolean(extendEntry && extendEntry.match(/^\.{1,2}\//))
   }
 
+  getExtendedConfigPath(): string | undefined {
+    const extendEntry: string = this.get<string>('extends')
+    if (!this.hasRelativeParent() || !this.path || !extendEntry) return undefined
+
+    return path.relative(path.dirname(this.path), extendEntry)
+  }
+
+  getReferencedPaths(): string[] {
+    const references = this.get('references')
+    if (!Array.isArray(references)) return []
+
+    return references.map((r) => r?.path).filter((p) => typeof p === 'string')
+  }
+
   removeValuesInheritedFrom(parent: TsConfigJSON): void {
     walk(this.getContent(), {
       onEnd: ({ path, value }) => {
@@ -320,5 +348,74 @@ export class TsConfigJSON extends JSONFile {
       }
     }
     return [entryFile]
+  }
+
+  /**
+   * Read the reference tree of a tsconfig.json file.
+   *
+   * Returns a tree of ReferenceTreeNode, where each node refers to a
+   * tsconfig(.*).json file that branches to other nodes  on "extends"
+   * and "references".
+   *
+   * @param disk - The storage adapter to read files from.
+   * @param filePath - The path to the tsconfig.json file.
+   * @param includeFile - Whether to include the TsConfigJSON instance in the
+   *                      tree nodes.
+   * @param ignore - An array of file paths to ignore (to prevent cycles).
+   *
+   * @return The reference tree of the tsconfig.json file.
+   */
+  static async readReferenceTree(
+    disk: StorageAdapter,
+    filePath: string | string[],
+    includeFile: boolean = false,
+    seen: string[] = []
+  ): Promise<ReferenceTree | undefined> {
+    const entryFile = await TsConfigJSON.readIfExists(disk, filePath)
+    if (!entryFile) return undefined
+
+    const tree: ReferenceTree = {
+      fileName: entryFile.path,
+      references: [],
+    }
+    if (includeFile) tree.file = entryFile
+
+    if (entryFile.hasRelativeParent()) {
+      const parentPath = path.join(
+        path.dirname(entryFile.getPath()),
+        entryFile.get('extends')
+      )
+      if (seen.includes(parentPath)) {
+        tree.extends = {
+          fileName: parentPath,
+          recursive: true,
+        }
+      } else {
+        const parentTree = await TsConfigJSON.readReferenceTree(
+          disk,
+          parentPath,
+          includeFile,
+          [entryFile.path, ...seen]
+        )
+        tree.extends = parentTree
+      }
+    }
+
+    for (const refEntry of entryFile.getReferencedPaths()) {
+      const refPath = path.join(path.dirname(entryFile.getPath()), refEntry)
+      if (seen.includes(refPath)) {
+        tree.references.push({
+          fileName: refPath,
+          recursive: true,
+        })
+      } else {
+        const refTree = await TsConfigJSON.readReferenceTree(disk, refPath, includeFile, [
+          entryFile.path,
+          ...seen,
+        ])
+        tree.references.push(refTree)
+      }
+    }
+    return tree
   }
 }
