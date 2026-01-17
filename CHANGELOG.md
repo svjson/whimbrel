@@ -4,6 +4,9 @@
 
 ### Added
 
+**@whimbrel/core-api**:
+- Added defined type *VCSIgnoreFile* for ignore-file entries
+
 **@whimbrel/array**:
 - Function - *juxtCyclic* - Variant of *juxt* that cycles shorter array when lengths differ
 

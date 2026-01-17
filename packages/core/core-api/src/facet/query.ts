@@ -9,6 +9,7 @@ import {
   ScriptExplanation,
 } from './role'
 import { Artifact } from './artifact'
+import { VCSIgnoreFile } from '@src/vcs'
 
 /**
  * Describes a query to be performed against the facets of an Actor.
@@ -159,11 +160,7 @@ export type FacetQueryTypes = {
     CriteriaType: never
   }
   'version-control:ignore-files': {
-    QueryResultType: {
-      pattern: string
-      groups: string[]
-      source: FacetId
-    }[]
+    QueryResultType: VCSIgnoreFile[]
     CriteriaType: never
   }
 }

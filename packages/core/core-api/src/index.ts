@@ -143,4 +143,4 @@ export type {
   StepAugmentationGenerator,
 } from './plan'
 export type { ScriptDescription, ScriptIntent } from './script'
-export type { VCSMutation, VCSFileEntry, VCSMutationType } from './vcs'
+export type { VCSIgnoreFile, VCSMutation, VCSFileEntry, VCSMutationType } from './vcs'
