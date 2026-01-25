@@ -13,6 +13,6 @@ export type {
   FacetRoles,
 } from './types'
 
-export type { ProjectMetaData, LicenseIdentifier } from './project'
+export type { ProjectMetaData, PackageManager, LicenseIdentifier } from './project'
 
 export type { ExplainScriptCriteria, ScriptExplanation } from './package-manager'

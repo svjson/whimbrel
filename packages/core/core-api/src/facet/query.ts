@@ -10,6 +10,7 @@ import {
 } from './role'
 import { Artifact } from './artifact'
 import { VCSIgnoreFile } from '@src/vcs'
+import { PackageManager } from './role/project'
 
 /**
  * Describes a query to be performed against the facets of an Actor.
@@ -153,6 +154,10 @@ export type FacetQueryTypes = {
   }
   'project:metadata': {
     QueryResultType: ProjectMetaData
+    CriteriaType: never
+  }
+  'project:package-manager': {
+    QueryResultType: PackageManager
     CriteriaType: never
   }
   'project:source-folders': {

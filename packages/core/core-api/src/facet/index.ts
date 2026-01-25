@@ -34,6 +34,7 @@ export type {
   IgnoreFileRole,
   LicenseRole,
   PackageFileRole,
+  PackageManager,
   PackageManagerRole,
   ScriptExplanation,
   VersionControlRole,

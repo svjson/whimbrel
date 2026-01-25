@@ -70,6 +70,7 @@ export type {
 export type {
   Artifact,
   PackageFileRole,
+  PackageManager,
   PackageManagerRole,
   BuildConfigRole,
   ConfigProviderRole,

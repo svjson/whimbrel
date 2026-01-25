@@ -5,6 +5,11 @@ export interface ProjectMetaData {
   author: string
 }
 
+export interface PackageManager {
+  name: string
+  version: string
+}
+
 export interface LicenseIdentifier {
   spdx: string
 }
