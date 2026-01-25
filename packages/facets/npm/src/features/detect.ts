@@ -69,6 +69,11 @@ export const detect: DetectFunction = async (ctx, dir) => {
     }
 
     if (detected) {
+      const pkgMan = pkgJson.getPackageManager()
+      if (pkgMan?.name === 'npm' && pkgMan?.version) {
+        detectResult.facet.scope.config.version = pkgMan.version
+      }
+
       return detectResult
     }
   }

@@ -23,6 +23,9 @@
 **@whimbrel/koa**:
 - Interpret `builtin-funcall` in query `http-adapter:port`
 
+**@whimbrel/npm**:
+- Query - `project:package-manager`
+
 **@whimbrel/tsconfig-json**:
 - Function *TsConfigJSON.getReferencedPaths*
 - Function *TsConfigJSON.readReferenceTree*
@@ -40,6 +43,9 @@
 
 **@whimbrel/gitignore**:
 - Updated task `gitignore:create` to remove redundant patterns from list of discovered files to ignore
+
+**@whimbrel/npm**:
+- Add npm version to actor facet config during detection
 
 **@whimbrel/tsconfig.json**:
 - Updated `detect` to include the full reference tree of detected base tsconfig.json files
