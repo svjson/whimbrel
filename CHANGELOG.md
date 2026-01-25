@@ -26,6 +26,9 @@
 **@whimbrel/npm**:
 - Query - `project:package-manager`
 
+**@whimbrel/pnpm**:
+- Query - `project:package-manager`
+
 **@whimbrel/tsconfig-json**:
 - Function *TsConfigJSON.getReferencedPaths*
 - Function *TsConfigJSON.readReferenceTree*
@@ -46,6 +49,9 @@
 
 **@whimbrel/npm**:
 - Add npm version to actor facet config during detection
+
+**@whimbrel/pnpm**:
+- Add pnpm version to actor facet config during detection
 
 **@whimbrel/tsconfig.json**:
 - Updated `detect` to include the full reference tree of detected base tsconfig.json files
