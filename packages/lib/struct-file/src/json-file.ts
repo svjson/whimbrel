@@ -20,7 +20,13 @@ export class JSONFile extends StructuredFile<any, string> {
 
   deserializeContent(content: any | string) {
     if (typeof content === 'string') {
-      return JSON.parse(content)
+      try {
+        return JSON.parse(content)
+      } catch (e) {
+        const source = this.path ?? '(anonymous)'
+        const message = e.message ?? '(no error message)'
+        throw new Error(`Unable to parse JSON file: ${source} - ${message}`)
+      }
     }
 
     if (typeof content === 'object') {

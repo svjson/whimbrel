@@ -53,6 +53,9 @@
 **@whimbrel/pnpm**:
 - Add pnpm version to actor facet config during detection
 
+**@whimbrel/struct-file**:
+- Throw descriptive exception when content parsing fails
+
 **@whimbrel/tsconfig.json**:
 - Updated `detect` to include the full reference tree of detected base tsconfig.json files
 - Updated query `version-control:ignore-files` to consider the full tsconfig file hierarchy
