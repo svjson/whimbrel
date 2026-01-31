@@ -3,11 +3,16 @@ import type {
   FunctionInvocationDescription,
   ImportSourceDescription,
   InstanceDescription,
+  MemberFunctionInvocationDescription,
+  SourceLookupDescription,
+  SourceTreeReference,
   WhimbrelContext,
 } from '@whimbrel/core-api'
-import { listSourceFiles, matchesImportSource } from './source-tree'
+import { listSourceFiles, matchesImportSource, resolveTargetPaths } from './source-tree'
 import { AST, filePathToAST, findRecursive, isLiteralNode, isTraversalNode } from './ast'
 import {
+  CallExpression,
+  FunctionDeclaration,
   type Identifier,
   type Node,
   type VariableDeclaration,
@@ -23,11 +28,19 @@ import {
   ValueExpression,
   InvocationExpressionReference,
   IdentifierAssignment,
+  ExpressionResolution,
+  ObjectReference,
+  PropertyReference,
 } from './reference'
 import { makeLiteral } from './literal'
 import { makeObjectReference } from './object'
-import { makeArgumentDeclaration } from './function'
+import {
+  findFunctionInvocations,
+  findReturnValues,
+  makeArgumentDeclaration,
+} from './function'
 import { makeIdentifierReference } from './symbol'
+import { resolveExpression } from './expression'
 
 /**
  * Locate instance declarations in source files within specified source folders
@@ -99,43 +112,55 @@ export const findImportBySource = (
   ast: AST,
   source: ImportSourceDescription
 ): IdentifierImportReference[] => {
-  return ast.nodes.reduce((nodes, node) => {
-    if (
-      node.type === 'ImportDeclaration' &&
-      node.importKind === 'value' &&
-      matchesImportSource(source, node.source.value, path.dirname(ast.sourceFile ?? '/'))
-    ) {
-      if (source.importType === 'default') {
-        const defaultSpecifier = node.specifiers.find(
-          (s) => s.type === 'ImportDefaultSpecifier'
+  const nodes = []
+
+  traverse(ast.parseResult, {
+    ImportDeclaration(nPath) {
+      const { node } = nPath
+      if (
+        node.importKind === 'value' &&
+        matchesImportSource(
+          source,
+          node.source.value,
+          path.dirname(ast.sourceFile ?? '/')
         )
-        if (defaultSpecifier) {
-          nodes.push({
-            type: 'ImportDeclaration',
-            name: defaultSpecifier.local.name,
-            importType: 'default',
-            ast,
-            node,
-          })
+      ) {
+        if (source.importType === 'default') {
+          const defaultSpecifier = node.specifiers.find(
+            (s) => s.type === 'ImportDefaultSpecifier'
+          )
+          if (defaultSpecifier) {
+            nodes.push({
+              type: 'ImportDeclaration',
+              name: defaultSpecifier.local.name,
+              importType: 'default',
+              ast,
+              node,
+            })
+          }
+        }
+
+        if (source.importType === 'named') {
+          const importSpecifier = node.specifiers.find(
+            (s) => s.type === 'ImportSpecifier'
+          )
+
+          if (importSpecifier) {
+            nodes.push({
+              type: 'ImportDeclaration',
+              name: importSpecifier.local.name,
+              importType: 'named',
+              nodePath: nPath,
+              ast,
+              node,
+            })
+          }
         }
       }
+    },
+  })
 
-      if (source.importType === 'named') {
-        const importSpecifier = node.specifiers.find((s) => s.type === 'ImportSpecifier')
-
-        if (importSpecifier) {
-          nodes.push({
-            type: 'ImportDeclaration',
-            name: importSpecifier.local.name,
-            importType: 'named',
-            ast,
-            node,
-          })
-        }
-      }
-    }
-    return nodes
-  }, [])
+  return nodes
 }
 
 /**
@@ -205,14 +230,16 @@ export const findIdentifierDefinition = (ast: AST, node: Identifier) => {
     const parentPath = binding.path.parentPath
 
     if (parentPath.isFunction()) {
-      return [makeArgumentDeclaration(ast, binding.path)]
+      return [makeArgumentDeclaration(ast, binding.path)].filter(Boolean)
     }
   }
 
-  return locateInstanceInAST(ast, {
+  const located = locateInstanceInAST(ast, {
     type: 'identifier',
     name: node.name,
   })
+
+  return located
 }
 
 /**
@@ -315,21 +342,20 @@ export const describeValueExpression = (ast: AST, a: Node): ValueExpression => {
     return makeLiteral(ast, a) as LiteralReference
   }
 
-  if (a.type === 'Identifier') {
+  switch (a.type) {
+    case 'Identifier':
       return makeIdentifierReference(ast, a)
+    case 'ObjectExpression':
+      return makeObjectReference(ast, a)
+    default:
+      return {
+        type: a.type,
+        category: 'expression',
+        resolutions: [],
+        node: a,
+        ast,
+      } as ExpressionReference
   }
-
-  if (a.type === 'ObjectExpression') {
-    return makeObjectReference(ast, a)
-  }
-
-  return {
-    type: a.type,
-    category: 'expression',
-    resolutions: [],
-    node: a,
-    ast,
-  } as ExpressionReference
 }
 
 /**
@@ -481,7 +507,7 @@ export const locateInvocationsInAST = (
 export const locateInvocations = async (
   ctx: WhimbrelContext,
   sourceFolders: string[],
-  invocation: FunctionInvocationDescription
+  invocation: MemberFunctionInvocationDescription
 ): Promise<InvocationExpressionReference[]> => {
   const objectRefs = await locateInstance(ctx, sourceFolders, invocation.instance)
   const localInvocations = locateInvocationsInAST(objectRefs, invocation)
@@ -496,11 +522,19 @@ export const locateInvocations = async (
             instance: {
               type: 'identifier',
               name: ref.name,
-              from: {
-                type: 'tree',
-                name: ref.ast.sourceFile,
-                importType: exportDef.type,
-              },
+              from:
+                exportDef.type === 'default'
+                  ? {
+                      type: 'tree',
+                      name: ref.ast.sourceFile,
+                      importType: 'default',
+                    }
+                  : {
+                      type: 'tree',
+                      name: ref.ast.sourceFile,
+                      importType: 'named',
+                      importName: ref.name,
+                    },
             },
           }))
         )
@@ -509,4 +543,150 @@ export const locateInvocations = async (
   }
 
   return [...localInvocations, ...imported]
+}
+
+export const findImportFrom = (
+  ast: AST,
+  from: ImportSourceDescription
+): NodePath<Identifier>[] => {
+  const importRefs = findImportBySource(ast, from)
+  return importRefs
+    .map((iRef) => {
+      let identifier: NodePath<Identifier> = null
+      iRef.nodePath!.traverse({
+        Identifier(path) {
+          if (path.node.name === iRef.name) {
+            identifier = path
+            path.stop()
+          }
+        },
+      })
+      return identifier
+    })
+    .filter(Boolean)
+}
+
+export const lookupInvocations = (
+  ast: AST,
+  desc: FunctionInvocationDescription
+): NodePath<CallExpression>[] => {
+  switch (desc.type) {
+    case 'function':
+      if (desc.from) {
+        const identiferPaths = findImportFrom(ast, desc.from)
+        const invocationPaths = identiferPaths.flatMap((id) =>
+          findFunctionInvocations(ast, makeIdentifierReference(ast, id.node))
+        )
+        return invocationPaths
+      }
+      break
+    case 'instance':
+      break
+  }
+  return []
+}
+
+export const extractNodePath = (path: string, node: NodePath<Node>): NodePath<Node>[] => {
+  const [part, ...rest] = path.split('.')
+  if (node.node.type === 'ObjectExpression') {
+    const propPaths = node.get('properties') as NodePath<Node>[]
+    for (const pPath of propPaths) {
+      if (pPath.node.type === 'ObjectProperty') {
+        const keyNode = pPath.get('key')
+        if (keyNode.isIdentifier() && keyNode.node.name === part && pPath.get('value')) {
+          if (rest.length === 0) {
+            return [pPath.get('value') as NodePath<Node>]
+          } else {
+            return extractNodePath(rest.join('.'), pPath.get('value') as NodePath<Node>)
+          }
+        } else if (
+          keyNode.isStringLiteral() &&
+          keyNode.node.value === part &&
+          pPath.get('value')
+        ) {
+          if (rest.length === 0) {
+            return [pPath.get('value') as NodePath<Node>]
+          } else {
+            return extractNodePath(rest.join('.'), pPath.get('value') as NodePath<Node>)
+          }
+        }
+      }
+    }
+  }
+  return []
+}
+
+export const extractNodePaths = (path: string, nodes: NodePath<Node>[]) => {
+  return nodes.flatMap((n) => extractNodePath(path, n))
+}
+
+export const lookupDescription = (
+  ast: AST,
+  desc: SourceLookupDescription
+): NodePath<Node>[] => {
+  switch (desc.type) {
+    case 'return-value':
+      const funcDecls = lookupDescription(ast, desc.of)
+      return funcDecls.flatMap((fd) =>
+        findReturnValues(ast, fd as NodePath<FunctionDeclaration>)
+      )
+    case 'function-declaration':
+      return lookupDescription(ast, desc.identifiedBy)
+    case 'positional-argument':
+      const invocations = lookupInvocations(ast, desc.of)
+      return invocations
+        .map((ivc) => {
+          return ivc.get(`arguments.${desc.position}`)
+        })
+        .filter(Boolean)
+    case 'object-path':
+      const object = lookupDescription(ast, desc.of)
+      return extractNodePaths(desc.path, object)
+  }
+}
+
+export type ResolvedCandidate = {
+  resolutions: ExpressionResolution[]
+}
+
+export type LookupValueResponse = {
+  candidates: ResolvedCandidate[]
+}
+
+export const lookupValue = async (
+  ast: AST,
+  desc: SourceLookupDescription
+): Promise<LookupValueResponse> => {
+  const identifiedNodes = lookupDescription(ast, desc)
+
+  const vExprs = identifiedNodes.map((c) => {
+    const n = describeValueExpression(ast, c.node)
+    return n
+  })
+
+  const response: LookupValueResponse = {
+    candidates: [],
+  }
+
+  for (const v of vExprs) {
+    const resolutions = await resolveExpression(ast, v.node)
+    response.candidates.push({
+      resolutions: resolutions,
+    })
+  }
+
+  return response
+}
+
+export const lookup = async (
+  ctx: WhimbrelContext,
+  source: SourceTreeReference,
+  lookupDesc: SourceLookupDescription
+) => {
+  const targetPaths = await resolveTargetPaths(ctx, source)
+
+  for (const filePath of targetPaths) {
+    const ast = await filePathToAST(ctx, path.join(source.root, filePath))
+    lookupDescription(ast, lookupDesc)
+  }
 }

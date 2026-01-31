@@ -18,6 +18,7 @@ import {
   ObjectPathReference,
   ObjectReference,
   SourceReference,
+  ValueExpression,
 } from './reference'
 import { makeLiteral } from './literal'
 import { findIdentifierDefinition } from './source-lookup'
@@ -161,7 +162,7 @@ export const resolveFunctionArgumentExpression = async (
     await Promise.all(
       invocations.map((inv) => {
         if (funcDecl.argument.index) {
-          return resolveExpression(ast, inv.arguments[funcDecl.argument.index])
+          return resolveExpression(ast, inv.node.arguments[funcDecl.argument.index])
         }
       })
     )
@@ -323,7 +324,7 @@ export const resolveExpression = async (
       return resolveArrayExpression(ast, node, opts)
   }
 
-  console.warn('Unable to resolve: ', node.type)
+  //  console.warn('Unable to resolve: ', node.type)
 
   return []
 }

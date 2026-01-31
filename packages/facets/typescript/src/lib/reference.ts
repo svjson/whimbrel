@@ -14,6 +14,7 @@ import {
 
 import { AST, ObjectPathPart } from './ast'
 import { LiteralByType } from './literal'
+import { NodePath } from '@babel/traverse'
 
 /**
  * Base interface for a reference to a segment of a TypeScript source file
@@ -26,6 +27,7 @@ export interface SourceReference<NT extends Node = Node> {
   type: string
   ast: AST
   node: NT
+  nodePath?: NodePath<NT>
 }
 
 export type SyntheticValueType = 'number' | 'string' | 'boolean' | 'undefined'

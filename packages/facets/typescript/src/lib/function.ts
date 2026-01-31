@@ -1,5 +1,10 @@
 import traverse, { Node, NodePath } from '@babel/traverse'
-import { ArrowFunctionExpression, FunctionDeclaration, Identifier } from '@babel/types'
+import {
+  ArrowFunctionExpression,
+  CallExpression,
+  FunctionDeclaration,
+  Identifier,
+} from '@babel/types'
 import { AST, isTraversalNode } from './ast'
 import {
   ArgumentDescription,
@@ -108,7 +113,6 @@ export const makeArrowFunctionArgumentDeclaration = (
 export const makeArgumentDeclaration = (ast: AST, argumentNode: NodePath<Node>) => {
   const parentPath = argumentNode.parentPath
   const parentNode = parentPath.node
-
   if (parentNode.type === 'FunctionDeclaration') {
     return makeFunctionArgumentDeclaration(ast, parentNode, argumentNode)
   } else if (parentPath.type === 'ArrowFunctionExpression') {
@@ -118,6 +122,20 @@ export const makeArgumentDeclaration = (ast: AST, argumentNode: NodePath<Node>) 
       argumentNode
     )
   }
+
+  console.warn('Unhandled argument function type:', parentPath.type)
+}
+
+export const findReturnValues = (ast: AST, funcDecl: NodePath<FunctionDeclaration>) => {
+  const returnValues = []
+  funcDecl.traverse({
+    ReturnStatement(path) {
+      if (path.node.argument) {
+        returnValues.push(path.get('argument'))
+      }
+    },
+  })
+  return returnValues
 }
 
 /**
@@ -127,13 +145,16 @@ export const makeArgumentDeclaration = (ast: AST, argumentNode: NodePath<Node>) 
  * @param funcDecl - The function declaration reference
  * @return Array of CallExpression nodes invoking the function
  */
-export const findFunctionInvocations = (ast: AST, funcDecl: FunctionReference) => {
+export const findFunctionInvocations = (
+  ast: AST,
+  funcDecl: FunctionReference
+): NodePath<CallExpression>[] => {
   const invocations = []
 
   traverse(ast.parseResult, {
     [funcDecl.node.type](path: NodePath<Node>) {
       if (isTraversalNode(path.node, funcDecl.node)) {
-        const id = funcDecl.id
+        const id = funcDecl.type === 'Identifier' ? funcDecl.node : funcDecl.id
         if (id) {
           const binding = path.scope.getBinding(id.name)
           invocations.push(
@@ -142,7 +163,7 @@ export const findFunctionInvocations = (ast: AST, funcDecl: FunctionReference) =
                 (refPath) =>
                   refPath.parentPath?.isCallExpression() && refPath.parentKey === 'callee'
               )
-              .map((refPath) => refPath.parent)
+              .map((refPath) => refPath.parentPath)
           )
         }
         path.stop()

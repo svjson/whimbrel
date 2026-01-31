@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { ExpressionStatement } from '@babel/types'
+import { ExpressionStatement, ObjectExpression } from '@babel/types'
 import { findNode, findRecursive, resolveExpression, sourceToAST } from '@src/lib'
-import { stripASTDetails } from './fixtures'
+import { stripASTDetails, expressionTree } from './fixtures'
 
 describe('resolveExpression', () => {
   describe('LogicalExpression', () => {
@@ -308,6 +308,80 @@ describe('resolveExpression', () => {
         ast.nodes[0],
         'ExpressionStatement'
       )[0].expression
+
+      // When
+      const resolutions = await resolveExpression(ast, node)
+
+      // Then
+      expect(stripASTDetails(resolutions, ['type'])).toEqual(expectedResolutions)
+    })
+  })
+
+  describe('ObjectExpression', () => {
+    const { obj, property, literal, synthetic } = expressionTree('type')
+
+    it.each([
+      [
+        'flat object with literals',
+        'const obj = { id: 24, name: "Burt" }',
+        [obj([property('id', literal(24)), property('name', literal('Burt'))])],
+      ],
+      [
+        'nested object with literals',
+        'const obj = { details: { id: 18, name: "Klodvig" } }',
+        [
+          obj([
+            property(
+              'details',
+              obj([property('id', literal(18)), property('name', literal('Klodvig'))])
+            ),
+          ]),
+        ],
+      ],
+      [
+        'nested object with synthetic value',
+        'const myVar = "48"; const obj = { details: { id: Number(myVar), name: "Cody" }}',
+        [
+          obj([
+            property(
+              'details',
+              obj([
+                property('id', {
+                  type: 'CallExpression',
+                  category: 'expression',
+                  resolutions: [synthetic('number', 48)],
+                }),
+                property('name', literal('Cody')),
+              ])
+            ),
+          ]),
+        ],
+      ],
+      [
+        'flat object with logical expression property value',
+        'const obj = { id: getId() || 0, name: "Mary" }',
+        [
+          obj([
+            property('id', {
+              type: 'LogicalExpression',
+              category: 'expression',
+              resolutions: [literal(0)],
+            }),
+            property('name', literal('Mary')),
+          ]),
+        ],
+      ],
+      [
+        'flat object with string literal key',
+        'const obj = { "/endpoints": "off" }',
+        [obj([property('/endpoints', literal('off'))])],
+      ],
+    ])('should resolve %s', async (_, source, expectedResolutions) => {
+      // Given
+      const ast = sourceToAST(source)
+      const node = findNode(ast, {
+        type: 'ObjectExpression',
+      })
 
       // When
       const resolutions = await resolveExpression(ast, node)

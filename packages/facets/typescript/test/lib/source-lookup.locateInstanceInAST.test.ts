@@ -9,6 +9,7 @@ import {
   SOURCE__KOA__INSTANTIATE_AND_EXPORT,
   SOURCE__SINGLE_FILE_VANILLA_KOA,
 } from '@test/source-fixtures'
+import { stripASTDetails } from './fixtures'
 
 describe('locateInstanceInAST', () => {
   it.each([['at file top level', SOURCE__SINGLE_FILE_VANILLA_KOA]])(
@@ -30,7 +31,7 @@ describe('locateInstanceInAST', () => {
 
       // Then
       expect(result).toHaveLength(1)
-      expect(result[0]).toEqual({
+      expect(stripASTDetails(result[0], ['type', 'node'])).toMatchObject({
         type: 'VariableDeclaration',
         name: 'app',
         expression: expect.objectContaining({
@@ -40,11 +41,6 @@ describe('locateInstanceInAST', () => {
         node: expect.objectContaining({
           start: 23,
           end: 44,
-        }),
-        ast: expect.objectContaining({
-          parseResult: expect.objectContaining({
-            type: 'File',
-          }),
         }),
       })
     }
@@ -65,19 +61,19 @@ describe('locateInstanceInAST', () => {
         type: 'tree',
         name: '/project/src/app.ts',
         importType: 'named',
+        importName: 'app',
       },
     })
 
     // Then
     expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({
+    expect(stripASTDetails(result[0], ['type', 'node'])).toEqual({
       name: 'app',
       importType: 'named',
       type: 'ImportDeclaration',
       node: expect.objectContaining({
         type: 'ImportDeclaration',
       }),
-      ast,
     })
   })
 

@@ -2,6 +2,7 @@ import path from 'node:path'
 import {
   FacetQueryFunction,
   FunctionInvocationDescription,
+  MemberFunctionInvocationDescription,
   WhimbrelContext,
 } from '@whimbrel/core-api'
 import { getLiteral, locateInvocations, resolveInvocationArguments } from '@src/lib'
@@ -88,9 +89,14 @@ export const queryLanguageInvocation: FacetQueryFunction<'language:invocation'> 
   }
 
   const invocations = await Promise.all(
-    (await locateInvocations(ctx, sourceFolders, functionInvocation)).map(
-      resolveInvocationArguments
-    )
+    (
+      await locateInvocations(
+        ctx,
+        sourceFolders,
+        // FIXME: This cast is dodgy
+        functionInvocation as MemberFunctionInvocationDescription
+      )
+    ).map(resolveInvocationArguments)
   )
 
   return invocations.map((inv) => ({

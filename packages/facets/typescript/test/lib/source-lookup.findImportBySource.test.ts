@@ -7,6 +7,7 @@ import {
 
 import { findImportBySource, sourceToAST } from '@src/lib'
 import { ImportSourceDescription } from '@whimbrel/core-api'
+import { stripASTDetails } from './fixtures'
 
 describe('findImportBySource', () => {
   it.each([
@@ -63,7 +64,7 @@ describe('findImportBySource', () => {
       const result = findImportBySource(ast, importDesc)
 
       // Then
-      expect(result).toEqual([
+      expect(stripASTDetails(result, ['type', 'node', 'ast'])).toEqual([
         {
           type: 'ImportDeclaration',
           importType: importDesc.importType,

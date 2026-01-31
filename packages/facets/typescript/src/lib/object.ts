@@ -161,9 +161,23 @@ export const extractObjectPath = (
 export const resolveObjectProperties = async (object: ObjectReference) => {
   for (const entry of object.entries) {
     if (entry.value.category === 'expression') {
-      entry.value.resolutions = await resolveExpression(object.ast, entry.value.node, {
+      // FIXME: This little asymmetry here is result of the expression tree
+      // and resolution tree models doesn't work for nested values, like this.
+      //
+      // Currently, and ObjectReference/ObjectExpression has known properties
+      // and there is only one resolution. Rather than exploding the tree size
+      // we are simply replacing the value with the resolution. There can only
+      // ever be one, and we don't want every single level of a nested object
+      // to duplicate the entire sub-tree.
+      //
+      const resolutions = await resolveExpression(object.ast, entry.value.node, {
         nodeRef: entry.value,
       })
+      if (entry.value.type === 'ObjectExpression' && resolutions.length === 1) {
+        entry.value = resolutions[0] as ObjectReference
+      } else {
+        entry.value.resolutions = resolutions
+      }
     }
   }
 }

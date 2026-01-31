@@ -1,6 +1,24 @@
 import path from 'node:path'
 import { pushUnique } from '@whimbrel/array'
-import { ImportSourceDescription, WhimbrelContext } from '@whimbrel/core-api'
+import {
+  ImportSourceDescription,
+  SourceTreeReference,
+  WhimbrelContext,
+} from '@whimbrel/core-api'
+
+export const resolveTargetPaths = async (
+  _ctx: WhimbrelContext,
+  sourceRef: SourceTreeReference
+): Promise<string[]> => {
+  switch (sourceRef.type) {
+    case 'source-file':
+      return [sourceRef.path]
+    case 'paths':
+      return sourceRef.paths
+    case 'project-source-folders':
+      throw new Error('"project-source-folders" not implemented')
+  }
+}
 
 /**
  * List all TypeScript source files in the given source folders.
