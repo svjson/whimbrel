@@ -1,11 +1,21 @@
 {
   "name": "whimbrel-root",
   "version": "0.1.0",
-  "type": "module",
-  "private": true,
   "description": "Automation Engine",
-  "license": "ISC",
   "author": "Sven Johansson",
+  "license": "ISC",
+  "private": true,
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svjson/whimbrel.git"
+  },
+  "homepage": "https://github.com/svjson/whimbrel",
+  "bugs": {
+    "url": "https://github.com/svjson/whimbrel/issues"
+  },
+
+  "type": "module",
   "packageManager": "npm@10.8.2",
   "engines": {
     "node": ">=20.0.0"
