@@ -5,7 +5,7 @@ import {
 } from '@whimbrel-test/asset-fixtures'
 import { describe, it, expect } from 'vitest'
 import { sourceToAST } from '@src/lib/ast'
-import { lookupDescription, lookupValue } from '@src/lib/source-lookup'
+import { lookupValue } from '@src/lib/source-lookup'
 import {
   FunctionInvocationDescription,
   SourceLookupDescription,

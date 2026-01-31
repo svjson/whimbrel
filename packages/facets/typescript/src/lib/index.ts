@@ -6,6 +6,8 @@ export {
   locateInstanceInAST,
   locateInvocations,
   locateInvocationsInAST,
+  lookupValue,
+  lookup,
 } from './source-lookup'
 export { getLiteral } from './reference'
 export { resolveExpression, resolveInvocationArguments } from './expression'
@@ -22,3 +24,5 @@ export type {
   IdentifierReference,
   ProcessArgumentReference,
 } from './reference'
+
+export type { LookupValueResponse, ResolvedCandidate } from './source-lookup'

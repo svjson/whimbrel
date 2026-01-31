@@ -29,8 +29,6 @@ import {
   InvocationExpressionReference,
   IdentifierAssignment,
   ExpressionResolution,
-  ObjectReference,
-  PropertyReference,
 } from './reference'
 import { makeLiteral } from './literal'
 import { makeObjectReference } from './object'
@@ -682,11 +680,18 @@ export const lookup = async (
   ctx: WhimbrelContext,
   source: SourceTreeReference,
   lookupDesc: SourceLookupDescription
-) => {
+): Promise<LookupValueResponse> => {
   const targetPaths = await resolveTargetPaths(ctx, source)
 
+  const candidates: ResolvedCandidate[] = []
+
   for (const filePath of targetPaths) {
-    const ast = await filePathToAST(ctx, path.join(source.root, filePath))
-    lookupDescription(ast, lookupDesc)
+    const ast = await filePathToAST(
+      ctx,
+      source.root ? path.join(source.root, filePath) : filePath
+    )
+    candidates.push(...(await lookupValue(ast, lookupDesc)).candidates)
   }
+
+  return { candidates }
 }
