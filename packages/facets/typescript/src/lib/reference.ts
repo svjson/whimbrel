@@ -1,4 +1,5 @@
 import {
+  ArrayExpression,
   ArrowFunctionExpression,
   CallExpression,
   FunctionDeclaration,
@@ -114,7 +115,10 @@ export interface FunctionArgumentDeclaration
  * Union type that allows FunctionArgumentDeclaration references to be used
  * as FunctionDeclarationReference instances.
  */
-export type FunctionReference = FunctionDeclarationReference | FunctionArgumentDeclaration
+export type FunctionReference =
+  | FunctionDeclarationReference
+  | FunctionArgumentDeclaration
+  | IdentifierReference
 
 /**
  * Auxiliary interface used by FunctionArgumentDeclaration that describes
@@ -163,6 +167,13 @@ export interface PropertyReference extends SourceReference<ObjectProperty> {
 
 export type ObjectEntryReference = PropertyReference
 
+export interface ArrayReference extends SourceReference<ArrayExpression> {
+  type: 'ArrayExpression'
+  category: 'expression'
+  elements: ValueExpression[]
+  resolutions: ExpressionResolution[]
+}
+
 /**
  * Source reference that describes a function invocation expression
  */
@@ -200,7 +211,7 @@ export interface ProcessArgumentReference extends SourceReference<MemberExpressi
   type: string
   category: 'process-arg'
   argIndex: ExpressionResolution[]
-  resolutions: []
+  resolutions: ExpressionResolution[]
 }
 
 /**
@@ -241,6 +252,7 @@ export type ExpressionReference =
   | InvocationExpressionReference
   | IdentifierReference
   | ObjectPathReference
+  | ArrayReference
   | AnyExpression
 
 /**

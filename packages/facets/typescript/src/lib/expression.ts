@@ -1,5 +1,6 @@
 import { juxtCyclic } from '@whimbrel/array'
 import {
+  ArrayExpression,
   CallExpression,
   Identifier,
   LogicalExpression,
@@ -257,6 +258,25 @@ export const resolveCallExpression = async (
   return resolutions
 }
 
+export const resolveArrayExpression = async (
+  ast: AST,
+  node: ArrayExpression,
+  opts?: ExpressionResolutionOptions
+): Promise<ExpressionResolution[]> => {
+  return [
+    {
+      type: 'ArrayExpression',
+      category: 'expression',
+      elements: (
+        await Promise.all(node.elements.map((e) => resolveExpression(ast, e, opts)))
+      ).flat() as ValueExpression[],
+      resolutions: [],
+      ast,
+      node,
+    },
+  ]
+}
+
 /**
  * Resolves an expression AST node into its possible literal references or
  * external resources.
@@ -299,6 +319,8 @@ export const resolveExpression = async (
       break
     case 'ObjectExpression':
       return resolveObjectExpression(ast, node, opts)
+    case 'ArrayExpression':
+      return resolveArrayExpression(ast, node, opts)
   }
 
   console.warn('Unable to resolve: ', node.type)
