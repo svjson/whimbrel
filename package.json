@@ -29,7 +29,7 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "npm run --workspaces clean --if-present",
-    "release": "npm run --workspaces publish --if-present",
+    "release": "npm publish --workspaces --access public",
     "test": "npm run --workspaces test --if-present",
     "test:integration": "npm run --workspaces test:integration --if-present",
     "typecheck": "npm run --workspaces typecheck --if-present"
