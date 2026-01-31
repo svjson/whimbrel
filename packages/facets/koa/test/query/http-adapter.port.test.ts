@@ -43,7 +43,7 @@ describe('http-adapter:port', () => {
         'env variable and fallback',
         TYPESCRIPT__KOA__SINGLE_FILE__PROCESS_ENV_WITH_OR_FALLBACK,
         {
-          primary: { type: 'env', name: [{ type: 'concrete', name: 'PORT' }] },
+          primary: { type: 'env', name: [{ type: 'symbol', name: 'PORT' }] },
           fallbacks: [{ type: 'concrete', value: 4433 }],
         },
       ],
@@ -51,7 +51,7 @@ describe('http-adapter:port', () => {
         'env variable and fallback via local variable',
         TYPESCRIPT__KOA__SINGLE_FILE__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
         {
-          primary: { type: 'env', name: [{ type: 'concrete', name: 'PORT' }] },
+          primary: { type: 'env', name: [{ type: 'symbol', name: 'PORT' }] },
           fallbacks: [{ type: 'concrete', value: 4433 }],
         },
       ],

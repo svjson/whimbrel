@@ -1,5 +1,5 @@
 import { pushDistinct } from '@whimbrel/array'
-import { FacetQueryFunction, WhimbrelContext } from '@whimbrel/core-api'
+import { FacetQueryFunction, ValueResolution, WhimbrelContext } from '@whimbrel/core-api'
 import { queryFacets } from '@whimbrel/facet'
 
 /**
@@ -68,7 +68,7 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
     },
   })
 
-  const toPortResolution = (argExpr: any) => {
+  const toPortResolution = (argExpr: any): ValueResolution => {
     if (argExpr.type === 'literal') {
       return { type: 'concrete', value: argExpr.value }
     }
@@ -93,7 +93,7 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
       if (Array.isArray(argExpr.resolutions) && argExpr.resolutions.length) {
         return argExpr.resolutions.map(toPortResolution)
       }
-      return { type: 'concrete', name: argExpr.name }
+      return { type: 'symbol', name: argExpr.name }
     }
 
     if (argExpr.type === 'expression') {
@@ -107,7 +107,7 @@ export const queryHttpAdapterPort: FacetQueryFunction<'http-adapter:port'> = asy
       }
     }
 
-    return []
+    return undefined
   }
 
   const [primary, ...fallbacks] = result
