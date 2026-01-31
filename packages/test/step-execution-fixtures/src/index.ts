@@ -1,10 +1,10 @@
-import { ExecuteTaskFunction, ExecutionStep, WhimbrelContext } from '@whimbrel/core-api'
-import { stepResultEqual } from '@whimbrel/core'
 import {
-  memFsContext,
-  rtMemFsContext,
-  testIOContext,
-} from '@whimbrel-test/context-fixtures'
+  ExecuteTaskFunction,
+  ExecutionStep,
+  WhimbrelContext,
+  stepResultEqual,
+} from '@whimbrel/core-api'
+import { rtMemFsContext, testIOContext } from '@whimbrel-test/context-fixtures'
 import { StepDefinition, makeConcreteStep } from '@whimbrel-test/step-fixtures'
 
 export type ContainsCtx = { ctx: WhimbrelContext }

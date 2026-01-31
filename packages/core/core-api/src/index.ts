@@ -23,6 +23,7 @@ export {
   defaultJournalEntryHandler,
   makeNullExecutionStep,
   newStepResult,
+  stepResultEqual,
 } from './execution'
 
 export type {

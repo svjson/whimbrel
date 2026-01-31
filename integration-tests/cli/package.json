@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel-test/cli-integration-tests",
-  "version": "0.0.6",
+  "version": "0.1.3",
   "type": "module",
   "private": true,
   "description": "Integration tests for Whimbrel CLI",
@@ -8,11 +8,15 @@
     "test:integration": "vitest run"
   },
   "devDependencies": {
-    "@whimbrel-test/asset-fixtures": "*",
-    "@whimbrel-test/tree-fixtures": "*",
-    "@whimbrel/package-json": "*",
+    "@whimbrel/actor": "workspace:*",
+    "@whimbrel/filesystem": "workspace:*",
+    "@whimbrel/walk": "workspace:*",
+    "@whimbrel/flow": "workspace:*",
+    "@whimbrel-test/asset-fixtures": "workspace:*",
+    "@whimbrel-test/tree-fixtures": "workspace:*",
+    "@whimbrel/package-json": "workspace:*",
+    "isomorphic-git": "^1.33.1",
     "vitest": "^3.2.4",
-    "which": "^5.0.0",
-    "whimbrel-cli": "*"
+    "which": "^5.0.0"
   }
 }

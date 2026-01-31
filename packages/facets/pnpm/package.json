@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/pnpm",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "pnpm Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -21,17 +21,23 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "dependencies": {
-    "@whimbrel/core-api": "*",
-    "@whimbrel/facet": "*",
-    "@whimbrel/flow": "*",
-    "@whimbrel/package-json": "*",
-    "@whimbrel/project": "*",
-    "@whimbrel/script-parser": "*"
+    "@whimbrel/array": "workspace:*",
+    "@whimbrel/core-api": "workspace:*",
+    "@whimbrel/facet": "workspace:*",
+    "@whimbrel/flow": "workspace:*",
+    "@whimbrel/package-json": "workspace:*",
+    "@whimbrel/project": "workspace:*",
+    "@whimbrel/script-parser": "workspace:*",
+    "@whimbrel/struct-file": "workspace:*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "*",
-    "@whimbrel-test/tree-fixtures": "*",
-    "@whimbrel-test/context-fixtures": "*",
+    "@whimbrel/actor": "workspace:*",
+    "@whimbrel/filesystem": "workspace:*",
+    "@whimbrel/npm": "workspace:*",
+    "@whimbrel/node": "workspace:*",
+    "@whimbrel-test/tree-fixtures": "workspace:*",
+    "@whimbrel-test/context-fixtures": "workspace:*",
+    "@whimbrel-test/step-execution-fixtures": "workspace:*",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",

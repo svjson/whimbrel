@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/core-api",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Core API for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,11 +22,14 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "tsup": "^8.5.1",
     "lodash": "^4.17.23",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@whimbrel/array": "workspace:*",
+    "fast-deep-equal": "^3.1.3"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "whimbrel-root",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "Automation Engine",
   "license": "ISC",
@@ -14,28 +14,25 @@
     "url": "https://github.com/svjson/whimbrel/issues"
   },
   "type": "module",
-  "packageManager": "npm@10.8.2",
+  "packageManager": "pnpm@10.28.2",
   "engines": {
     "node": ">=20.0.0"
   },
-  "workspaces": [
-    "packages/cli",
-    "packages/core/*",
-    "packages/lib/*",
-    "packages/facets/*",
-    "packages/test/*",
-    "integration-tests/*"
-  ],
   "scripts": {
     "build": "turbo run build",
-    "clean": "npm run --workspaces clean --if-present",
-    "release": "npm publish --workspaces --access public",
-    "test": "npm run --workspaces test --if-present",
-    "test:integration": "npm run --workspaces test:integration --if-present",
-    "typecheck": "npm run --workspaces typecheck --if-present"
+    "clean": "pnpm -r clean",
+    "release": "pnpm publish --access public",
+    "test": "pnpm -r test",
+    "test:integration": "pnpm -r test:integration",
+    "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
+    "@types/node": "^24.10.9",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.6"
+    "tsup": "^8.5.1",
+    "turbo": "^2.5.6",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }

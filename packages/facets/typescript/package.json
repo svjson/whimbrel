@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/typescript",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "TypeScript Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -23,20 +23,21 @@
   "dependencies": {
     "@babel/parser": "^7.28.5",
     "@babel/traverse": "^7.28.5",
-    "@whimbrel/array": "*",
-    "@whimbrel/core-api": "*",
-    "@whimbrel/facet": "*",
-    "@whimbrel/filesystem": "*",
-    "@whimbrel/flow": "*",
-    "@whimbrel/package-json": "*"
+    "@babel/types": "^7.28.5",
+    "@whimbrel/array": "workspace:*",
+    "@whimbrel/core-api": "workspace:*",
+    "@whimbrel/facet": "workspace:*",
+    "@whimbrel/filesystem": "workspace:*",
+    "@whimbrel/flow": "workspace:*",
+    "@whimbrel/package-json": "workspace:*"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.28.0",
     "@types/node": "^24.3.0",
-    "@whimbrel-test/asset-fixtures": "*",
-    "@whimbrel-test/context-fixtures": "*",
-    "@whimbrel-test/tree-fixtures": "*",
-    "@whimbrel/core": "*",
+    "@whimbrel-test/asset-fixtures": "workspace:*",
+    "@whimbrel-test/context-fixtures": "workspace:*",
+    "@whimbrel-test/tree-fixtures": "workspace:*",
+    "@whimbrel/core": "workspace:*",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   }

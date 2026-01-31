@@ -1,13 +1,7 @@
 export { makeWhimbrelContext } from './context'
 export { makeAnalyzeScaffold } from './operation'
 export { materializePlan, inferPreparationSteps } from './plan'
-export {
-  Runner,
-  DefaultRunner,
-  makeRunner,
-  matchesStepIdSelector,
-  stepResultEqual,
-} from './execution'
+export { Runner, DefaultRunner, makeRunner, matchesStepIdSelector } from './execution'
 export { outputPostExecutionReports } from './report'
 export { DefaultFormatter } from './log/formatter'
 export { analyzePath } from './facade'

@@ -1,0 +1,7 @@
+packages:
+  - packages/cli
+  - packages/core/*
+  - packages/lib/*
+  - packages/facets/*
+  - packages/test/*
+  - integration-tests/*
