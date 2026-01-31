@@ -1,5 +1,5 @@
-import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import path from 'node:path'
 import { memFsContext } from '@whimbrel-test/context-fixtures'
 import makeTreeFixture from '@whimbrel-test/tree-fixtures'
 import { DiskFileSystem } from '@whimbrel/filesystem'
@@ -12,7 +12,7 @@ describe('detect', () => {
   it('should not detect Koa when no package.json is present', async () => {
     // Given
     const ctx = await memFsContext()
-    const root = await createDirectory(['tsconfig.json'])
+    const root = await createDirectory(['tsconfig.json'], ctx.disk)
 
     // When
     const detectionResult = await detect(ctx, root)
@@ -24,7 +24,7 @@ describe('detect', () => {
   it('should not detect Koa when package.json does not list koa as dependency', async () => {
     // Given
     const ctx = await memFsContext()
-    const root = await createDirectory(['tsconfig.json'])
+    const root = await createDirectory(['tsconfig.json'], ctx.disk)
     const pkgJson = new PackageJSON({
       storage: ctx.disk,
       path: path.join(root, 'package.json'),
@@ -48,7 +48,7 @@ describe('detect', () => {
   it('should detect Koa when package.json list koa as dependency', async () => {
     // Given
     const ctx = await memFsContext()
-    const root = await createDirectory(['tsconfig.json'])
+    const root = await createDirectory(['tsconfig.json'], ctx.disk)
     const pkgJson = new PackageJSON({
       storage: ctx.disk,
       path: path.join(root, 'package.json'),
