@@ -44,6 +44,9 @@
 **@whimbrel/array**:
 - *juxt* now supports any number of arrays
 
+**@whimbrel/filesystem**:
+- Declared `@whimbrel/walk` and `@whimbrel/array` dependencies
+
 **@whimbrel/gitignore**:
 - Updated task `gitignore:create` to remove redundant patterns from list of discovered files to ignore
 
