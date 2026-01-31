@@ -1,7 +1,19 @@
 {
   "name": "whimbrel-cli",
   "version": "0.1.0",
-  "description": "CLI-based automation tool",
+  "description": "CLI-based automation and analysis tool",
+  "author": "Sven Johansson",
+  "license": "ISC",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svjson/whimbrel.git"
+  },
+  "homepage": "https://github.com/svjson/whimbrel",
+  "bugs": {
+    "url": "https://github.com/svjson/whimbrel/issues"
+  },
+
   "engines": {
     "node": ">=20"
   },
