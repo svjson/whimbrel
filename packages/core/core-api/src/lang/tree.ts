@@ -6,7 +6,7 @@ export interface SourceFolder {
 }
 
 interface SourceRefBase {
-  root: string
+  root?: string
 }
 
 export interface ProjectSourceFolders extends SourceRefBase {
