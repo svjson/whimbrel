@@ -610,6 +610,8 @@ export const extractNodePath = (path: string, node: NodePath<Node>): NodePath<No
         }
       }
     }
+  } else if (node.node.type === 'TSAsExpression') {
+    return extractNodePath(path, node.get('expression'))
   }
   return []
 }
@@ -638,8 +640,8 @@ export const lookupDescription = (
         })
         .filter(Boolean)
     case 'object-path':
-      const object = lookupDescription(ast, desc.of)
-      return extractNodePaths(desc.path, object)
+      const objects = lookupDescription(ast, desc.of)
+      return extractNodePaths(desc.path, objects)
   }
 }
 

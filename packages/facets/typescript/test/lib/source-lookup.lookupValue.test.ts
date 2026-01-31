@@ -163,4 +163,47 @@ describe('lookupValue', () => {
       },
     ])
   })
+
+  it('should extract server.port from object argument to defineConfig', async () => {
+    const source = await readAsset(TYPESCRIPT__VITE_CONFIG__REACT_SERVER_PROXY_TEST)
+
+    const ast = sourceToAST(source)
+
+    const result = await lookupValue(ast, {
+      type: 'object-path',
+      path: 'server.port',
+      of: {
+        type: 'positional-argument',
+        position: 0,
+        of: {
+          type: 'function',
+          name: 'defineConfig',
+          from: {
+            type: 'library',
+            name: 'vite',
+            importType: 'named',
+            importName: 'defineConfig',
+          },
+        } satisfies FunctionInvocationDescription,
+      },
+    } satisfies SourceLookupDescription)
+
+    expect(result).toMatchObject({
+      candidates: [
+        {
+          resolutions: [expect.any(Object)],
+        },
+      ],
+    })
+    expect(result.candidates.length).toBe(1)
+
+    const [{ resolutions }] = result.candidates
+
+    expect(resolutions.map((r) => stripASTDetails(r))).toEqual([
+      {
+        category: 'literal',
+        value: 7003,
+      },
+    ])
+  })
 })

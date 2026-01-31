@@ -322,6 +322,8 @@ export const resolveExpression = async (
       return resolveObjectExpression(ast, node, opts)
     case 'ArrayExpression':
       return resolveArrayExpression(ast, node, opts)
+    case 'TSAsExpression':
+      return resolveExpression(ast, node.expression, opts)
   }
 
   //  console.warn('Unable to resolve: ', node.type)
