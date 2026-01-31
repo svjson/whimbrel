@@ -11,6 +11,7 @@ import {
 import { Artifact } from './artifact'
 import { VCSIgnoreFile } from '@src/vcs'
 import { PackageManager } from './role/project'
+import { HttpPortResolution } from './role/http-adapter'
 
 /**
  * Describes a query to be performed against the facets of an Actor.
@@ -127,6 +128,10 @@ export type InferQueryCriteriaType<T extends string> = T extends keyof FacetQuer
 export type FacetQueryTypes = {
   'actor:canonical-name': {
     QueryResultType: string
+    CriteriaType: never
+  }
+  'http-adapter:port': {
+    QueryResultType: HttpPortResolution
     CriteriaType: never
   }
   'language:invocation': {

@@ -69,15 +69,19 @@ export type {
 } from './context'
 export type {
   Artifact,
+  BuiltInFunCallResolution,
   PackageFileRole,
   PackageManager,
   PackageManagerRole,
   BuildConfigRole,
+  ConcreteValueResolution,
   ConfigProviderRole,
+  EnvValueResolution,
   VersionControlRole,
   EngineRole,
   ExplainScriptCriteria,
   HttpAdapterRole,
+  HttpPortResolution,
   IgnoreFileRole,
   InferQueryResultType,
   InferQueryCriteriaType,
@@ -99,9 +103,11 @@ export type {
   FacetQuery,
   FacetQueryFunction,
   FacetQueryResult,
+  ProcessArgValueResolution,
   MergeConfigFunction,
   QueryIndex,
   ScriptExplanation,
+  ValueResolution,
 } from './facet'
 export type {
   FileEntry,

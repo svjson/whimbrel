@@ -25,17 +25,23 @@ export type { FacetScope, FacetScopes, FacetScopePrototype } from './scope'
 
 export type {
   BuildConfigRole,
+  BuiltInFunCallResolution,
+  ConcreteValueResolution,
   ConfigProviderRole,
   EngineRole,
+  EnvValueResolution,
   ExplainScriptCriteria,
   FacetRole,
   FacetRoles,
   HttpAdapterRole,
+  HttpPortResolution,
   IgnoreFileRole,
   LicenseRole,
   PackageFileRole,
   PackageManager,
   PackageManagerRole,
+  ProcessArgValueResolution,
   ScriptExplanation,
+  ValueResolution,
   VersionControlRole,
 } from './role'
