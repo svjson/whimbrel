@@ -180,11 +180,22 @@ export class PackageJSON extends JSONFile {
    *
    * @return True if the dependency was updated, false otherwise.
    */
-  updateDependency(dependency: string, version: string): boolean {
+  updateDependency(
+    dependency: string,
+    version: string,
+    opts: { exclude?: string | string[] } = {}
+  ): boolean {
+    const { exclude = [] } = opts
+    const ignore = Array.isArray(exclude) ? exclude : [exclude]
+
     let updated = false
     ;['dependencies', 'devDependencies', 'peerDependencies'].forEach((depColl) => {
       const currentVersion: string = this.get([depColl, dependency])
-      if (currentVersion && !isVersion(currentVersion, version)) {
+      if (
+        currentVersion &&
+        !ignore.includes(currentVersion) &&
+        !isVersion(currentVersion, version)
+      ) {
         const updatedVersion = updateVersionString(currentVersion, version)
         this.set([depColl, dependency], updatedVersion)
         updated = true

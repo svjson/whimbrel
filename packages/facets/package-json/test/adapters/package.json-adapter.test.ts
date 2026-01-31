@@ -345,5 +345,35 @@ describe('PackageJSON', () => {
         },
       })
     })
+
+    it('should do nothing if dependency is in ignore-list', () => {
+      // Given
+      const pkgJson = new PackageJSON({
+        content: {
+          devDependencies: {
+            'my-lib': '^5.8.3',
+          },
+          peerDependencies: {
+            'my-lib': '*',
+          },
+        },
+      })
+
+      // When
+      const updatedp = pkgJson.updateDependency('my-lib', '6.0.0', {
+        exclude: '*',
+      })
+
+      // Then
+      expect(updatedp).toBe(true)
+      expect(pkgJson.getContent()).toEqual({
+        devDependencies: {
+          'my-lib': '^6.0.0',
+        },
+        peerDependencies: {
+          'my-lib': '*',
+        },
+      })
+    })
   })
 })

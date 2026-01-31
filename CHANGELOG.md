@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.2] 2026-01-31
+
+Patch-release for accidentally published wildcard dependencies.
+
+### Added:
+
+**@whimbrel/package-json**:
+- Added opts argument to PackageJSON.updateDependency, allowing ignore patterns (ie, "*")
+
+
+### Fixed:
+
+**repo**:
+
+Fixed borked publish/release script that left workspace dependency resolution wildcards in release.
+
+
 ## [0.1.1] 2026-01-31
 
 Better and wider support for querying HTTP service modules + fixed borked peer dependency chain

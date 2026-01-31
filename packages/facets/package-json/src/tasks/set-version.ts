@@ -24,7 +24,9 @@ const execute = async (ctx: WhimbrelContext) => {
       const ws = new WorkspaceAdapter(ctx, rootActor, packageJson)
 
       await ws.forEachModule(async (modulePackageJson) => {
-        const updated = modulePackageJson.updateDependency(target.name, version)
+        const updated = modulePackageJson.updateDependency(target.name, version, {
+          exclude: ['*', 'workspace:*'],
+        })
         if (updated) await modulePackageJson.write()
       })
     }
