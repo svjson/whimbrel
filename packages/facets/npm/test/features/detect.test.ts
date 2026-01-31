@@ -31,7 +31,9 @@ describe('detect', () => {
       facet: {
         scope: {
           roles: ['pkg-manager'],
-          config: {},
+          config: {
+            version: '10.8.2',
+          },
         },
       },
     })
