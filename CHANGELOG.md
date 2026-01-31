@@ -1,12 +1,16 @@
 # Changelog
 
-## [UNRELEASED]
+## [0.1.1] 2026-01-31
+
+Better and wider support for querying HTTP service modules + fixed borked peer dependency chain
 
 ### Added
 
 **@whimbrel/core-api**:
 - Defined type *VCSIgnoreFile* for ignore-file entries
 - Query - `project:package-manager`
+- Query - `http-adapter:port` (formally defined with response shape)
+- Added type hierarchy for describing source code constructs
 
 **@whimbrel/array**:
 - Function - *juxtCyclic* - Variant of *juxt* that cycles shorter array when lengths differ
@@ -34,7 +38,17 @@
 - Function *TsConfigJSON.readReferenceTree*
 
 **@whimbrel/typescript**:
-- Support resolving synthetic values safe built-in function invocations
+- Support resolving synthetic values from safe built-in function invocations
+- Support resolving values from array expressions
+- Support string literal keys in object expressions
+- Added `lookup` and `lookupValue` for static lookup of values and their resolutions
+- Export static value lookup library functions
+
+**@whimbrel/vite** (New Package):
+- Facet for vite projects and vite configuration
+- Feature - Detect presence of vite in node projects
+- Query - `http-adapter:port`
+
 
 ### Changed
 
@@ -64,10 +78,16 @@
 - Updated query `version-control:ignore-files` to consider the full tsconfig file hierarchy
 - Updated query `version-control:ignore-files` to include tsconfig.buildinfo files
 
-### Fixes
+### Fixed
 
+**repository**:
 - Fixed overzealous reliance on peerDependencies, causing dependency mismatch in consuming projects
 
+**@whimbrel/typescript**:
+- Fixed infinite loop in ambiguous variable declaration resolutions
+
+**@whimbrel-test/cli-integration-tests**:
+- Fixed drift in cli integration tests where `whim` relies on npm/pnpm network usage, by adding a fake-bin folder to PATH.
 
 ---
 

@@ -95,7 +95,7 @@ on their own.
 |----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | [actor](./packages/facets/git)                     | Core Facet dealing with `actor`, which is Whimbrel-speak for "project" or a cohesive folder structure. Not intended for CLI usage. |
 | [docker-compose](./packages/facets/docker-compose) | Read/Write/Inspect docker-compose YAML files                                                                                       |
-| [dotenv](./packages/facets/dotenv)                 | Inspect, compare and update dotenv files                                                                                                                                   |
+| [dotenv](./packages/facets/dotenv)                 | Inspect, compare and update dotenv files                                                                                           |
 | [express](./packages/facets/express)               | Allows detection and querying configuration of Express usage as http-adapter                                                       |
 | [fastify](./packages/facets/fastify)               | Allows detection and querying configuration of Fastify usage as http-adapter                                                       |
 | [git](./packages/facets/git)                       | Interact with git repositories, backed by either [isomorphic-git](https://isomorphic-git.org/) or plain old git.                   |
@@ -112,150 +112,14 @@ on their own.
 | [tsconfig.json](./packages/facets/tsconfig.json)   | Create, maintain, clean, extend and configure tsconfig.json files                                                                  |
 | [turborepo](./packages/facets/turborepo)           | Configure and analyze turborepo configurations                                                                                     |
 | [typescript](./packages/facets/typescript)         | Provides static code-analysis for TypeScript projects                                                                              |
+| [vite](./packages/facets/vite)                     | Provides configuration resolution for projects using Vite                                                                          |
 
 
-## Latest Release - [0.1.0] - 2026-01-09
+## Latest Release - [0.1.1] - 2026-01-31
 
-Recognize actors/projects that use dotenv configuration, provide HTTP services and granular analysis of package.json scripts
+See [CHANGELOG.md](./CHANGELOG.md) for more information
 
-Use cases:
-- Migrate npm projects to pnpm with a single command
-- Update informal .env(.template/.example) files with missing example properties
-- Determine http port of project submodules
-
-
-### Added
-
-**whimbrel-cli**:
-- Command - *query* - Execute facet queries by name from CLI
-- Option - *--max-materialization-iterations*
-
-**@whimbrel/core-api**:
-- Feature - Allow facets to provide their own strategy for merging facet configs, when the same facet is detected/advised from multiple sources.
-- Types and constants for core facet roles
-- Types for description of script and script intent
-- Introduced ActorRole
-- Introduced Artifact
-- Features - Query type-specific query criteria
-- Type-safety and inference for core facet query types
-
-**@whimbrel/core**:
-- Feature - literal default values for task parameters
-
-**@whimbrel/flow**:
-- Feature - **doEach** - for iteration of sequence types in flow NS.
-
-**@whimbrel/struct-file**:
-- Feature - PropertiesFile-adapter for basic key-value property file formats
-
-**@whimbrel/script-parser**:
-- Parser engine for script statements
-- Composable parser architecture with pluggable tokenizers, grammars and node emitters.
-
-**@whimbrel/walk**:
-- Function - *closestAncestor* - Find matching ancestors of object path
-- Option to make *resolve* provide resolution metadata
-
-**@whimbrel/filesystem**:
-- Feature - ReadThroughFileSystem - InMemoryFileSystem that requires no warm-up. Read from physical, write to shadowing in-memory layer.
-
-**@whimbrel/actor**:
-- Task - actor:delete-facet-artifacts
-
-**@whimbrel/dotenv** (New Package):
-- Facet for dotenv files
-- Feature - DotEnvFile-adapter
-- Task - dotenv:compare
-- Task - dotenv:update-templates
-
-**@whimbrel/express** (New Package):
-- Facet for ExpressJS
-- Query - http-adapter:port
-
-**@whimbrel/fastify** (New Package):
-- Facet for Fastify
-- Query - http-adapter:port
-
-**@whimbrel/koa** (New Package):
-- Facet for KoaJS
-- Query - http-adapter:port
-
-**@whimbrel/npm**:
-- Feature - Command parser for npm commands
-- Query - package-manager:artifacts
-- Query - package-manager:explain-script
-
-**@whimbrel/pnpm**:
-- Task - pnpm:set-workspace-dependencies
-- Task - pnpm:migrate-project
-- Task - pnpm:migrate-scripts
-- Task - pnpm:migrate-submodule
-- Task - pnpm:migrate-workspaces
-- Query - package-manager:artifacts
-- Feature - Write/rewrite package manager scripts from script intent
-
-**@whimbrel/tsconfig-json**:
-- Query - project:source-folders
-
-**@whimbrel/typescript** (New Package):
-- Facet for TypeScript projects
-- Feature - source lookup via static code analysis
-- Query - language:invocation
-
-**@whimbrel-test/asset-fixtures**:
-- Added tarballs of example git repositories
-- Added various TypeScript example files that initialize Koa/Fastify/Express
-
-
-### Changes
-
-**@whimbrel/core**:
-- Speed up materialization and dry runs by using ReadThroughFileSystem and eliminating preparation of InMemoryFileSystem
-- Child processes are launched with `child_process.spawn` instead of promisified `exec`.
-- Storing input resolution metadata in `step.meta` during plan materialization.
-- Configurable iteration limit for materialization phase
-
-**@whimbrel/flow**:
-- Make journal-formatting options type-safe in regards to the flow NS / let forms
-
-**@whimbrel/struct-file**:
-- Make the structured file base less reliant on @whimbrel/core-api constructs
-
-**@whimbrel/actor**:
-- Changed reporting of actor:discover-facets to include more role groupings
-
-**@whimbrel/pnpm**:
-- Now using fallback strategies for determining pnpm version.
-
-**@whimbrel/target**:
-- Detect and set root flag during define:target if target is root project
-
-
-### Fixes
-
-**whimbrel-cli**:
-- Bug - Fixed broken *--silent* flag
-- Bug - Fixed broken *--plain* flag
-
-**@whimbrel/core**:
-- Bug - Fixed bug where step augmentations were sometimes applied twice during materialization
-
-**@whimbrel/walk**:
-- Bug - *mergeLeft* - Fixed issue with handling of empty objects, leading to incorrect results
-
-**@whimbrel/filesystem**:
-- Bug - Fixed incomplete FileEntry instance emitted by scanDir under some conditions
-- BUg - Added missing mutation reporting for *rmdir*
-
-**@whimbrel/package-json**:
-- Bug - fixed writing of license to wrong json field.
-
-**@whimbrel/source**:
-- Bug - Only skip memory-import of actor file tree if it actually exists on the target fs
-
-**@whimbrel/target**:
-- Bug - Only skip memory-import of actor file tree if it actually exists on the target fs
-
+--
 
 ## License
 
