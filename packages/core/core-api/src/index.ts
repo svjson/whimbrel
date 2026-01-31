@@ -119,12 +119,23 @@ export type {
   LsOptions,
 } from './fs'
 export type {
+  FreeFunctionInvocationDescription,
+  FunctionIdentificationCriteria,
+  FunctionInvocationDescription,
+  FunctionLookupDescription,
   ImportSourceDescription,
   InstanceDescription,
-  FunctionInvocationDescription,
   InvocationArgumentResolution,
   InvocationExpression,
+  MemberFunctionInvocationDescription,
+  PositionalArgumentDescription,
+  ProjectSourceFolders,
+  ReturnValueLookupDescription,
+  ObjectPathDescription,
+  SourceFileReference,
   SourceFolder,
+  SourceLookupDescription,
+  SourceTreeReference,
 } from './lang'
 export type { ApplicationLog, FileListOptions } from './log'
 export type {

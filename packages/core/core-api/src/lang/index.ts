@@ -1,9 +1,22 @@
 export {
+  FreeFunctionInvocationDescription,
+  FunctionIdentificationCriteria,
+  FunctionInvocationDescription,
+  FunctionLookupDescription,
   ImportSourceDescription,
   InstanceDescription,
-  FunctionInvocationDescription,
+  MemberFunctionInvocationDescription,
+  PositionalArgumentDescription,
+  ReturnValueLookupDescription,
+  ObjectPathDescription,
+  SourceLookupDescription,
 } from './description'
 
 export { InvocationArgumentResolution, InvocationExpression } from './expression'
 
-export type { SourceFolder } from './tree'
+export type {
+  ProjectSourceFolders,
+  SourceFileReference,
+  SourceFolder,
+  SourceTreeReference,
+} from './tree'

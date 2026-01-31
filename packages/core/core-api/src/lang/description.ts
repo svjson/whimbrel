@@ -11,10 +11,7 @@ export type ImportSourceType = 'library' | 'tree'
  */
 export type InstanceType = 'class' | 'identifier' | 'return-value'
 
-/**
- * Describes the source from which an entity/identifier is imported.
- */
-export type ImportSourceDescription = {
+export interface ImportDescriptionBase {
   /**
    * Type of source
    */
@@ -28,6 +25,20 @@ export type ImportSourceDescription = {
    */
   importType: ImportType
 }
+
+export interface DefaultImportDescription extends ImportDescriptionBase {
+  importType: 'default'
+}
+
+export interface NamedImportDescription extends ImportDescriptionBase {
+  importType: 'named'
+  importName: string
+}
+
+/**
+ * Describes the source from which an entity/identifier is imported.
+ */
+export type ImportSourceDescription = DefaultImportDescription | NamedImportDescription
 
 /**
  * Describes the criterion for referencing an instance declaration
@@ -48,10 +59,7 @@ export type InstanceDescription = {
   from?: ImportSourceDescription
 }
 
-/**
- * Describes a function invocation
- */
-export type FunctionInvocationDescription = {
+export interface MemberFunctionInvocationDescription {
   /**
    * The function name
    */
@@ -65,3 +73,55 @@ export type FunctionInvocationDescription = {
    */
   instance: InstanceDescription
 }
+
+export interface FreeFunctionInvocationDescription {
+  /**
+   * The function name
+   */
+  name: string
+  /**
+   * The function type
+   */
+  type: 'function'
+  /**
+   * Function source/origin
+   */
+  from?: ImportSourceDescription
+}
+
+/**
+ * Describes a function invocation
+ */
+export type FunctionInvocationDescription =
+  | FreeFunctionInvocationDescription
+  | MemberFunctionInvocationDescription
+
+export interface ReturnValueLookupDescription {
+  type: 'return-value'
+  of: FunctionLookupDescription
+}
+
+export interface FunctionLookupDescription {
+  type: 'function-declaration'
+  identifiedBy: FunctionIdentificationCriteria
+}
+
+export interface PositionalArgumentDescription {
+  type: 'positional-argument'
+  position: number
+  of: FunctionInvocationDescription
+}
+
+export interface ObjectPathDescription {
+  type: 'object-path'
+  path: string
+  of: SourceLookupDescription
+}
+
+export type FunctionIdentificationCriteria = PositionalArgumentDescription
+
+export type SourceLookupDescription =
+  | ReturnValueLookupDescription
+  | FunctionLookupDescription
+  | PositionalArgumentDescription
+  | ObjectPathDescription
