@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ExpressJS Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -30,11 +30,11 @@
     "@whimbrel/package-json": "*"
   },
   "devDependencies": {
-    "@whimbrel/struct-file": "^0.1.0",
-    "@whimbrel/typescript": "^0.1.0",
-    "@whimbrel-test/asset-fixtures": "0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
+    "@whimbrel/struct-file": "*",
+    "@whimbrel/typescript": "*",
+    "@whimbrel-test/asset-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
+    "@whimbrel-test/context-fixtures": "*",
     "@types/node": "^24.3.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"

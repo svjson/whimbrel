@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/script-parser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Script parsing engine and IR for command-based script syntax variants",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -25,7 +25,6 @@
     "@whimbrel/core-api": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
     "@types/node": "^24.3.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"

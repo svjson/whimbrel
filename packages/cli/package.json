@@ -1,19 +1,17 @@
 {
   "name": "whimbrel-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI-based automation and analysis tool",
-  "author": "Sven Johansson",
   "license": "ISC",
-
+  "homepage": "https://github.com/svjson/whimbrel",
   "repository": {
     "type": "git",
     "url": "https://github.com/svjson/whimbrel.git"
   },
-  "homepage": "https://github.com/svjson/whimbrel",
   "bugs": {
     "url": "https://github.com/svjson/whimbrel/issues"
   },
-
+  "author": "Sven Johansson",
   "engines": {
     "node": ">=20"
   },
@@ -40,7 +38,7 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/actor": "^0.1.0",
+    "@whimbrel/actor": "^0.1.1",
     "chalk": "^5.6.0",
     "commander": "^14.0.0",
     "ora": "^8.2.0",
@@ -76,7 +74,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "@whimbrel/actor": "^0.1.0",
+    "@whimbrel/actor": "*",
     "rimraf": "^6.0.1",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",

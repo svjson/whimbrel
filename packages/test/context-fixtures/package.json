@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel-test/context-fixtures",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,11 +19,11 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "peerDependencies": {
-    "@whimbrel/core": "0.1.0"
+    "@whimbrel/core": "^0.1.1"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "0.1.0",
-    "@whimbrel/facet": "0.1.0",
-    "@whimbrel/filesystem": "0.1.0"
+    "@whimbrel/core-api": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*"
   }
 }

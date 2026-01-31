@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/dotenv",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "dotenv Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -29,15 +29,15 @@
     "@whimbrel/struct-file": "*"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/core": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/filesystem": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/struct-file": "^0.1.0",
-    "@whimbrel-test/asset-fixtures": "0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
-    "@whimbrel-test/context-fixtures": "0.1.0",
+    "@whimbrel/core-api": "*",
+    "@whimbrel/core": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/filesystem": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/struct-file": "*",
+    "@whimbrel-test/asset-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
+    "@whimbrel-test/context-fixtures": "*",
     "@types/node": "^24.3.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"

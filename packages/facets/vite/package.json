@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/vite",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vite Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,7 +22,7 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/filesystem": "^0.1.0"
+    "@whimbrel/filesystem": "^0.1.1"
   },
   "dependencies": {
     "@whimbrel/array": "*",

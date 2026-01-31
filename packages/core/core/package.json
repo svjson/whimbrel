@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Whimbrel Core Library",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -33,6 +33,6 @@
     "@whimbrel/walk": "*"
   },
   "devDependencies": {
-    "@whimbrel-test/tree-fixtures": "^0.1.0"
+    "@whimbrel-test/tree-fixtures": "*"
   }
 }

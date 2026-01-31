@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/struct-file",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Abstractions for common structured file formats",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,7 +22,7 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/walk": "^0.1.0"
+    "@whimbrel/walk": "^0.1.1"
   },
   "dependencies": {
     "fast-deep-equal": "^3.1.3",
@@ -30,9 +30,9 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "@whimbrel/walk": "^0.1.0",
-    "@whimbrel-test/context-fixtures": "^0.1.0",
-    "@whimbrel-test/tree-fixtures": "^0.1.0",
+    "@whimbrel/walk": "*",
+    "@whimbrel-test/context-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
     "vite": "^7.1.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"

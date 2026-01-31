@@ -8,11 +8,11 @@
     "test:integration": "vitest run"
   },
   "devDependencies": {
-    "@whimbrel-test/asset-fixtures": "0.1.0",
-    "@whimbrel-test/tree-fixtures": "0.1.0",
-    "@whimbrel/package-json": "0.1.0",
+    "@whimbrel-test/asset-fixtures": "*",
+    "@whimbrel-test/tree-fixtures": "*",
+    "@whimbrel/package-json": "*",
     "vitest": "^3.2.4",
     "which": "^5.0.0",
-    "whimbrel-cli": "0.1.0"
+    "whimbrel-cli": "*"
   }
 }

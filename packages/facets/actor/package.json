@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/actor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Core Actor Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -22,18 +22,18 @@
     "publish": "npm publish --access public"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/project": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/walk": "^0.1.0"
+    "@whimbrel/core-api": "^0.1.1",
+    "@whimbrel/facet": "^0.1.1",
+    "@whimbrel/project": "^0.1.1",
+    "@whimbrel/flow": "^0.1.1",
+    "@whimbrel/walk": "^0.1.1"
   },
   "devDependencies": {
-    "@whimbrel/core-api": "^0.1.0",
-    "@whimbrel/project": "^0.1.0",
-    "@whimbrel/facet": "^0.1.0",
-    "@whimbrel/flow": "^0.1.0",
-    "@whimbrel/walk": "^0.1.0",
+    "@whimbrel/core-api": "*",
+    "@whimbrel/project": "*",
+    "@whimbrel/facet": "*",
+    "@whimbrel/flow": "*",
+    "@whimbrel/walk": "*",
     "@types/node": "^24.3.0",
     "vite": "^7.1.2",
     "vite-plugin-dts": "^4.5.4",

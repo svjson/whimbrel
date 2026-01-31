@@ -30,10 +30,12 @@ const ensureSemVer = (v: string | SemVer) => {
 }
 
 export const isVersion = (v1: string | SemVer, v2: string | SemVer) => {
+  if (v1 === v2) return true
+
   v1 = ensureSemVer(v1)
   v2 = ensureSemVer(v2)
 
-  return v1.major == v2.major && v1.minor == v2.minor && v1.patch === v2.patch
+  return v1?.major == v2?.major && v1?.minor == v2?.minor && v1?.patch === v2?.patch
 }
 
 export const updateVersion = (from: string | SemVer, to: string | SemVer) => {
