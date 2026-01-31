@@ -135,6 +135,7 @@ export type {
   SourceFileReference,
   SourceFolder,
   SourceLookupDescription,
+  SourceLookupConditionalOr,
   SourceTreeReference,
 } from './lang'
 export type { ApplicationLog, FileListOptions } from './log'

@@ -9,6 +9,7 @@ export {
   PositionalArgumentDescription,
   ReturnValueLookupDescription,
   ObjectPathDescription,
+  SourceLookupConditionalOr,
   SourceLookupDescription,
 } from './description'
 

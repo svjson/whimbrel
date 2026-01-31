@@ -118,9 +118,15 @@ export interface ObjectPathDescription {
   of: SourceLookupDescription
 }
 
+export interface SourceLookupConditionalOr {
+  type: 'or'
+  anyOf: SourceLookupDescription[]
+}
+
 export type FunctionIdentificationCriteria = PositionalArgumentDescription
 
 export type SourceLookupDescription =
+  | SourceLookupConditionalOr
   | ReturnValueLookupDescription
   | FunctionLookupDescription
   | PositionalArgumentDescription
