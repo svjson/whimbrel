@@ -42,12 +42,18 @@ export const parseViteConfiguration = async (ctx: WhimbrelContext, dir: string) 
         type: 'object-path',
         path: 'server.port',
         of: {
-          type: 'return-value',
-          of: {
-            type: 'function-declaration',
-            identifiedBy: DEFINE_CONFIG_ARG,
-          },
-        } satisfies SourceLookupDescription,
+          type: 'or',
+          anyOf: [
+            DEFINE_CONFIG_ARG,
+            {
+              type: 'return-value',
+              of: {
+                type: 'function-declaration',
+                identifiedBy: DEFINE_CONFIG_ARG,
+              },
+            } satisfies SourceLookupDescription,
+          ],
+        },
       }
     )
 
