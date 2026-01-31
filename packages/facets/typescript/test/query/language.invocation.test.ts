@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { memFsContext } from '@whimbrel-test/context-fixtures'
-import makeTreeFixture from '@whimbrel-test/tree-fixtures'
+import makeTreeFixture, { asset } from '@whimbrel-test/tree-fixtures'
 import { DiskFileSystem } from '@whimbrel/filesystem'
 
 import { queryLanguageInvocation } from '@src/query/language.invocation'
@@ -19,6 +19,7 @@ import {
   SOURCE__KOA__PROCESS_ENV_WITH_OR_FALLBACK_FROM_LOCAL_VAR,
   SOURCE__SINGLE_FILE_VANILLA_KOA,
 } from '@test/source-fixtures'
+import { TYPESCRIPT__KOA__SEPARATE_FILES__IMPORT_DEFAULT__DECLARE_VAR__ENV_PORT_LITERAL_FALLBACK__CALLBACK } from '@whimbrel-test/asset-fixtures'
 const { createDirectory } = makeTreeFixture(DiskFileSystem)
 
 describe('language:invocation', () => {
@@ -307,6 +308,48 @@ describe('language:invocation', () => {
                 value: 4433,
               },
             ],
+          },
+        ],
+      ],
+      [
+        'with port value from local variable passed with callback on imported instance',
+        [
+          {
+            'index.ts': asset(
+              TYPESCRIPT__KOA__SEPARATE_FILES__IMPORT_DEFAULT__DECLARE_VAR__ENV_PORT_LITERAL_FALLBACK__CALLBACK
+            ),
+          },
+          {
+            'app.ts': SOURCE__KOA__INSTANTIATE_AND_DEFAULT_EXPORT,
+          },
+        ],
+        [
+          {
+            type: 'symbol',
+            name: 'PORT',
+            resolutions: [
+              {
+                type: 'process-env',
+                literal: 'process.env.PORT',
+                name: [
+                  {
+                    type: 'symbol',
+                    name: 'PORT',
+                    resolutions: [],
+                  },
+                ],
+              },
+              {
+                type: 'literal',
+                literal: '5020',
+                value: 5020,
+              },
+            ],
+          },
+          {
+            literal: '() => {\n  logger.info(`listening on http://localhost:${PORT}`)\n}',
+            resolutions: [],
+            type: 'expression',
           },
         ],
       ],

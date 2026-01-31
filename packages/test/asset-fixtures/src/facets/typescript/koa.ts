@@ -33,3 +33,6 @@ export const TYPESCRIPT__KOA__SEPARATE_FILES__IMPORT_AND_LISTEN =
 
 export const TYPESCRIPT__KOA__SEPARATE_FILES__IMPORT_DEFAULT_AND_LISTEN =
   'facets/typescript/koa/separate-files/index.default-import-instance.ts'
+
+export const TYPESCRIPT__KOA__SEPARATE_FILES__IMPORT_DEFAULT__DECLARE_VAR__ENV_PORT_LITERAL_FALLBACK__CALLBACK =
+  'facets/typescript/koa/separate-files/index.default-import-instance.listen.env-PORT.literal-fallback.callback.ts'

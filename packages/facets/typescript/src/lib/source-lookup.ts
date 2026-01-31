@@ -229,6 +229,15 @@ export const findIdentifierDefinition = (ast: AST, node: Identifier) => {
 
     if (parentPath.isFunction()) {
       return [makeArgumentDeclaration(ast, binding.path)].filter(Boolean)
+    } else if (parentPath.node.type === 'VariableDeclaration') {
+      const decl = parentPath.node.declarations
+        .map((d) =>
+          makeVariableDeclarationReference(ast, parentPath.node as VariableDeclaration, d)
+        )
+        .find((d) => d.name === node.name)
+      return [decl.expression]
+    } else {
+      return []
     }
   }
 
@@ -238,6 +247,39 @@ export const findIdentifierDefinition = (ast: AST, node: Identifier) => {
   })
 
   return located
+}
+
+export const makeVariableDeclarationReference = (
+  ast: AST,
+  node: VariableDeclaration,
+  n: VariableDeclarator
+) => {
+  const identifier = n.id.type === 'Identifier' ? n.id.name : ''
+
+  const expression: ValueExpression = n.init
+    ? {
+        type: n.init.type,
+        category: 'expression',
+        resolutions: [],
+        node: n.init,
+        ast,
+      }
+    : {
+        type: n.type,
+        category: 'expression',
+        resolutions: [],
+        node: n,
+        ast,
+      }
+
+  return {
+    type: 'VariableDeclaration',
+    name: identifier,
+    exports: findExports(ast, node, identifier),
+    expression: expression,
+    node: node,
+    ast,
+  } satisfies InstanceDeclaration
 }
 
 /**
@@ -294,32 +336,7 @@ export const findVariableDeclarations = (
           .filter(matchesLHS)
           .filter(matchesRHS)
           .map((n) => {
-            const identifier = n.id.type === 'Identifier' ? n.id.name : ''
-
-            const expression: ValueExpression = n.init
-              ? {
-                  type: n.init.type,
-                  category: 'expression',
-                  resolutions: [],
-                  node: n.init,
-                  ast,
-                }
-              : {
-                  type: n.type,
-                  category: 'expression',
-                  resolutions: [],
-                  node: n,
-                  ast,
-                }
-
-            return {
-              type: 'VariableDeclaration',
-              name: identifier,
-              exports: findExports(ast, node, identifier),
-              expression: expression,
-              node,
-              ast,
-            } satisfies InstanceDeclaration
+            return makeVariableDeclarationReference(ast, node, n)
           })
       )
     }

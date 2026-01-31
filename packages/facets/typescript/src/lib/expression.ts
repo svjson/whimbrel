@@ -118,7 +118,7 @@ const resolveIdentifierExpression = async (
 ): Promise<ExpressionResolution[]> => {
   const decl = findIdentifierDefinition(ast, node)
 
-  if (!decl.length && opts?.acceptIdentifier) {
+  if (opts?.acceptIdentifier) {
     return [
       (await resolveBinding(ast, node)) ??
         ({
