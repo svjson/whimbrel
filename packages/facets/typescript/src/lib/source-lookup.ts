@@ -27,6 +27,7 @@ import {
 import { makeLiteral } from './literal'
 import { makeObjectReference } from './object'
 import { makeArgumentDeclaration } from './function'
+import { makeIdentifierReference } from './symbol'
 
 /**
  * Locate instance declarations in source files within specified source folders
@@ -315,14 +316,7 @@ export const describeValueExpression = (ast: AST, a: Node): ValueExpression => {
   }
 
   if (a.type === 'Identifier') {
-    return {
-      type: 'Identifier',
-      name: a.name,
-      category: 'expression',
-      resolutions: [],
-      node: a,
-      ast,
-    }
+      return makeIdentifierReference(ast, a)
   }
 
   if (a.type === 'ObjectExpression') {
