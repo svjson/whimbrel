@@ -642,6 +642,8 @@ export const lookupDescription = (
     case 'object-path':
       const objects = lookupDescription(ast, desc.of)
       return extractNodePaths(desc.path, objects)
+    case 'or':
+      return desc.anyOf.flatMap((c) => lookupDescription(ast, c))
   }
 }
 
