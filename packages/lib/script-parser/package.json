@@ -18,8 +18,7 @@
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf ./dist && rimraf ./node_modules",
-    "publish": "npm publish --access public"
+    "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "dependencies": {
     "@whimbrel/core-api": "*"

@@ -18,8 +18,7 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "clean": "rimraf ./dist && rimraf ./node_modules",
-    "publish": "npm publish --access public"
+    "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

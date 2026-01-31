@@ -40,5 +40,15 @@ export const RemoveScript = makeTask({
       type: 'string',
       required: false,
     },
+    allPackages: {
+      type: 'boolean',
+      cli: {
+        excludes: ['submodules', 'rootModule'],
+        sets: {
+          submodules: '<<value>>',
+          rootModule: true,
+        },
+      },
+    },
   },
 })
