@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/express",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ExpressJS Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

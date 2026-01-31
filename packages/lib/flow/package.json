@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/flow",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fluent DSL for internal Whimbrel Action Execution",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -21,7 +21,7 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "peerDependencies": {
-    "@whimbrel/core-api": "^0.1.1"
+    "@whimbrel/core-api": "^0.1.2"
   },
   "devDependencies": {
     "@whimbrel/core-api": "*",

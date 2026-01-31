@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/filesystem",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "File System abstractions for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

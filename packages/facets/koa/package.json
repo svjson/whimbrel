@@ -1,6 +1,6 @@
 {
   "name": "@whimbrel/koa",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Koa Facet for Whimbrel",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -21,7 +21,7 @@
     "clean": "rimraf ./dist && rimraf ./node_modules"
   },
   "peerDependencies": {
-    "@whimbrel/filesystem": "^0.1.1"
+    "@whimbrel/filesystem": "^0.1.2"
   },
   "dependencies": {
     "@whimbrel/array": "*",
