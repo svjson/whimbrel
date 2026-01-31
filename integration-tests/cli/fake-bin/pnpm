@@ -1,0 +1,12 @@
+#!/bin/sh
+
+case "$*" in
+  "--version")
+    printf "10.28.1\n"
+    ;;
+  *)
+    echo "unsupported npm invocation: $*" >&2
+    exit 1
+    ;;
+esac
+

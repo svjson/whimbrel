@@ -9,7 +9,7 @@ exports[`pennant > from npm > whim x pnpm:migrate-submodule 1`] = `
     "typescript": "^5.9.3",
   },
   "name": "pennant",
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.28.1",
   "private": true,
   "scripts": {
     "build": "pnpm -r build",

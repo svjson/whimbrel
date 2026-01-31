@@ -15,7 +15,10 @@ const whimbrelCliDist = path.resolve(
   'cli',
   'dist'
 )
+
 const whimbrelIndex = path.join(whimbrelCliDist, 'index.cjs')
+
+const fakeBinRoot = path.resolve(__dirname, '..', 'fake-bin')
 
 const node = await which('node')
 
@@ -32,7 +35,9 @@ export function whimCli(cwd: string) {
 
     async execute(args: string[] | string) {
       return new Promise<void>((resolve, reject) => {
-        const env: any = {}
+        const env: any = {
+          PATH: `${fakeBinRoot}:${process.env.PATH}`,
+        }
         if (!args.includes('--no-color')) {
           env.FORCE_COLOR = '1'
         }
