@@ -35,6 +35,15 @@ export const makeObjectReference = (
           node: prop,
           ast,
         })
+      } else if (prop.key.type === 'StringLiteral') {
+        entries.push({
+          type: 'ObjectProperty',
+          name: prop.key.value,
+          value: describeValueExpression(ast, prop.value),
+          category: 'entry',
+          node: prop,
+          ast,
+        })
       }
     }
   }
