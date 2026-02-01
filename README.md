@@ -115,7 +115,7 @@ on their own.
 | [vite](./packages/facets/vite)                     | Provides configuration resolution for projects using Vite                                                                          |
 
 
-## Latest Release - [0.1.2] - 2026-01-31
+## Latest Release - [0.1.3] - 2026-02-01
 
 See [CHANGELOG.md](./CHANGELOG.md) for more information
 

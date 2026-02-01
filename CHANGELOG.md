@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.3] 2026-02-02
+
+Migrated Whimbrel to pnpm + patch release for borked wildcard/workspace dependency version releases 0.1.1-0.1.2
+
 ## [0.1.2] 2026-01-31
 
 Patch-release for accidentally published wildcard dependencies.
